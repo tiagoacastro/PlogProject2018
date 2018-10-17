@@ -20,7 +20,7 @@ display_game([A|B], Player) :-
     display_game(B, Player). 
 
 
-guardaTabuleiro(Njogada, Board) :-
+/*guardaTabuleiro(Njogada, Board) :-
     assert (jogadaAnterior(Njogada, Board)).
 
 jogadaAnterior (Njogada, Board)
@@ -28,7 +28,7 @@ jogadaAnterior (Njogada, Board)
 empate(Board) :-
     jogadaAnterior(N1, Board),
     jogadaAnterior(N2, Board),
-    N1 \= N2.
+    N1 \= N2.*/
 
     
   

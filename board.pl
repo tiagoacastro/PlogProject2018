@@ -11,12 +11,67 @@ getPiece(Nlinha, Ncoluna, Board, Peca) :-
     nth1(Ncoluna, Linha, Peca). 
 
 display_game([], Player) :-
-    write(' ___________________\n' ),
-    write('  a   b   c   d   e ').
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    write('\n' ).
 
 display_game([A|B], Player) :-
-    write(' ___________________\n' ),
-    write('|'),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    put_code(0x2501),
+    write('\n' ),
+    put_code(0x2503),
     display_line(A, Player  ),
     display_game(B, Player). 
 
@@ -25,21 +80,24 @@ display_line([], Player) :-
 
 display_line([A|B], Player) :-
     A = 'x',
-    write('   |'),
+    write('   '),
+    put_code(0x2503),
     display_line(B, Player).
 
 display_line([A|B], Player) :-
     A = 'w',
     write(' '),
     put_code(0x25CB),
-    write(' |'),
+    write(' '),
+    put_code(0x2503),
     display_line(B, Player).
 
 display_line([A|B], Player) :-
     A = 'b',
     write(' '),
     put_code(0x25CF),
-    write(' |'),
+    write(' '),
+    put_code(0x2503),
     display_line(B, Player).
 
 /*guardaTabuleiro(Njogada, Board) :-

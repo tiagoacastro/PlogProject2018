@@ -16,9 +16,31 @@ display_game([], Player) :-
 
 display_game([A|B], Player) :-
     write(' ___________________\n' ),
-    format('| ~w | ~w | ~w | ~w | ~w |\n', A),
+    write('|'),
+    display_line(A, Player  ),
     display_game(B, Player). 
 
+display_line([], Player) :-
+    write('\n' ).
+
+display_line([A|B], Player) :-
+    A = 'x',
+    write('   |'),
+    display_line(B, Player).
+
+display_line([A|B], Player) :-
+    A = 'w',
+    write(' '),
+    put_code(0x25CB),
+    write(' |'),
+    display_line(B, Player).
+
+display_line([A|B], Player) :-
+    A = 'b',
+    write(' '),
+    put_code(0x25CF),
+    write(' |'),
+    display_line(B, Player).
 
 /*guardaTabuleiro(Njogada, Board) :-
     assert (jogadaAnterior(Njogada, Board)).

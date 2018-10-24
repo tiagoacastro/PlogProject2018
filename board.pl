@@ -79,26 +79,20 @@ display_line([], Player) :-
     write('\n' ).
 
 display_line([A|B], Player) :-
-    A = 'x',
-    write('   '),
-    put_code(0x2503),
-    display_line(B, Player).
-
-display_line([A|B], Player) :-
-    A = 'w',
     write(' '),
-    put_code(0x25CB),
+    write_char(A),
     write(' '),
     put_code(0x2503),
     display_line(B, Player).
 
-display_line([A|B], Player) :-
-    A = 'b',
-    write(' '),
-    put_code(0x25CF),
-    write(' '),
-    put_code(0x2503),
-    display_line(B, Player).
+write_char('x') :-
+    write(' ').
+
+write_char('w') :-
+    put_code(0x25CB).
+
+write_char('b') :-
+    put_code(0x25CF).
 
 /*guardaTabuleiro(Njogada, Board) :-
     assert (jogadaAnterior(Njogada, Board)).

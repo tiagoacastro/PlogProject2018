@@ -11,72 +11,25 @@ getPiece(Nlinha, Ncoluna, Board, Peca) :-
     nth1(Ncoluna, Linha, Peca). 
 
 display_game([], Player) :-
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    write('\n' ).
+    display_border(28).
 
-display_game([A|B], Player) :-
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    put_code(0x2501),
-    write('\n' ),
+display_game([A|B], Player) :-       
+    display_border(28),
     put_code(0x2503),
-    display_line(A, Player  ),
-    display_game(B, Player). 
+    display_line(A, Player),
+    display_game(B, Player).
+
+display_border(0) :- 
+    write('\n').
+
+display_border(N) :-
+    N > 0,
+    put_code(0x2501),
+    N1 is N-1,
+    display_border(N1).
 
 display_line([], Player) :-
-    write('\n' ).
+    write('\n').
 
 display_line([A|B], Player) :-
     write(' '),

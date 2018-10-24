@@ -3,7 +3,7 @@
 
 :- use_module(library(lists)).
 
-neutreeko:-
+play:-
     mainMenu. 
 
   

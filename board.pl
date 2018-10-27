@@ -11,9 +11,10 @@ getPiece(Nlinha, Ncoluna, Board, Peca) :-
     nth1(Ncoluna, Linha, Peca). 
 
 display_game([], Player) :-
-    display_border(28).
+    display_border(28),
+    write('\n Now playing: ').
 
-display_game([A|B], Player) :-       
+display_game([A|B], Player) :-
     display_border(28),
     put_code(0x2503),
     display_line(A, Player),

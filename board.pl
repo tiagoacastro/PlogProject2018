@@ -1,6 +1,6 @@
 :-use_module(library(lists)).
 
-board( [ ['x', 'w', 'x', 'w', 'x'],
+startBoard( [ ['x', 'w', 'x', 'w', 'x'],
          ['x', 'x', 'b', 'x', 'x'],
          ['x', 'x', 'x', 'x', 'x'],
          ['x', 'x', 'w', 'x', 'x'],

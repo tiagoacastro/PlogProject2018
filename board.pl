@@ -1,10 +1,10 @@
 :-use_module(library(lists)).
 
-startBoard( [ ['x', 'w', 'x', 'w', 'x'],
-         ['x', 'x', 'b', 'x', 'x'],
-         ['x', 'x', 'x', 'x', 'x'],
-         ['x', 'x', 'w', 'x', 'x'],
-         ['x', 'b', 'x', 'b', 'x']] ).
+startBoard( [['x', 'w', 'x', 'w', 'x'],
+             ['x', 'x', 'b', 'x', 'x'],
+             ['x', 'x', 'x', 'x', 'x'],
+             ['x', 'x', 'w', 'x', 'x'],
+             ['x', 'b', 'x', 'b', 'x']] ).
 
 getPiece(Nlinha, Ncoluna, Board, Peca) :-
     nth1(Nlinha, Board, Linha),        

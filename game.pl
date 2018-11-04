@@ -25,7 +25,9 @@ whiteTurn(inBoard, outBoard) :-
 checkIfWin(Board, Player) :-
     (
        (checkRow(Board, Player),  write('Row'));
-       (checkColumn(Board, Player, 1), write('Column'))     
+       (checkColumn(Board, Player, 1), write('Column'));
+       (checkDiagonalNWSE(Board, Player, 1), write('Diagonal NW-SE'));
+       (checkDiagonalNESW(Board, Player, 1), write('Diagonal NE-SW'))          
     ).
 
 % Checks if any row has a game ending condition
@@ -49,3 +51,22 @@ checkColumn(Board, Player, Ncolumn) :-
     NewN < 6,
     checkColumn(Board, Player, NewN).
 
+% Checks if any diagonal has a game ending condition (NW-SE orientation)
+checkDiagonalNWSE(Board, Player, Ncolumn) :-
+    getRow(Board, Player, 1, Nrow),
+    getPiece(Nrow, Ncolumn, Board, Piece), Piece = Player,
+    Nrow2 is Nrow + 1, Ncolumn2 is Ncolumn + 1, getPiece(Nrow2, Ncolumn2, Board, Piece2), Piece2 = Player, 
+    Nrow3 is Nrow + 2, Ncolumn3 is Ncolumn + 2, getPiece(Nrow3, Ncolumn3, Board, Piece3), Piece3 = Player;
+    NewN is Ncolumn + 1,
+    NewN < 6,
+    checkDiagonalNWSE(Board, Player, NewN).
+
+% Checks if any diagonal has a game ending condition (NE-SW orientation)
+checkDiagonalNESW(Board, Player, Ncolumn) :-
+    getRow(Board, Player, 1, Nrow),
+    getPiece(Nrow, Ncolumn, Board, Piece), Piece = Player,
+    Nrow2 is Nrow + 1, Ncolumn2 is Ncolumn - 1, getPiece(Nrow2, Ncolumn2, Board, Piece2), Piece2 = Player, 
+    Nrow3 is Nrow + 2, Ncolumn3 is Ncolumn - 2, getPiece(Nrow3, Ncolumn3, Board, Piece3), Piece3 = Player;
+    NewN is Ncolumn + 1,
+    NewN < 6,
+    checkDiagonalNESW(Board, Player, NewN).

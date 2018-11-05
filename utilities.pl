@@ -14,6 +14,7 @@ sublist(Sub, List) :-
 sublist(Sub, [HL|TL]) :-
     sublist(Sub, TL).
 
+%Get Piece
 getPiece(Row, Column, Board, Piece) :-
     getRow(Row, Board, OutRow),
     getColumn(Column, OutRow, Piece).
@@ -32,7 +33,25 @@ getColumn(N, [_|Resto], Column) :-
     Previous is N-1,
     getColumn(Previous, Resto, Column).
 
+%Checks if Elem is member of the list
 member(Elem, [Elem|_]).
 
 member(Elem, [H|T]) :-
     member(Elem, T).
+
+%Changes member on a certain position of the board
+changePiece(BoardIn, Column, Row, NewPiece, BoardOut) :-
+    setRow(Row, Column, BoardIn, NewPiece, BoardOut).
+
+setRow(1, Column, [HIn|T], NewPiece, [HOut|T]) :-
+    setColumn(Column, HIn, NewPiece, HOut).
+
+setRow(N, Column, [H|TIn], NewPiece, [H|TOut]) :-
+    NewN is N-1,
+    setRow(NewN, Column, TIn, NewPiece, TOut).
+
+setColumn(1, [HIn|T], NewPiece, [NewPiece|T] ).
+
+setColumn(N, [H|TIn], NewPiece, [H|TOut]) :-
+    NewN is N-1,
+    setColumn(NewN, TIn, NewPiece, TOut).

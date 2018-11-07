@@ -8,9 +8,12 @@ mainMenu :-
     ).
 
 printMenu :-    
-    write('------------------\n'),
-    write('|    Neutreeko   |\n'),
-    write('------------------\n'),
+    display_border(25),
+    put_code(0x2503),
+    write('    Neutreeko   '),
+    put_code(0x2503),
+    write('\n'),
+    display_border(25),
     write('1 - Play\n'),
     write('2 - Rules\n'),
     write('3 - Exit\n').
@@ -26,9 +29,12 @@ playMenu :-
     ).
 
 printPlayMenu :-
-    write('------------------\n'),
-    write('|      Play      |\n'),
-    write('------------------\n'),
+    display_border(25),
+    put_code(0x2503),
+    write('      Play      '),
+    put_code(0x2503),
+    write('\n'),
+    display_border(25),
     write('1 - Human vs Human\n'),
     write('2 - Human vs Computer\n'),
     write('3 - Computer vs Computer\n'),
@@ -42,9 +48,12 @@ rulesMenu :-
     ).
 
 printRules :-
-    write('-------------------\n'),
-    write('|      Rules      |\n'),
-    write('-------------------\n\n'),
+    display_border(26),
+    put_code(0x2503),
+    write('      Rules      '),
+    put_code(0x2503),
+    write('\n\n'),
+    display_border(26),
     write('- Each players has 3 pieces (white or black).\n'),
     write('- Only one piece is moved in each turn.\n'),
     write('- Pieces slide orthogonally or diagonally until stopped by another piece or the border of the board.\n'),

@@ -6,16 +6,46 @@ initGame(Player1, Player2) :-
 
 % Game loop
 playTurn(Board):-
-    write('Do turn\n'),
 %    blackTurn(Board, IntBoard),
+%    display_game(Board, Player),
+%    changePiece(Board, 3, 3, 'w', IntBoard),
+%    changePiece(IntBoard, 3, 4, 'x', FBoard),
+%    display_game(FBoard, Player). 
+%    checkIfWin(Board, 'b'),
     display_game(Board, Player),
-    changePiece(Board, 3, 3, 'w', IntBoard),
-    changePiece(IntBoard, 3, 4, 'x', FBoard),
-    display_game(FBoard, Player). 
-%    checkIfWin(Board, 'b');
+    findNewPosition('south', Board, 1, 4, 'w', BoardOut),
+    display_game(BoardOut, Player).
+%    display_game(BoardOut, Player).
     %whiteTurn(IntBoard, FinalBoard),
 %    checkIfWin(Board,'w').
     %playTurn(FinalBoard).
+
+%Finds the position to where the piece is going to move and updates board
+findNewPosition('south', Board, Row, Column, Player, OutBoard) :-
+move('south', Board, Row, Column, OutRow),
+    changePiece(Board, Column, Row, 'x', IntBoard), 
+    changePiece(IntBoard, Column, OutRow, Player, OutBoard).
+
+%When a move function was prematurely ended because a piece was found before reaching the border (TODO outColumn)
+move('end', Board, Row, Column, OutRow) :-
+    OutRow is Row.
+
+%When a move 'south' function reaches the border
+move('south', Board, 5, Column, OutRow) :-
+    OutRow is 5.
+
+%Gets the new position for a piece
+move('south', Board, Row, Column, OutRow) :-
+    NewRow is Row + 1, 
+    (isMoveValid(Board, NewRow, Column) -> 
+        move('south', Board, NewRow, Column, OutRow);
+        move('end', Board, Row, Column, OutRow)).
+
+%Checks if position (Row, Column) is free
+isMoveValid(Board, Row, Column) :-
+    getPiece(Row, Column, Board, Piece),
+    Piece = 'x'.
+
 
 % Proccesses black turn
 blackTurn(inBoard, outBoard) :-

@@ -55,3 +55,17 @@ setColumn(1, [HIn|T], NewPiece, [NewPiece|T] ).
 setColumn(N, [H|TIn], NewPiece, [H|TOut]) :-
     NewN is N-1,
     setColumn(NewN, TIn, NewPiece, TOut).
+
+%Converts letter(A-E) to respective row and checks if row is valid
+validateRow(RowCode, Row) :-
+    char_code(RowCode, Number),
+    Number >= 97, %a
+    Number =< 101, %e
+    Row is Number-96.
+
+%Checks if column is valid
+validateColumn(ColumnCode, Column) :-
+    char_code(ColumnCode, Number),
+    Number >= 49, %1
+    Number =< 53, %5
+    Column is Number-48.

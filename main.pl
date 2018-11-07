@@ -3,8 +3,6 @@
 :- include('menu.pl').
 :- include('utilities.pl').
 
-%:- use_module(library(lists)).
-
 play:-
     mainMenu. 
 

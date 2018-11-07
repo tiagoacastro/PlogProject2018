@@ -6,25 +6,33 @@ initGame(Player1, Player2) :-
 
 % Game loop
 playTurn(Board):-
-%    blackTurn(Board, IntBoard),
+    blackTurn(Board, IntBoard),
 %    display_game(Board, Player),
-%    changePiece(Board, 3, 3, 'w', IntBoard),
-%    changePiece(IntBoard, 3, 4, 'x', FBoard),
-%    display_game(FBoard, Player). 
 %    checkIfWin(Board, 'b'),
-    display_game(Board, Player),
-    findNewPosition('SW', Board, 2, 3, 'b', BoardOut),
-    display_game(BoardOut, Player).
 %    display_game(BoardOut, Player).
     %whiteTurn(IntBoard, FinalBoard),
 %    checkIfWin(Board,'w').
-    %playTurn(FinalBoard).
+    playTurn(Board).
+
+% Proccesses black turn
+blackTurn(InBoard, OutBoard) :-
+    getInput(Row,Column).
+
+% Proccesses white turn
+whiteTurn(InBoard, OutBoard) :-
+    write('simulate white turn\n').   
+
+getInput(Row, Column) :-
+    write('Enter the position of the piece you want to move in the correct format(ex: a3)'),
+    read(Input),
+    atom_chars(Input, [R, C|_]), % coloca letra (row) em H e numero (coluna) em T (ex:a3)
+    %TODO validar o row, column e ver se a peça na posição é válida
 
 %Finds the position to where the piece is going to move and updates board
 findNewPosition(Direction, Board, Row, Column, Player, OutBoard) :-
 move(Direction, Board, Row, Column, OutRow, OutColumn),
-    changePiece(Board, Column, Row, 'x', IntBoard), 
-    changePiece(IntBoard, OutColumn, OutRow, Player, OutBoard).
+changePiece(Board, Column, Row, 'x', IntBoard),
+changePiece(IntBoard, OutColumn, OutRow, Player, OutBoard).
 
 %When a move function was prematurely ended because a piece was found before reaching the border (TODO outColumn)
 move('end', Board, Row, Column, OutRow, OutColumn) :-
@@ -95,15 +103,6 @@ move('SW', Board, Row, Column, OutRow, OutColumn) :-
 isMoveValid(Board, Row, Column) :-
     getPiece(Row, Column, Board, Piece),
     Piece = 'x'.
-
-
-% Proccesses black turn
-blackTurn(inBoard, outBoard) :-
-    write('simulate black turn\n').
-    
-% Proccesses white turn
-whiteTurn(inBoard, outBoard) :-
-    write('simulate white turn\n').    
 
 % Checks all conditions that end the game
 checkIfWin(Board, Player) :-

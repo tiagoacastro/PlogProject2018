@@ -6,33 +6,43 @@ initGame(Player1, Player2) :-
 
 % Game loop
 playTurn(Board):-
+/*    blackTurn(Board, IntBoard), 
+    checkIfWin(IntBoard, 'b'),
+    whiteTurn(IntBoard, FinalBoard), 
+    playTurn(FinalBoard).*/
     blackTurn(Board, IntBoard),
-%    display_game(Board, Player),
-%    checkIfWin(Board, 'b'),
-%    display_game(BoardOut, Player).
-    %whiteTurn(IntBoard, FinalBoard),
-%    checkIfWin(Board,'w').
-    playTurn(Board).
+    (
+        (write('Check\n'), checkIfWin(IntBoard, 'b'), write('Hey\n'));
+        (whiteTurn(IntBoard, FinalBoard),
+            (
+                (checkIfWin(FinalBoard, 'w'), write('Hey\n'));
+                (playTurn(FinalBoard))
+            )
+        )
+    ).
 
 % Proccesses black turn
 blackTurn(InBoard, OutBoard) :-
-    getInput(Row,Column).
+    display_game(InBoard, 'b'),
+    write('Now playing: BLACK\n'),
+    getMovingPiece(InBoard, Row, Column, 'b'),
+    readDirection(Direction),
+    findNewPosition(Direction, InBoard, Row, Column, 'b', OutBoard).
 
+    
 % Proccesses white turn
 whiteTurn(InBoard, OutBoard) :-
-    write('simulate white turn\n').   
-
-getInput(Row, Column) :-
-    write('Enter the position of the piece you want to move in the correct format(ex: a3)'),
-    read(Input),
-    atom_chars(Input, [R, C|_]), % coloca letra (row) em H e numero (coluna) em T (ex:a3)
-    %TODO validar o row, column e ver se a peça na posição é válida
+    display_game(InBoard, 'w'),
+    write('Now playing: WHITE\n'),
+    getMovingPiece(InBoard, Row, Column, 'w'),
+    readDirection(Direction),
+    findNewPosition(Direction, InBoard, Row, Column, 'w', OutBoard).
 
 %Finds the position to where the piece is going to move and updates board
 findNewPosition(Direction, Board, Row, Column, Player, OutBoard) :-
-move(Direction, Board, Row, Column, OutRow, OutColumn),
-changePiece(Board, Column, Row, 'x', IntBoard),
-changePiece(IntBoard, OutColumn, OutRow, Player, OutBoard).
+    move(Direction, Board, Row, Column, OutRow, OutColumn),
+    changePiece(Board, Column, Row, 'x', IntBoard),
+    changePiece(IntBoard, OutColumn, OutRow, Player, OutBoard).
 
 %When a move function was prematurely ended because a piece was found before reaching the border (TODO outColumn)
 move('end', Board, Row, Column, OutRow, OutColumn) :-
@@ -40,63 +50,63 @@ move('end', Board, Row, Column, OutRow, OutColumn) :-
     OutColumn is Column.
 
 %Gets the new position for a piece moving 'north'
-move('N', Board, Row, Column, OutRow, OutColumn) :-
+move(1, Board, Row, Column, OutRow, OutColumn) :-
     NewRow is Row - 1, 
     (isMoveValid(Board, NewRow, Column) -> 
-        move('N', Board, NewRow, Column, OutRow, OutColumn);
+        move(1, Board, NewRow, Column, OutRow, OutColumn);
         move('end', Board, Row, Column, OutRow, OutColumn)).
 
-%Gets the new position for a piece moving 'east'
-move('E', Board, Row, Column, OutRow, OutColumn) :-
+%Gets the new position for a piece moving 'west'
+move(2, Board, Row, Column, OutRow, OutColumn) :-
     NewColumn is Column - 1, 
     (isMoveValid(Board, Row, NewColumn) -> 
-        move('E', Board, Row, NewColumn, OutRow, OutColumn);
+        move(2, Board, Row, NewColumn, OutRow, OutColumn);
         move('end', Board, Row, Column, OutRow, OutColumn)).
 
 %Gets the new position for a piece moving 'east'
-move('W', Board, Row, Column, OutRow, OutColumn) :-
+move(3, Board, Row, Column, OutRow, OutColumn) :-
     NewColumn is Column + 1, 
     (isMoveValid(Board, Row, NewColumn) -> 
-        move('W', Board, Row, NewColumn, OutRow, OutColumn);
+        move(3, Board, Row, NewColumn, OutRow, OutColumn);
         move('end', Board, Row, Column, OutRow, OutColumn)).    
 
 %Gets the new position for a piece moving 'south'
-move('S', Board, Row, Column, OutRow, OutColumn) :-
+move(4, Board, Row, Column, OutRow, OutColumn) :-
     NewRow is Row + 1, 
     (isMoveValid(Board, NewRow, Column) -> 
-        move('S', Board, NewRow, Column, OutRow, OutColumn);
+        move(4, Board, NewRow, Column, OutRow, OutColumn);
         move('end', Board, Row, Column, OutRow, OutColumn)).
     
 %Gets the new position for a piece moving 'northeast'
-move('NE', Board, Row, Column, OutRow, OutColumn) :-
+move(5, Board, Row, Column, OutRow, OutColumn) :-
     NewRow is Row - 1, 
     NewColumn is Column + 1, 
     (isMoveValid(Board, NewRow, NewColumn) -> 
-        move('NE', Board, NewRow, NewColumn, OutRow, OutColumn);
+        move(5, Board, NewRow, NewColumn, OutRow, OutColumn);
         move('end', Board, Row, Column, OutRow, OutColumn)).
 
 %Gets the new position for a piece moving 'northwest'
-move('NW', Board, Row, Column, OutRow, OutColumn) :-
+move(6, Board, Row, Column, OutRow, OutColumn) :-
     NewRow is Row - 1, 
     NewColumn is Column - 1, 
     (isMoveValid(Board, NewRow, NewColumn) -> 
-        move('NW', Board, NewRow, NewColumn, OutRow, OutColumn);
+        move(6, Board, NewRow, NewColumn, OutRow, OutColumn);
         move('end', Board, Row, Column, OutRow, OutColumn)).
 
 %Gets the new position for a piece moving 'southeast'
-move('SE', Board, Row, Column, OutRow, OutColumn) :-
+move(7, Board, Row, Column, OutRow, OutColumn) :-
     NewRow is Row + 1, 
     NewColumn is Column + 1, 
     (isMoveValid(Board, NewRow, NewColumn) -> 
-        move('SE', Board, NewRow, NewColumn, OutRow, OutColumn);
+        move(7, Board, NewRow, NewColumn, OutRow, OutColumn);
         move('end', Board, Row, Column, OutRow, OutColumn)).
 
 %Gets the new position for a piece moving 'southwest'
-move('SW', Board, Row, Column, OutRow, OutColumn) :-
+move(8, Board, Row, Column, OutRow, OutColumn) :-
     NewRow is Row + 1, 
     NewColumn is Column - 1, 
     (isMoveValid(Board, NewRow, NewColumn) -> 
-        move('SW', Board, NewRow, NewColumn, OutRow, OutColumn);
+        move(8, Board, NewRow, NewColumn, OutRow, OutColumn);
         move('end', Board, Row, Column, OutRow, OutColumn)).
 
 %Checks if position (Row, Column) is free

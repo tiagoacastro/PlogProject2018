@@ -2,21 +2,17 @@
 initGame(Player1, Player2) :-
     startBoard(Board),
     playTurn(Board).
-%    checkIfWin(Board, Player1).
 
 % Game loop
 playTurn(Board):-
-/*    blackTurn(Board, IntBoard), 
-    checkIfWin(IntBoard, 'b'),
-    whiteTurn(IntBoard, FinalBoard), 
-    playTurn(FinalBoard).*/
     blackTurn(Board, IntBoard),
     (
-        (checkIfWin(IntBoard, 'b'));
-        (whiteTurn(IntBoard, FinalBoard),
+        checkIfWin(IntBoard, 'b');
+        (
+            whiteTurn(IntBoard, FinalBoard),
             (
-                (checkIfWin(FinalBoard, 'w'), write('Hey\n'));
-                (playTurn(FinalBoard))
+                checkIfWin(FinalBoard, 'w'), write('Hey\n');
+                playTurn(FinalBoard)
             )
         )
     ).
@@ -52,62 +48,78 @@ move('end', Board, Row, Column, OutRow, OutColumn) :-
 %Gets the new position for a piece moving 'north'
 move(1, Board, Row, Column, OutRow, OutColumn) :-
     NewRow is Row - 1, 
-    (isMoveValid(Board, NewRow, Column) -> 
-        move(1, Board, NewRow, Column, OutRow, OutColumn);
-        move('end', Board, Row, Column, OutRow, OutColumn)).
+    (
+        isMoveValid(Board, NewRow, Column) -> 
+            move(1, Board, NewRow, Column, OutRow, OutColumn);
+        move('end', Board, Row, Column, OutRow, OutColumn)
+    ).
 
 %Gets the new position for a piece moving 'west'
 move(2, Board, Row, Column, OutRow, OutColumn) :-
     NewColumn is Column - 1, 
-    (isMoveValid(Board, Row, NewColumn) -> 
-        move(2, Board, Row, NewColumn, OutRow, OutColumn);
-        move('end', Board, Row, Column, OutRow, OutColumn)).
+    (
+        isMoveValid(Board, Row, NewColumn) -> 
+            move(2, Board, Row, NewColumn, OutRow, OutColumn);
+        move('end', Board, Row, Column, OutRow, OutColumn)
+    ).
 
 %Gets the new position for a piece moving 'east'
 move(3, Board, Row, Column, OutRow, OutColumn) :-
     NewColumn is Column + 1, 
-    (isMoveValid(Board, Row, NewColumn) -> 
-        move(3, Board, Row, NewColumn, OutRow, OutColumn);
-        move('end', Board, Row, Column, OutRow, OutColumn)).    
+    (
+        isMoveValid(Board, Row, NewColumn) -> 
+            move(3, Board, Row, NewColumn, OutRow, OutColumn);
+        move('end', Board, Row, Column, OutRow, OutColumn)
+    ).    
 
 %Gets the new position for a piece moving 'south'
 move(4, Board, Row, Column, OutRow, OutColumn) :-
     NewRow is Row + 1, 
-    (isMoveValid(Board, NewRow, Column) -> 
-        move(4, Board, NewRow, Column, OutRow, OutColumn);
-        move('end', Board, Row, Column, OutRow, OutColumn)).
+    (
+        isMoveValid(Board, NewRow, Column) -> 
+            move(4, Board, NewRow, Column, OutRow, OutColumn);
+        move('end', Board, Row, Column, OutRow, OutColumn)
+    ).
     
 %Gets the new position for a piece moving 'northeast'
 move(5, Board, Row, Column, OutRow, OutColumn) :-
     NewRow is Row - 1, 
     NewColumn is Column + 1, 
-    (isMoveValid(Board, NewRow, NewColumn) -> 
-        move(5, Board, NewRow, NewColumn, OutRow, OutColumn);
-        move('end', Board, Row, Column, OutRow, OutColumn)).
+    (
+        isMoveValid(Board, NewRow, NewColumn) -> 
+            move(5, Board, NewRow, NewColumn, OutRow, OutColumn);
+        move('end', Board, Row, Column, OutRow, OutColumn)
+    ).
 
 %Gets the new position for a piece moving 'northwest'
 move(6, Board, Row, Column, OutRow, OutColumn) :-
     NewRow is Row - 1, 
     NewColumn is Column - 1, 
-    (isMoveValid(Board, NewRow, NewColumn) -> 
-        move(6, Board, NewRow, NewColumn, OutRow, OutColumn);
-        move('end', Board, Row, Column, OutRow, OutColumn)).
+    (
+        isMoveValid(Board, NewRow, NewColumn) -> 
+            move(6, Board, NewRow, NewColumn, OutRow, OutColumn);
+        move('end', Board, Row, Column, OutRow, OutColumn)
+    ).
 
 %Gets the new position for a piece moving 'southeast'
 move(7, Board, Row, Column, OutRow, OutColumn) :-
     NewRow is Row + 1, 
     NewColumn is Column + 1, 
-    (isMoveValid(Board, NewRow, NewColumn) -> 
-        move(7, Board, NewRow, NewColumn, OutRow, OutColumn);
-        move('end', Board, Row, Column, OutRow, OutColumn)).
+    (
+        isMoveValid(Board, NewRow, NewColumn) -> 
+            move(7, Board, NewRow, NewColumn, OutRow, OutColumn);
+        move('end', Board, Row, Column, OutRow, OutColumn)
+    ).
 
 %Gets the new position for a piece moving 'southwest'
 move(8, Board, Row, Column, OutRow, OutColumn) :-
     NewRow is Row + 1, 
     NewColumn is Column - 1, 
-    (isMoveValid(Board, NewRow, NewColumn) -> 
-        move(8, Board, NewRow, NewColumn, OutRow, OutColumn);
-        move('end', Board, Row, Column, OutRow, OutColumn)).
+    (
+        isMoveValid(Board, NewRow, NewColumn) -> 
+            move(8, Board, NewRow, NewColumn, OutRow, OutColumn);
+        move('end', Board, Row, Column, OutRow, OutColumn)
+    ).
 
 %Checks if position (Row, Column) is free
 isMoveValid(Board, Row, Column) :-

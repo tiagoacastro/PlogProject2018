@@ -5,24 +5,22 @@ getMovingPiece(Board, Row, Column, Player) :-
     readColumn(Column),
     format('Row: ~w ', Row), format('Col: ~w\n', Column),
     getPiece(Row, Column, Board, Piece),
-    (
-        Piece = Player -> write('\nPiece selected\n');
-        write('\nPiece selected is invalid. Try again.\n\n'), 
-        getMovingPiece(Board, Row, Column, Player)   
-    ).
+    Piece = Player -> write('\nPiece selected\n');
+    write('\nPiece selected is invalid. Try again.\n\n'), 
+    getMovingPiece(Board, Row, Column, Player).
         
 %Converts number(1-5) to respective row and checks if row is valid
 readRow(Row) :-
     write('Enter the row of the piece you want to move (1-5)'),    
     read(Input),
     (
-            Input = 1 -> Row is 1;
-            Input = 2 -> Row is 2;
-            Input = 3 -> Row is 3;
-            Input = 4 -> Row is 4;
-            Input = 5 -> Row is 5;
-            write('\nRow is invalid. Try again.\n'),
-            readRow(Row) 
+        Input = 1 -> Row is 1;
+        Input = 2 -> Row is 2;
+        Input = 3 -> Row is 3;
+        Input = 4 -> Row is 4;
+        Input = 5 -> Row is 5;
+        write('\nRow is invalid. Try again.\n'),
+        readRow(Row) 
     ).
 
 %Converts letter(a-e) to respective row and checks if row is valid
@@ -46,14 +44,14 @@ readDirection(Direction) :-
     write('Enter the desired direction'),
     read(Input),
     (
-            Input = 1 -> Direction is 1;
-            Input = 2 -> Direction is 2;
-            Input = 3 -> Direction is 3;
-            Input = 4 -> Direction is 4;
-            Input = 5 -> Direction is 5;
-            Input = 6 -> Direction is 6;
-            Input = 7 -> Direction is 7;
-            Input = 8 -> Direction is 8;
-            write('Direction is invalid. Try again.\n'),
-            readDirection(Direction) 
+        Input = 1 -> Direction is 1;
+        Input = 2 -> Direction is 2;
+        Input = 3 -> Direction is 3;
+        Input = 4 -> Direction is 4;
+        Input = 5 -> Direction is 5;
+        Input = 6 -> Direction is 6;
+        Input = 7 -> Direction is 7;
+        Input = 8 -> Direction is 8;
+        write('Direction is invalid. Try again.\n'),
+        readDirection(Direction) 
     ).

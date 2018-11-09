@@ -10,8 +10,16 @@ getMovingPiece(Board, Row, Column, Player) :-
 readRow(Row) :-
     write('Enter the row of the piece you want to move (a-e)'),    
     read(Input),
-    validateRow(Input, Row).
-
+    (
+            Input = 'a' -> Row is 1;
+            Input = 'b' -> Row is 2;
+            Input = 'c' -> Row is 3;
+            Input = 'd' -> Row is 4;
+            Input = 'e' -> Row is 5;
+            write('Row is invalid. Try again\n'),
+            readRow(Row) 
+    ).
+/*
 validateRow('a', Row) :-
     Row is 1.
 
@@ -31,15 +39,23 @@ validateRow('e', Row) :-
 validateRow(_Row, Row) :-
     write('Row is invalid. Try again\n'),
     readRow(Input).
-
+*/
 
 %Checks if column is valid
 readColumn(Column) :-
     write('Enter the column of the piece you want to move (1-5)'),
     read(Input),
-    validateColumn(Input, Column). 
+    (
+        Input = 1 -> Column is 1;
+        Input = 2 -> Column is 2;
+        Input = 3 -> Column is 3;
+        Input = 4 -> Column is 4;
+        Input = 5 -> Column is 5;
+        write('Column is invalid. Try again\n'),
+        readColumn(Column) 
+    ).
 
-validateColumn(1, Column) :-    
+/*validateColumn(1, Column) :-    
     Column is 1.
 
 validateColumn(2, Column) :-    
@@ -57,7 +73,7 @@ validateColumn(5, Column) :-
 %If column is invalid
 validateColumn(_Column, Column) :-
     write('Column is invalid. Try again\n'),
-    readColumn(Column).
+    readColumn(Column).*/   
 
 %If piece is the same as the player('b' or 'w'), return true.
 validatePiece(Board, Row, Column, P, P).
@@ -73,10 +89,20 @@ readDirection(Direction) :-
     write('5 - Northeast   6 - Northwest   7 - Southeast   8 - Southwest \n'),
     write('Enter the desired direction'),
     read(Input),
-    Direction is Input.
-    validateDirection(Input, Direction).
+    (
+            Input = 1 -> Direction is 1;
+            Input = 2 -> Direction is 2;
+            Input = 3 -> Direction is 3;
+            Input = 4 -> Direction is 4;
+            Input = 5 -> Direction is 5;
+            Input = 6 -> Direction is 6;
+            Input = 7 -> Direction is 7;
+            Input = 8 -> Direction is 8;
+            write('Direction is invalid. Try again\n'),
+            readDirection(Direction) 
+    ).
 
-validateDirection(1, Direction) :-
+/*validateDirection(1, Direction) :-
     Direction is 1.
 
 validateDirection(2, Direction) :-
@@ -98,7 +124,7 @@ validateDirection(7, Direction) :-
     Direction is 7.
 
 validateDirection(8, Direction) :-
-    Direction is 8.
+    Direction is 8.*/
 
 %If direction is not valid
 /*validateDirection(_Direction, Direction) :-

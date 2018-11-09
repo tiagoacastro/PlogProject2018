@@ -12,7 +12,7 @@ playTurn(Board):-
     playTurn(FinalBoard).*/
     blackTurn(Board, IntBoard),
     (
-        (write('Check\n'), checkIfWin(IntBoard, 'b'), write('Hey\n'));
+        (checkIfWin(IntBoard, 'b'));
         (whiteTurn(IntBoard, FinalBoard),
             (
                 (checkIfWin(FinalBoard, 'w'), write('Hey\n'));

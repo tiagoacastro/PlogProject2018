@@ -24,7 +24,7 @@ playTurn(Board):-
 % Proccesses black turn
 blackTurn(InBoard, OutBoard) :-
     display_game(InBoard, 'b'),
-    write('Now playing: BLACK\n'),
+    write('Now playing: BLACK\n\n'),
     getMovingPiece(InBoard, Row, Column, 'b'),
     readDirection(Direction),
     findNewPosition(Direction, InBoard, Row, Column, 'b', OutBoard).
@@ -33,7 +33,7 @@ blackTurn(InBoard, OutBoard) :-
 % Proccesses white turn
 whiteTurn(InBoard, OutBoard) :-
     display_game(InBoard, 'w'),
-    write('Now playing: WHITE\n'),
+    write('Now playing: WHITE\n\n'),
     getMovingPiece(InBoard, Row, Column, 'w'),
     readDirection(Direction),
     findNewPosition(Direction, InBoard, Row, Column, 'w', OutBoard).

@@ -12,7 +12,6 @@ getPiece(Nlinha, Ncoluna, Board, Peca) :-
 
 display_game([], Player) :-
     display_border(28).
- %   write('\n Now playing: ').
 
 display_game([A|B], Player) :-
     display_border(28),

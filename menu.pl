@@ -1,3 +1,4 @@
+%Main menu
 mainMenu :-
     printMenu, 
     read(Input),
@@ -17,7 +18,8 @@ printMenu :-
     write('1 - Play\n'),
     write('2 - Rules\n'),
     write('3 - Exit\n').
-    
+
+%Play menu
 playMenu :-
     printPlayMenu,
     read(Input),
@@ -40,6 +42,7 @@ printPlayMenu :-
     write('3 - Computer vs Computer\n'),
     write('4 - Back\n').
 
+%Rules menu
 rulesMenu :-
     printRules,
     read(Input),

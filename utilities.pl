@@ -1,3 +1,10 @@
+%Checks if the desired sublist exists in the list
+sublist(Sub, List) :-
+    prefix(Sub, List).
+
+sublist(Sub, [HL|TL]) :-
+    sublist(Sub, TL).
+
 prefix([], List).
 
 prefix([H|TP], [H|TL]) :-
@@ -7,12 +14,6 @@ suffix(List, List).
 
 suffix(Suf, [HL|TL]) :-
     suffix(Suf, TL).
-
-sublist(Sub, List) :-
-    prefix(Sub, List).
-
-sublist(Sub, [HL|TL]) :-
-    sublist(Sub, TL).
 
 %Get Piece
 getPiece(Row, Column, Board, Piece) :-

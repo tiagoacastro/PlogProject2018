@@ -4,7 +4,6 @@
 :- include('utilities.pl').
 :- include('input.pl').
 
+%main
 play:-
     mainMenu. 
-
-  

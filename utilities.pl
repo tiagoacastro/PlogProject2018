@@ -22,23 +22,17 @@ getPiece(Row, Column, Board, Piece) :-
 
 getRow(1, [Row|_], Row).
 
-getRow(N, [_|Resto], Row) :-
+getRow(N, [_|Rest], Row) :-
     N>1,
     Previous is N-1,
-    getRow(Previous, Resto, Row).
+    getRow(Previous, Rest, Row).
 
 getColumn(1, [Column|_], Column).
 
-getColumn(N, [_|Resto], Column) :-
+getColumn(N, [_|Rest], Column) :-
     N>1,
     Previous is N-1,
-    getColumn(Previous, Resto, Column).
-
-%Checks if Elem is member of the list
-member(Elem, [Elem|_]).
-
-member(Elem, [H|T]) :-
-    member(Elem, T).
+    getColumn(Previous, Rest, Column).
 
 %Changes member on a certain position of the board
 changePiece(BoardIn, Column, Row, NewPiece, BoardOut) :-
@@ -56,5 +50,21 @@ setColumn(1, [HIn|T], NewPiece, [NewPiece|T] ).
 setColumn(N, [H|TIn], NewPiece, [H|TOut]) :-
     NewN is N-1,
     setColumn(NewN, TIn, NewPiece, TOut).
+
+%Get first ocurrence of a piece
+getFirstPiecePos(Board, Piece, Row, Column) :-
+    R is 1,
+    getFPRow(R, C, Board, Piece, Row, Column).
+
+getFPRow(R, C, [H|Rest], Piece, Row, Column) :-
+    (C is 1,
+    getFPColumn(C, H, Piece, Column), Row is R);
+    (Next is R + 1,
+    getFPRow(Next, New, Rest, Piece, Row, Column)).
+
+getFPColumn(C, [H|Rest], Piece, Column) :-
+    (H = Piece, Column is C);
+    (Next is C + 1,
+    getFPColumn(Next, Rest, Piece, Column)).
 
 

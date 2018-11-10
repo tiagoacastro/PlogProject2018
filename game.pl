@@ -11,7 +11,7 @@ playTurn(Board):-
         (
             whiteTurn(IntBoard, FinalBoard),
             (
-                checkIfWin(FinalBoard, 'w'), write('Hey\n');
+                checkIfWin(FinalBoard, 'w');
                 playTurn(FinalBoard)
             )
         )
@@ -129,10 +129,10 @@ isMoveValid(Board, Row, Column) :-
 % Checks all conditions that end the game
 checkIfWin(Board, Player) :-
     (
-       (checkRow(Board, Player),  write('Row'));
-       (checkColumn(Board, Player, 1), write('Column'));
-       (checkDiagonalNWSE(Board, Player, 1), write('Diagonal NW-SE'));
-       (checkDiagonalNESW(Board, Player, 1), write('Diagonal NE-SW'))          
+       (checkRow(Board, Player),  write('Row\n'));
+       (checkColumn(Board, Player), write('Column\n'));
+       (checkDiagonalNWSE(Board, Player), write('Diagonal NW-SE\n'));
+       (checkDiagonalNESW(Board, Player), write('Diagonal NE-SW\n'))          
     ).
 
 % Checks if any row has a game ending condition
@@ -140,38 +140,20 @@ checkRow([H|T], Player) :-
     sublist([Player, Player, Player], H);
     checkRow(T, Player).
 
-% Gets the first row where the specified piece is found  
-getRowWithPlayer([H|T], Player, N, Nrow) :- 
-    member(Player, H), Nrow is N; 
-    NewN is N + 1,
-    getRowWithPlayer(T, Player, NewN, Nrow).
-
 % Checks if any column has a game ending condition
-checkColumn(Board, Player, Ncolumn) :-
-    getRowWithPlayer(Board, Player, 1, Nrow),
-    getPiece(Nrow, Ncolumn, Board, Piece), Piece = Player,
-    Nrow2 is Nrow + 1, getPiece(Nrow2, Ncolumn, Board, Piece2), Piece2 = Player, 
-    Nrow3 is Nrow + 2, getPiece(Nrow3, Ncolumn, Board, Piece3), Piece3 = Player;
-    NewN is Ncolumn + 1,
-    NewN < 6,
-    checkColumn(Board, Player, NewN).
+checkColumn(Board, Player) :-
+    getFirstPiecePos(Board, Player, Nrow, Ncolumn),
+    Nrow2 is Nrow + 1, getPiece(Nrow2, Ncolumn, Board, Piece2), Piece2 = Player,
+    Nrow3 is Nrow + 2, getPiece(Nrow3, Ncolumn, Board, Piece3), Piece3 = Player.
 
 % Checks if any diagonal has a game ending condition (NW-SE orientation)
-checkDiagonalNWSE(Board, Player, Ncolumn) :-
-    getRowWithPlayer(Board, Player, 1, Nrow),
-    getPiece(Nrow, Ncolumn, Board, Piece), Piece = Player,
+checkDiagonalNWSE(Board, Player) :-
+    getFirstPiecePos(Board, Player, Nrow, Ncolumn),
     Nrow2 is Nrow + 1, Ncolumn2 is Ncolumn + 1, getPiece(Nrow2, Ncolumn2, Board, Piece2), Piece2 = Player, 
-    Nrow3 is Nrow + 2, Ncolumn3 is Ncolumn + 2, getPiece(Nrow3, Ncolumn3, Board, Piece3), Piece3 = Player;
-    NewN is Ncolumn + 1,
-    NewN < 6,
-    checkDiagonalNWSE(Board, Player, NewN).
+    Nrow3 is Nrow + 2, Ncolumn3 is Ncolumn + 2, getPiece(Nrow3, Ncolumn3, Board, Piece3), Piece3 = Player.
 
 % Checks if any diagonal has a game ending condition (NE-SW orientation)
-checkDiagonalNESW(Board, Player, Ncolumn) :-
-    getRowWithPlayer(Board, Player, 1, Nrow),
-    getPiece(Nrow, Ncolumn, Board, Piece), Piece = Player,
+checkDiagonalNESW(Board, Player) :-
+    getFirstPiecePos(Board, Player, Nrow, Ncolumn),
     Nrow2 is Nrow + 1, Ncolumn2 is Ncolumn - 1, getPiece(Nrow2, Ncolumn2, Board, Piece2), Piece2 = Player, 
-    Nrow3 is Nrow + 2, Ncolumn3 is Ncolumn - 2, getPiece(Nrow3, Ncolumn3, Board, Piece3), Piece3 = Player;
-    NewN is Ncolumn + 1,
-    NewN < 6,
-    checkDiagonalNESW(Board, Player, NewN).
+    Nrow3 is Nrow + 2, Ncolumn3 is Ncolumn - 2, getPiece(Nrow3, Ncolumn3, Board, Piece3).

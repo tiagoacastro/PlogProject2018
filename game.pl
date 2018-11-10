@@ -1,15 +1,16 @@
 % Starts a game with the start board 
 initGame(Player1, Player2) :-
     startBoard(Board),
-    playTurn(Board).
+    playTurn(Board, 1).
 
 % Game loop
-playTurn(Board):-
+playTurn(Board, Njogada):-
+    valid_moves(Board, 'b', ListOfMoves).
     blackTurn(Board, IntBoard),
     (
         checkIfWin(IntBoard, 'b');
         (
-            whiteTurn(IntBoard, FinalBoard),
+            guardaTabuleiro(Njogada, IntBoard), whiteTurn(IntBoard, FinalBoard),
             (
                 checkIfWin(FinalBoard, 'w');
                 playTurn(FinalBoard)
@@ -20,7 +21,7 @@ playTurn(Board):-
 % Proccesses black turn
 blackTurn(InBoard, OutBoard) :-
     display_game(InBoard, 'b'),
-    write('Now playing: BLACK\n\n'),
+    write('\nNow playing: BLACK\n\n'),
     getMovingPiece(InBoard, Row, Column, 'b'),
     readDirection(Direction),
     findNewPosition(Direction, InBoard, Row, Column, 'b', OutBoard).
@@ -29,10 +30,10 @@ blackTurn(InBoard, OutBoard) :-
 % Proccesses white turn
 whiteTurn(InBoard, OutBoard) :-
     display_game(InBoard, 'w'),
-    write('Now playing: WHITE\n\n'),
+    write('\nNow playing: WHITE\n\n'),
     getMovingPiece(InBoard, Row, Column, 'w'),
     readDirection(Direction),
-    findNewPosition(Direction, InBoard, Row, Column, 'w', OutBoard).
+    findNewPosition(Direction, InBoard, Row, Column, 'w', OutBoard).    
 
 %Finds the position to where the piece is going to move and updates board
 findNewPosition(Direction, Board, Row, Column, Player, OutBoard) :-
@@ -121,10 +122,38 @@ move(8, Board, Row, Column, OutRow, OutColumn) :-
         move('end', Board, Row, Column, OutRow, OutColumn)
     ).
 
+valid_moves(Board, Player, ListOfMoves) :-
+    getFirstPiecePos(Board, Player, Row, Column),
+    RowDown is Row + 1,
+    RowUp is Row - 1,
+    ColumnRight is Column + 1,
+    ColumnLeft is Column - 1,
+    isMoveValid(Board, RowUp, Column, 'North', [], OutList1),
+    isMoveValid(Board, Row, ColumnLeft, 'West', OutList1, OutList2),
+    isMoveValid(Board, Row, ColumnRight, 'East', OutList2, OutList3),
+    isMoveValid(Board, RowDown, Column, 'South', OutList3, OutList4),
+    isMoveValid(Board, RowUp, ColumnRight, 'Northeast', OutList4, OutList5),
+    isMoveValid(Board, RowUp, ColumnLeft, 'Northwest', OutList5, OutList6),
+    isMoveValid(Board, RowDown, ColumnRight, 'Southeast', OutList6, OutList7),
+    isMoveValid(Board, RowDown, ColumnLeft, 'Southwest', OutList7, ListOfMoves),
+    printList(ListOfMoves).
+
+
+printList([]).
+
+printList([H|T]) :-
+    format('~w \n', H),
+    printList(T).
+
 %Checks if position (Row, Column) is free
 isMoveValid(Board, Row, Column) :-
     getPiece(Row, Column, Board, Piece),
     Piece = 'x'.
+
+isMoveValid(Board, Row, Column, Dir, InList, OutList) :-
+    getPiece(Row, Column, Board, Piece),
+    Piece = 'x'  -> append(InList, [Dir], OutList);
+    append(InList, [], OutList).
 
 % Checks all conditions that end the game
 checkIfWin(Board, Player) :-

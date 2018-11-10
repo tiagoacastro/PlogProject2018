@@ -52,6 +52,6 @@ readDirection(Direction) :-
         Input = 6 -> Direction is 6;
         Input = 7 -> Direction is 7;
         Input = 8 -> Direction is 8;
-        write('Direction is invalid. Try again.\n'),
+        write('\nDirection is invalid. Try again.\n'),
         readDirection(Direction) 
     ).

@@ -66,5 +66,3 @@ getFPColumn(C, [H|Rest], Piece, Column) :-
     (H = Piece, Column is C);
     (Next is C + 1,
     getFPColumn(Next, Rest, Piece, Column)).
-
-

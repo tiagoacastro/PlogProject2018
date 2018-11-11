@@ -3,9 +3,9 @@
 %Start board
 startBoard( [['x', 'w', 'x', 'w', 'x'],
              ['x', 'x', 'b', 'x', 'x'],
-             ['x', 'x', 'x', 'x', 'x'],
-             ['x', 'x', 'w', 'x', 'x'],
-             ['x', 'b', 'x', 'b', 'x']] ).
+             ['x', 'b', 'x', 'x', 'x'],
+             ['x', 'x', 'b', 'x', 'x'],
+             ['x', 'x', 'w', 'x', 'x']] ).
 
 %Displays the board
 display_gameAux([], Player, _) :-

@@ -5,7 +5,7 @@ initGame(Player1, Player2) :-
 
 % Game loop
 playTurn(Board, Njogada):-
-    valid_moves(Board, 'b', ListOfMoves).
+    %valid_moves(Board, 'b', ListOfMoves).
     blackTurn(Board, IntBoard),
     (
         checkIfWin(IntBoard, 'b');
@@ -171,18 +171,18 @@ checkRow([H|T], Player) :-
 
 % Checks if any column has a game ending condition
 checkColumn(Board, Player) :-
-    getFirstPiecePos(Board, Player, Nrow, Ncolumn),
+    getNthPiecePos(Board, Player, Nrow, Ncolumn, 1),
     Nrow2 is Nrow + 1, getPiece(Nrow2, Ncolumn, Board, Piece2), Piece2 = Player,
     Nrow3 is Nrow + 2, getPiece(Nrow3, Ncolumn, Board, Piece3), Piece3 = Player.
 
 % Checks if any diagonal has a game ending condition (NW-SE orientation)
 checkDiagonalNWSE(Board, Player) :-
-    getFirstPiecePos(Board, Player, Nrow, Ncolumn),
+    getNthPiecePos(Board, Player, Nrow, Ncolumn, 1),
     Nrow2 is Nrow + 1, Ncolumn2 is Ncolumn + 1, getPiece(Nrow2, Ncolumn2, Board, Piece2), Piece2 = Player, 
     Nrow3 is Nrow + 2, Ncolumn3 is Ncolumn + 2, getPiece(Nrow3, Ncolumn3, Board, Piece3), Piece3 = Player.
 
 % Checks if any diagonal has a game ending condition (NE-SW orientation)
 checkDiagonalNESW(Board, Player) :-
-    getFirstPiecePos(Board, Player, Nrow, Ncolumn),
+    getNthPiecePos(Board, Player, Nrow, Ncolumn, 1),
     Nrow2 is Nrow + 1, Ncolumn2 is Ncolumn - 1, getPiece(Nrow2, Ncolumn2, Board, Piece2), Piece2 = Player, 
     Nrow3 is Nrow + 2, Ncolumn3 is Ncolumn - 2, getPiece(Nrow3, Ncolumn3, Board, Piece3).

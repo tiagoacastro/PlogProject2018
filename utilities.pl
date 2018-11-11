@@ -51,18 +51,37 @@ setColumn(N, [H|TIn], NewPiece, [H|TOut]) :-
     NewN is N-1,
     setColumn(NewN, TIn, NewPiece, TOut).
 
-%Get first ocurrence of a piece
-getFirstPiecePos(Board, Piece, Row, Column) :-
+%Get nth ocurrence of a piece starting from
+getNthPiecePos(Board, Piece, Row, Column, N) :-
     R is 1,
-    getFPRow(R, C, Board, Piece, Row, Column).
+    getNPRow(R, C, Board, Piece, Row, Column, N).
 
-getFPRow(R, C, [H|Rest], Piece, Row, Column) :-
+getNPRow(R, C, [H|Rest], Piece, Row, Column, N) :-
     (C is 1,
-    getFPColumn(C, H, Piece, Column), Row is R);
-    (Next is R + 1,
-    getFPRow(Next, New, Rest, Piece, Row, Column)).
+    getNPColumn(C, H, Piece, Column, N, NewN), format('~w sup\n', NewN), NewN = 0, !, Row is R);
+    (Next is R + 1, format('~w ', N), format('~w\n', NewN),
+    getNPRow(Next, New, Rest, Piece, Row, Column, NewN)).
 
-getFPColumn(C, [H|Rest], Piece, Column) :-
-    (H = Piece, Column is C);
+getNPColumn(C, [H|[]], Piece, Column, 1, NewN) :-
+    write('kek2\n'),
+    (H = Piece, Column is C, NewN is 0);
+    NewN is 1.
+
+getNPColumn(C, [H|Rest], Piece, Column, 1, NewN) :-
+    write('kek1\n'),
+    (H = Piece, Column is C, NewN is 0);
     (Next is C + 1,
-    getFPColumn(Next, Rest, Piece, Column)).
+    getNPColumn(Next, Rest, Piece, Column, 1, NewN)).
+
+getNPColumn(C, [H|[]], Piece, Column, N, NewN) :-
+    N > 1,
+    ((H = Piece, NextN is N - 1); NextN is N),
+    NewN is NextN.
+
+getNPColumn(C, [H|Rest], Piece, Column, N, NewN) :-
+    N > 1,
+    ((H = Piece, NextN is N - 1); NextN is N),
+    Next is C + 1,
+    getNPColumn(Next, Rest, Piece, Column, NextN, NewN).
+
+

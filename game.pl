@@ -4,21 +4,21 @@ initGame(Player1, Player2) :-
     playTurn(Board, 1).
 
 % Game loop
-playTurn(Board, Njogada):-
-    %valid_moves(Board, 'b', ListOfMoves).
-    %getNthPiecePos(Board, 'b', Nrow, Ncolumn, 3).
+playTurn(Board, N):-
     blackTurn(Board, IntBoard),
     (
         checkIfWin(IntBoard, 'b');
         (
-            %guardaTabuleiro(Njogada, IntBoard), 
             whiteTurn(IntBoard, FinalBoard),
             (
                 checkIfWin(FinalBoard, 'w');
-                playTurn(FinalBoard, Njogada)
+                saveBoard(N, Board),
+                NewN is N + 1,
+                playTurn(FinalBoard, NewN)
             )
         )
     ).
+
 
 % Proccesses black turn
 blackTurn(InBoard, OutBoard) :-
@@ -163,7 +163,8 @@ checkIfWin(Board, Player) :-
        (checkRow(Board, Player),  write('Row\n'));
        (checkColumn(Board, Player), write('Column\n'));
        (checkDiagonalNWSE(Board, Player), write('Diagonal NW-SE\n'));
-       (checkDiagonalNESW(Board, Player), write('Diagonal NE-SW\n'))          
+       (checkDiagonalNESW(Board, Player), write('Diagonal NE-SW\n'));
+       (Player = 'w' -> checkDraw(Board), write('Empate'))          
     ).
 
 % Checks if any row has a game ending condition
@@ -188,3 +189,9 @@ checkDiagonalNESW(Board, Player) :-
     getNthPiecePos(Board, Player, Nrow, Ncolumn, 1),
     Nrow2 is Nrow + 1, Ncolumn2 is Ncolumn - 1, getPiece(Nrow2, Ncolumn2, Board, Piece2), Piece2 = Player, 
     Nrow3 is Nrow + 2, Ncolumn3 is Ncolumn - 2, getPiece(Nrow3, Ncolumn3, Board, Piece3), Piece3 = Player.
+
+% Checks if the same position occurred for the third time. If it did, then the game is declared a draw. 
+checkDraw(Board) :-
+    previousBoards(N1, Board),
+    previousBoards(N2, Board),
+    N1 \= N2.

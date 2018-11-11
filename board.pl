@@ -1,11 +1,11 @@
 :-use_module(library(lists)).
 
 %Start board
-startBoard( [['x', 'w', 'x', 'w', 'x'],
-             ['x', 'x', 'b', 'x', 'x'],
+startBoard( [['b', 'w', 'b', 'w', 'x'],
              ['x', 'b', 'x', 'x', 'x'],
-             ['x', 'x', 'b', 'x', 'x'],
-             ['x', 'x', 'w', 'x', 'x']] ).
+             ['x', 'x', 'x', 'x', 'x'],
+             ['x', 'x', 'w', 'x', 'x'],
+             ['x', 'x', 'x', 'x', 'x']] ).
 
 %Displays the board
 display_gameAux([], Player, _) :-
@@ -68,13 +68,3 @@ display_columns :-
     write(' e '),
     put_code(0x2503),
     write('\n').
-
-guardaTabuleiro(Njogada, Board) :-
-    assert(jogadaAnterior(Njogada, Board)).
-
- %jogadaAnterior(Njogada, Board)
-
- empate(Board) :-
-    jogadaAnterior(N1, Board),
-    jogadaAnterior(N2, Board),
-    N1 \= N2.

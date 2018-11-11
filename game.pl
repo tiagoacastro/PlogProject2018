@@ -11,10 +11,11 @@ playTurn(Board, Njogada):-
     (
         checkIfWin(IntBoard, 'b');
         (
-            guardaTabuleiro(Njogada, IntBoard), whiteTurn(IntBoard, FinalBoard),
+            %guardaTabuleiro(Njogada, IntBoard), 
+            whiteTurn(IntBoard, FinalBoard),
             (
                 checkIfWin(FinalBoard, 'w');
-                playTurn(FinalBoard)
+                playTurn(FinalBoard, Njogada)
             )
         )
     ).
@@ -186,4 +187,4 @@ checkDiagonalNWSE(Board, Player) :-
 checkDiagonalNESW(Board, Player) :-
     getNthPiecePos(Board, Player, Nrow, Ncolumn, 1),
     Nrow2 is Nrow + 1, Ncolumn2 is Ncolumn - 1, getPiece(Nrow2, Ncolumn2, Board, Piece2), Piece2 = Player, 
-    Nrow3 is Nrow + 2, Ncolumn3 is Ncolumn - 2, getPiece(Nrow3, Ncolumn3, Board, Piece3).
+    Nrow3 is Nrow + 2, Ncolumn3 is Ncolumn - 2, getPiece(Nrow3, Ncolumn3, Board, Piece3), Piece3 = Player.

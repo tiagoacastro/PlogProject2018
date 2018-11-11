@@ -6,6 +6,7 @@ initGame(Player1, Player2) :-
 % Game loop
 playTurn(Board, Njogada):-
     %valid_moves(Board, 'b', ListOfMoves).
+    %getNthPiecePos(Board, 'b', Nrow, Ncolumn, 3).
     blackTurn(Board, IntBoard),
     (
         checkIfWin(IntBoard, 'b');

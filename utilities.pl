@@ -58,28 +58,31 @@ getNthPiecePos(Board, Piece, Row, Column, N) :-
 
 getNPRow(R, C, [H|Rest], Piece, Row, Column, N) :-
     (C is 1,
-    getNPColumn(C, H, Piece, Column, N, NewN), format('~w sup\n', NewN), NewN = 0, !, Row is R);
+    getNPColumn(C, H, Piece, Column, N, NewN), !, Row is R);
     (Next is R + 1, format('~w ', N), format('~w\n', NewN),
     getNPRow(Next, New, Rest, Piece, Row, Column, NewN)).
 
 getNPColumn(C, [H|[]], Piece, Column, 1, NewN) :-
     write('kek2\n'),
-    (H = Piece, Column is C, NewN is 0);
-    NewN is 1.
+    (H = Piece, Column is C);
+    fail.
 
 getNPColumn(C, [H|Rest], Piece, Column, 1, NewN) :-
     write('kek1\n'),
-    (H = Piece, Column is C, NewN is 0);
+    (H = Piece, Column is C);
     (Next is C + 1,
     getNPColumn(Next, Rest, Piece, Column, 1, NewN)).
 
 getNPColumn(C, [H|[]], Piece, Column, N, NewN) :-
     N > 1,
+    write('kek2\n'),
     ((H = Piece, NextN is N - 1); NextN is N),
-    NewN is NextN.
+    NewN is NextN,
+    fail.
 
 getNPColumn(C, [H|Rest], Piece, Column, N, NewN) :-
     N > 1,
+    write('kek1\n'),
     ((H = Piece, NextN is N - 1); NextN is N),
     Next is C + 1,
     getNPColumn(Next, Rest, Piece, Column, NextN, NewN).

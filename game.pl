@@ -24,121 +24,118 @@ playTurn(Board, N):-
 blackTurn(InBoard, OutBoard) :-
     display_game(InBoard, 'b'),
     write('\nNow playing: BLACK\n\n'),
-    getMovingPiece(InBoard, Row, Column, 'b'),
-    readDirection(Direction),
-    findNewPosition(Direction, InBoard, Row, Column, 'b', OutBoard).
+    move(Direction, InBoard, Row, Column, 'b', OutBoard).
 
-    
 % Proccesses white turn
 whiteTurn(InBoard, OutBoard) :-
     display_game(InBoard, 'w'),
     write('\nNow playing: WHITE\n\n'),
-    getMovingPiece(InBoard, Row, Column, 'w'),
-    readDirection(Direction),
-    findNewPosition(Direction, InBoard, Row, Column, 'w', OutBoard).    
+    move(Direction, InBoard, Row, Column, 'w', OutBoard).    
 
-%Finds the position to where the piece is going to move and updates board
-findNewPosition(Direction, Board, Row, Column, Player, OutBoard) :-
-    move(Direction, Board, Row, Column, OutRow, OutColumn),
-    changePiece(Board, Column, Row, 'x', IntBoard),
+%Finds the position to where the piece is going to findNewPosition and updates board
+move(Direction, InBoard, Row, Column, Player, OutBoard) :-
+    getMovingPiece(InBoard, Row, Column, Player),
+    readDirection(Direction),
+    findNewPosition(Direction, InBoard, Row, Column, OutRow, OutColumn),
+    changePiece(InBoard, Column, Row, 'x', IntBoard),
     changePiece(IntBoard, OutColumn, OutRow, Player, OutBoard).
 
-%When a move function was prematurely ended because a piece was found before reaching the border (TODO outColumn)
-move('end', Board, Row, Column, OutRow, OutColumn) :-
+%When a findNewPosition function was prematurely ended because a piece was found before reaching the border (TODO outColumn)
+findNewPosition('end', Board, Row, Column, OutRow, OutColumn) :-
     OutRow is Row,
     OutColumn is Column.
 
 %Gets the new position for a piece moving 'north'
-move(1, Board, Row, Column, OutRow, OutColumn) :-
+findNewPosition(1, Board, Row, Column, OutRow, OutColumn) :-
     NewRow is Row - 1, 
     (
-        isMoveValid(Board, NewRow, Column) -> 
-            move(1, Board, NewRow, Column, OutRow, OutColumn);
-        move('end', Board, Row, Column, OutRow, OutColumn)
+        isfindNewPositionValid(Board, NewRow, Column) -> 
+            findNewPosition(1, Board, NewRow, Column, OutRow, OutColumn);
+        findNewPosition('end', Board, Row, Column, OutRow, OutColumn)
     ).
 
 %Gets the new position for a piece moving 'west'
-move(2, Board, Row, Column, OutRow, OutColumn) :-
+findNewPosition(2, Board, Row, Column, OutRow, OutColumn) :-
     NewColumn is Column - 1, 
     (
-        isMoveValid(Board, Row, NewColumn) -> 
-            move(2, Board, Row, NewColumn, OutRow, OutColumn);
-        move('end', Board, Row, Column, OutRow, OutColumn)
+        isfindNewPositionValid(Board, Row, NewColumn) -> 
+            findNewPosition(2, Board, Row, NewColumn, OutRow, OutColumn);
+        findNewPosition('end', Board, Row, Column, OutRow, OutColumn)
     ).
 
 %Gets the new position for a piece moving 'east'
-move(3, Board, Row, Column, OutRow, OutColumn) :-
+findNewPosition(3, Board, Row, Column, OutRow, OutColumn) :-
     NewColumn is Column + 1, 
     (
-        isMoveValid(Board, Row, NewColumn) -> 
-            move(3, Board, Row, NewColumn, OutRow, OutColumn);
-        move('end', Board, Row, Column, OutRow, OutColumn)
+        isfindNewPositionValid(Board, Row, NewColumn) -> 
+            findNewPosition(3, Board, Row, NewColumn, OutRow, OutColumn);
+        findNewPosition('end', Board, Row, Column, OutRow, OutColumn)
     ).    
 
 %Gets the new position for a piece moving 'south'
-move(4, Board, Row, Column, OutRow, OutColumn) :-
+findNewPosition(4, Board, Row, Column, OutRow, OutColumn) :-
     NewRow is Row + 1, 
     (
-        isMoveValid(Board, NewRow, Column) -> 
-            move(4, Board, NewRow, Column, OutRow, OutColumn);
-        move('end', Board, Row, Column, OutRow, OutColumn)
+        isfindNewPositionValid(Board, NewRow, Column) -> 
+            findNewPosition(4, Board, NewRow, Column, OutRow, OutColumn);
+        findNewPosition('end', Board, Row, Column, OutRow, OutColumn)
     ).
     
 %Gets the new position for a piece moving 'northeast'
-move(5, Board, Row, Column, OutRow, OutColumn) :-
+findNewPosition(5, Board, Row, Column, OutRow, OutColumn) :-
     NewRow is Row - 1, 
     NewColumn is Column + 1, 
     (
-        isMoveValid(Board, NewRow, NewColumn) -> 
-            move(5, Board, NewRow, NewColumn, OutRow, OutColumn);
-        move('end', Board, Row, Column, OutRow, OutColumn)
+        isfindNewPositionValid(Board, NewRow, NewColumn) -> 
+            findNewPosition(5, Board, NewRow, NewColumn, OutRow, OutColumn);
+        findNewPosition('end', Board, Row, Column, OutRow, OutColumn)
     ).
 
 %Gets the new position for a piece moving 'northwest'
-move(6, Board, Row, Column, OutRow, OutColumn) :-
+findNewPosition(6, Board, Row, Column, OutRow, OutColumn) :-
     NewRow is Row - 1, 
     NewColumn is Column - 1, 
     (
-        isMoveValid(Board, NewRow, NewColumn) -> 
-            move(6, Board, NewRow, NewColumn, OutRow, OutColumn);
-        move('end', Board, Row, Column, OutRow, OutColumn)
+        isfindNewPositionValid(Board, NewRow, NewColumn) -> 
+            findNewPosition(6, Board, NewRow, NewColumn, OutRow, OutColumn);
+        findNewPosition('end', Board, Row, Column, OutRow, OutColumn)
     ).
 
 %Gets the new position for a piece moving 'southeast'
-move(7, Board, Row, Column, OutRow, OutColumn) :-
+findNewPosition(7, Board, Row, Column, OutRow, OutColumn) :-
     NewRow is Row + 1, 
     NewColumn is Column + 1, 
     (
-        isMoveValid(Board, NewRow, NewColumn) -> 
-            move(7, Board, NewRow, NewColumn, OutRow, OutColumn);
-        move('end', Board, Row, Column, OutRow, OutColumn)
+        isfindNewPositionValid(Board, NewRow, NewColumn) -> 
+            findNewPosition(7, Board, NewRow, NewColumn, OutRow, OutColumn);
+        findNewPosition('end', Board, Row, Column, OutRow, OutColumn)
     ).
 
 %Gets the new position for a piece moving 'southwest'
-move(8, Board, Row, Column, OutRow, OutColumn) :-
+findNewPosition(8, Board, Row, Column, OutRow, OutColumn) :-
     NewRow is Row + 1, 
     NewColumn is Column - 1, 
     (
-        isMoveValid(Board, NewRow, NewColumn) -> 
-            move(8, Board, NewRow, NewColumn, OutRow, OutColumn);
-        move('end', Board, Row, Column, OutRow, OutColumn)
+        isfindNewPositionValid(Board, NewRow, NewColumn) -> 
+            findNewPosition(8, Board, NewRow, NewColumn, OutRow, OutColumn);
+        findNewPosition('end', Board, Row, Column, OutRow, OutColumn)
     ).
 
-valid_moves(Board, Player, ListOfMoves) :-
+valid_findNewPositions(Board, Player, ListOffindNewPositions) :-
     getFirstPiecePos(Board, Player, Row, Column),
     RowDown is Row + 1,
     RowUp is Row - 1,
     ColumnRight is Column + 1,
     ColumnLeft is Column - 1,
-    isMoveValid(Board, RowUp, Column, 'North', [], OutList1),
-    isMoveValid(Board, Row, ColumnLeft, 'West', OutList1, OutList2),
-    isMoveValid(Board, Row, ColumnRight, 'East', OutList2, OutList3),
-    isMoveValid(Board, RowDown, Column, 'South', OutList3, OutList4),
-    isMoveValid(Board, RowUp, ColumnRight, 'Northeast', OutList4, OutList5),
-    isMoveValid(Board, RowUp, ColumnLeft, 'Northwest', OutList5, OutList6),
-    isMoveValid(Board, RowDown, ColumnRight, 'Southeast', OutList6, OutList7),
-    isMoveValid(Board, RowDown, ColumnLeft, 'Southwest', OutList7, ListOfMoves),
-    printList(ListOfMoves).
+    isfindNewPositionValid(Board, RowUp, Column, 'North', [], OutList1),
+    isfindNewPositionValid(Board, Row, ColumnLeft, 'West', OutList1, OutList2),
+    isfindNewPositionValid(Board, Row, ColumnRight, 'East', OutList2, OutList3),
+    isfindNewPositionValid(Board, RowDown, Column, 'South', OutList3, OutList4),
+    isfindNewPositionValid(Board, RowUp, ColumnRight, 'Northeast', OutList4, OutList5),
+    isfindNewPositionValid(Board, RowUp, ColumnLeft, 'Northwest', OutList5, OutList6),
+    isfindNewPositionValid(Board, RowDown, ColumnRight, 'Southeast', OutList6, OutList7),
+    isfindNewPositionValid(Board, RowDown, ColumnLeft, 'Southwest', OutList7, ListOffindNewPositions),
+    printList(ListOffindNewPositions).
 
 
 printList([]).
@@ -148,11 +145,11 @@ printList([H|T]) :-
     printList(T).
 
 %Checks if position (Row, Column) is free
-isMoveValid(Board, Row, Column) :-
+isfindNewPositionValid(Board, Row, Column) :-
     getPiece(Row, Column, Board, Piece),
     Piece = 'x'.
 
-isMoveValid(Board, Row, Column, Dir, InList, OutList) :-
+isfindNewPositionValid(Board, Row, Column, Dir, InList, OutList) :-
     getPiece(Row, Column, Board, Piece),
     Piece = 'x'  -> append(InList, [Dir], OutList);
     append(InList, [], OutList).

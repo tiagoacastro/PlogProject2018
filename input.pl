@@ -37,26 +37,25 @@ readColumn(Column) :-
     ), !.
 
 %Gets direction of movement from user and validates it
-readDirection(Board, Row, Column, Player, Direction) :-
-    printDirections(Board, Row, Column, Player),
+readDirection(ListOfMoves, Direction) :-
+    printDirections(ListOfMoves),
     write('Enter the desired direction'),
     read(Input),
     (
-        Input = 1, Direction is 1;
-        Input = 2, Direction is 2;
-        Input = 3, Direction is 3;
-        Input = 4, Direction is 4;
-        Input = 5, Direction is 5;
-        Input = 6, Direction is 6;
-        Input = 7, Direction is 7;
-        Input = 8, Direction is 8;
-        (write('\nDirection is invalid. Try again.\n'),
-        readDirection(Direction))
+        Input = 1, sublist(['North'], ListOfMoves), Direction is 1;
+        Input = 2, sublist(['West'], ListOfMoves), Direction is 2;
+        Input = 3, sublist(['East'], ListOfMoves), Direction is 3;
+        Input = 4, sublist(['South'], ListOfMoves), Direction is 4;
+        Input = 5, sublist(['Northeast'], ListOfMoves), Direction is 5;
+        Input = 6, sublist(['Northwest'], ListOfMoves), Direction is 6;
+        Input = 7, sublist(['Southeast'], ListOfMoves), Direction is 7;
+        Input = 8, sublist(['Southwest'], ListOfMoves), Direction is 8;
+        write('\nDirection is invalid. Try again.\n'),
+        readDirection(ListOfMoves, Direction) 
     ), !.
 
 %Only the valid directions are displayed to the user
-printDirections(Board, Row, Column, Player) :-
-    valid_moves(Board, Row, Column, Player, ListOfMoves),
+printDirections(ListOfMoves) :-
     printDir(1, 'North', ListOfMoves),
     printDir(2, 'West', ListOfMoves),
     printDir(3, 'East', ListOfMoves),

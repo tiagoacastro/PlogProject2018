@@ -31,7 +31,7 @@ whiteTurn(InBoard, OutBoard) :-
     write('\nNow playing: WHITE\n\n'),
     move(Direction, InBoard, Row, Column, 'w', OutBoard).    
 
-%Finds the position to where the piece is going to findNewPosition and updates board
+%Finds the position to where the piece is going to move and updates board
 move(Direction, InBoard, Row, Column, Player, OutBoard) :-
     getMovingPiece(InBoard, Row, Column, Player),
     readDirection(Direction),
@@ -48,7 +48,7 @@ findNewPosition('end', Board, Row, Column, OutRow, OutColumn) :-
 findNewPosition(1, Board, Row, Column, OutRow, OutColumn) :-
     NewRow is Row - 1, 
     (
-        isfindNewPositionValid(Board, NewRow, Column) -> 
+        isMoveValid(Board, NewRow, Column) -> 
             findNewPosition(1, Board, NewRow, Column, OutRow, OutColumn);
         findNewPosition('end', Board, Row, Column, OutRow, OutColumn)
     ).
@@ -57,7 +57,7 @@ findNewPosition(1, Board, Row, Column, OutRow, OutColumn) :-
 findNewPosition(2, Board, Row, Column, OutRow, OutColumn) :-
     NewColumn is Column - 1, 
     (
-        isfindNewPositionValid(Board, Row, NewColumn) -> 
+        isMoveValid(Board, Row, NewColumn) -> 
             findNewPosition(2, Board, Row, NewColumn, OutRow, OutColumn);
         findNewPosition('end', Board, Row, Column, OutRow, OutColumn)
     ).
@@ -66,7 +66,7 @@ findNewPosition(2, Board, Row, Column, OutRow, OutColumn) :-
 findNewPosition(3, Board, Row, Column, OutRow, OutColumn) :-
     NewColumn is Column + 1, 
     (
-        isfindNewPositionValid(Board, Row, NewColumn) -> 
+        isMoveValid(Board, Row, NewColumn) -> 
             findNewPosition(3, Board, Row, NewColumn, OutRow, OutColumn);
         findNewPosition('end', Board, Row, Column, OutRow, OutColumn)
     ).    
@@ -75,7 +75,7 @@ findNewPosition(3, Board, Row, Column, OutRow, OutColumn) :-
 findNewPosition(4, Board, Row, Column, OutRow, OutColumn) :-
     NewRow is Row + 1, 
     (
-        isfindNewPositionValid(Board, NewRow, Column) -> 
+        isMoveValid(Board, NewRow, Column) -> 
             findNewPosition(4, Board, NewRow, Column, OutRow, OutColumn);
         findNewPosition('end', Board, Row, Column, OutRow, OutColumn)
     ).
@@ -85,7 +85,7 @@ findNewPosition(5, Board, Row, Column, OutRow, OutColumn) :-
     NewRow is Row - 1, 
     NewColumn is Column + 1, 
     (
-        isfindNewPositionValid(Board, NewRow, NewColumn) -> 
+        isMoveValid(Board, NewRow, NewColumn) -> 
             findNewPosition(5, Board, NewRow, NewColumn, OutRow, OutColumn);
         findNewPosition('end', Board, Row, Column, OutRow, OutColumn)
     ).
@@ -95,7 +95,7 @@ findNewPosition(6, Board, Row, Column, OutRow, OutColumn) :-
     NewRow is Row - 1, 
     NewColumn is Column - 1, 
     (
-        isfindNewPositionValid(Board, NewRow, NewColumn) -> 
+        isMoveValid(Board, NewRow, NewColumn) -> 
             findNewPosition(6, Board, NewRow, NewColumn, OutRow, OutColumn);
         findNewPosition('end', Board, Row, Column, OutRow, OutColumn)
     ).
@@ -105,7 +105,7 @@ findNewPosition(7, Board, Row, Column, OutRow, OutColumn) :-
     NewRow is Row + 1, 
     NewColumn is Column + 1, 
     (
-        isfindNewPositionValid(Board, NewRow, NewColumn) -> 
+        isMoveValid(Board, NewRow, NewColumn) -> 
             findNewPosition(7, Board, NewRow, NewColumn, OutRow, OutColumn);
         findNewPosition('end', Board, Row, Column, OutRow, OutColumn)
     ).
@@ -115,7 +115,7 @@ findNewPosition(8, Board, Row, Column, OutRow, OutColumn) :-
     NewRow is Row + 1, 
     NewColumn is Column - 1, 
     (
-        isfindNewPositionValid(Board, NewRow, NewColumn) -> 
+        isMoveValid(Board, NewRow, NewColumn) -> 
             findNewPosition(8, Board, NewRow, NewColumn, OutRow, OutColumn);
         findNewPosition('end', Board, Row, Column, OutRow, OutColumn)
     ).
@@ -127,22 +127,23 @@ valid_moves(Board, Player, ListOfMoves) :-
     RowUp is Row - 1,
     ColumnRight is Column + 1,
     ColumnLeft is Column - 1,
-    isfindNewPositionValid(Board, RowUp, Column, 'North', [], OutList1),
-    isfindNewPositionValid(Board, Row, ColumnLeft, 'West', OutList1, OutList2),
-    isfindNewPositionValid(Board, Row, ColumnRight, 'East', OutList2, OutList3),
-    isfindNewPositionValid(Board, RowDown, Column, 'South', OutList3, OutList4),
-    isfindNewPositionValid(Board, RowUp, ColumnRight, 'Northeast', OutList4, OutList5),
-    isfindNewPositionValid(Board, RowUp, ColumnLeft, 'Northwest', OutList5, OutList6),
-    isfindNewPositionValid(Board, RowDown, ColumnRight, 'Southeast', OutList6, OutList7),
-    isfindNewPositionValid(Board, RowDown, ColumnLeft, 'Southwest', OutList7, ListOffindNewPositions),
-    printList(ListOffindNewPositions).
+    isMoveValid(Board, RowUp, Column, 'North', [], OutList1),
+    isMoveValid(Board, Row, ColumnLeft, 'West', OutList1, OutList2),
+    isMoveValid(Board, Row, ColumnRight, 'East', OutList2, OutList3),
+    isMoveValid(Board, RowDown, Column, 'South', OutList3, OutList4),
+    isMoveValid(Board, RowUp, ColumnRight, 'Northeast', OutList4, OutList5),
+    isMoveValid(Board, RowUp, ColumnLeft, 'Northwest', OutList5, OutList6),
+    isMoveValid(Board, RowDown, ColumnRight, 'Southeast', OutList6, OutList7),
+    isMoveValid(Board, RowDown, ColumnLeft, 'Southwest', OutList7, ListOfMoves),
+    printList(ListOfMoves).
 
-%Checks if position (Row, Column) is free
-isfindNewPositionValid(Board, Row, Column) :-
+%Checks if position (Row, Column) is valid
+isMoveValid(Board, Row, Column) :-
     getPiece(Row, Column, Board, Piece),
     Piece = 'x'.
 
-isfindNewPositionValid(Board, Row, Column, Dir, InList, OutList) :-
+%If the movement in a certain direction is valid, that direction is added to the list fo valid moves
+isMoveValid(Board, Row, Column, Dir, InList, OutList) :-
     getPiece(Row, Column, Board, Piece),
     Piece = 'x'  -> append(InList, [Dir], OutList);
     append(InList, [], OutList).

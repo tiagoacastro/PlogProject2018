@@ -120,6 +120,7 @@ findNewPosition(8, Board, Row, Column, OutRow, OutColumn) :-
         findNewPosition('end', Board, Row, Column, OutRow, OutColumn)
     ).
 
+%gets the possible moves
 valid_moves(Board, Player, ListOfMoves) :-
     getNthPiecePos(Board, Player, Row, Column, 1),
     RowDown is Row + 1,

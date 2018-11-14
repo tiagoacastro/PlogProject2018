@@ -62,7 +62,8 @@ whiteTurn(InBoard, OutBoard) :-
 %Finds the position to where the piece is going to move and updates board
 move(Direction, InBoard, Row, Column, Player, OutBoard) :-
     getMovingPiece(InBoard, Row, Column, Player),
-    readDirection(InBoard, Row, Column, Player, Direction),
+    valid_moves(InBoard, Row, Column, Player, ListOfMoves),
+    readDirection(ListOfMoves, Direction),
     findNewPosition(Direction, InBoard, Row, Column, OutRow, OutColumn),
     changePiece(InBoard, Column, Row, 'x', IntBoard),
     changePiece(IntBoard, OutColumn, OutRow, Player, OutBoard).
@@ -134,7 +135,6 @@ findNewPosition(8, Board, Row, Column, OutRow, OutColumn) :-
 
 %gets the possible moves
 valid_moves(Board, Row, Column, Player, ListOfMoves) :-
-%    getNthPiecePos(Board, Player, Row, Column, 1),
     RowDown is Row + 1,
     RowUp is Row - 1,
     ColumnRight is Column + 1,
@@ -147,7 +147,6 @@ valid_moves(Board, Row, Column, Player, ListOfMoves) :-
     isMoveValid(Board, RowUp, ColumnLeft, 'Northwest', OutList5, OutList6),
     isMoveValid(Board, RowDown, ColumnRight, 'Southeast', OutList6, OutList7),
     isMoveValid(Board, RowDown, ColumnLeft, 'Southwest', OutList7, ListOfMoves).
-%    printList(ListOfMoves).
 
 %Checks if position (Row, Column) is valid
 isMoveValid(Board, Row, Column) :-

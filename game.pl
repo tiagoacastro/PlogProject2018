@@ -12,9 +12,11 @@ playTurn(Board, N):-
             whiteTurn(IntBoard, FinalBoard),
             (
                 gameOver(FinalBoard, 'w');
-                saveBoard(N, Board),
-                NewN is N + 1,
-                playTurn(FinalBoard, NewN)
+                (
+                    saveBoard(N, Board),
+                    NewN is N + 1,
+                    playTurn(FinalBoard, NewN)
+                )
             )
         )
     ).

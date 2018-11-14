@@ -3,9 +3,9 @@ mainMenu :-
     printMenu, 
     read(Input),
     (
-        Input = 1 -> playMenu;
-        Input = 2 -> rulesMenu, mainMenu;
-        Input = 3 -> write('Thanks for playing')
+        Input = 1, playMenu;
+        Input = 2, rulesMenu, mainMenu;
+        Input = 3, write('Thanks for playing\n')
     ).
 
 printMenu :-    
@@ -24,10 +24,10 @@ playMenu :-
     printPlayMenu,
     read(Input),
     (
-        Input = 1 -> initGame(Player1, Player2);
-        Input = 2 -> initGame(Player1, Player2);
-        Input = 3 -> initGame(Player1, Player2);
-        Input = 4 -> mainMenu
+        Input = 1, initGame(1);
+        Input = 2, initGame(2);
+        Input = 3, initGame(3);
+        Input = 4, mainMenu
     ).
 
 printPlayMenu :-

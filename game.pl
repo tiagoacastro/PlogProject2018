@@ -1,10 +1,36 @@
 % Starts a game with the start board 
-initGame(Player1, Player2) :-
+initGame(1) :-
+    startBoard(Board),
+    playTurn(Board, 1).
+
+initGame(2) :-
+    startBoard(Board),
+    playTurnVSBot(Board, 1).
+
+initGame(3) :-
     startBoard(Board),
     playTurn(Board, 1).
 
 % Game loop
 playTurn(Board, N):-
+    blackTurn(Board, IntBoard),
+    (
+        game_over(IntBoard, 'b');
+        (
+            whiteTurn(IntBoard, FinalBoard),
+            (
+                game_over(FinalBoard, 'w');
+                (
+                    saveBoard(N, Board),
+                    NewN is N + 1,
+                    playTurn(FinalBoard, NewN)
+                )
+            )
+        )
+    ).
+
+% Game loop
+playTurnVSBot(Board, N):-
     blackTurn(Board, IntBoard),
     (
         game_over(IntBoard, 'b');
@@ -49,78 +75,62 @@ findNewPosition('end', Board, Row, Column, OutRow, OutColumn) :-
 %Gets the new position for a piece moving 'north'
 findNewPosition(1, Board, Row, Column, OutRow, OutColumn) :-
     NewRow is Row - 1, 
-    (
-        isMoveValid(Board, NewRow, Column) -> 
-            findNewPosition(1, Board, NewRow, Column, OutRow, OutColumn);
-        findNewPosition('end', Board, Row, Column, OutRow, OutColumn)
-    ).
+    ((isMoveValid(Board, NewRow, Column),
+        findNewPosition(1, Board, NewRow, Column, OutRow, OutColumn));
+        findNewPosition('end', Board, Row, Column, OutRow, OutColumn)).
 
 %Gets the new position for a piece moving 'west'
 findNewPosition(2, Board, Row, Column, OutRow, OutColumn) :-
     NewColumn is Column - 1, 
-    (
-        isMoveValid(Board, Row, NewColumn) -> 
-            findNewPosition(2, Board, Row, NewColumn, OutRow, OutColumn);
-        findNewPosition('end', Board, Row, Column, OutRow, OutColumn)
-    ).
+    ((isMoveValid(Board, Row, NewColumn),
+        findNewPosition(2, Board, Row, NewColumn, OutRow, OutColumn));
+        findNewPosition('end', Board, Row, Column, OutRow, OutColumn)).
 
 %Gets the new position for a piece moving 'east'
 findNewPosition(3, Board, Row, Column, OutRow, OutColumn) :-
     NewColumn is Column + 1, 
-    (
-        isMoveValid(Board, Row, NewColumn) -> 
-            findNewPosition(3, Board, Row, NewColumn, OutRow, OutColumn);
-        findNewPosition('end', Board, Row, Column, OutRow, OutColumn)
-    ).    
+    ((isMoveValid(Board, Row, NewColumn),
+        findNewPosition(3, Board, Row, NewColumn, OutRow, OutColumn));
+        findNewPosition('end', Board, Row, Column, OutRow, OutColumn)).   
 
 %Gets the new position for a piece moving 'south'
 findNewPosition(4, Board, Row, Column, OutRow, OutColumn) :-
     NewRow is Row + 1, 
-    (
-        isMoveValid(Board, NewRow, Column) -> 
-            findNewPosition(4, Board, NewRow, Column, OutRow, OutColumn);
-        findNewPosition('end', Board, Row, Column, OutRow, OutColumn)
-    ).
+    ((isMoveValid(Board, NewRow, Column),
+        findNewPosition(4, Board, NewRow, Column, OutRow, OutColumn));
+        findNewPosition('end', Board, Row, Column, OutRow, OutColumn)).
     
 %Gets the new position for a piece moving 'northeast'
 findNewPosition(5, Board, Row, Column, OutRow, OutColumn) :-
     NewRow is Row - 1, 
     NewColumn is Column + 1, 
-    (
-        isMoveValid(Board, NewRow, NewColumn) -> 
-            findNewPosition(5, Board, NewRow, NewColumn, OutRow, OutColumn);
-        findNewPosition('end', Board, Row, Column, OutRow, OutColumn)
-    ).
+    ((isMoveValid(Board, NewRow, NewColumn),
+        findNewPosition(5, Board, NewRow, NewColumn, OutRow, OutColumn));
+        findNewPosition('end', Board, Row, Column, OutRow, OutColumn)).
 
 %Gets the new position for a piece moving 'northwest'
 findNewPosition(6, Board, Row, Column, OutRow, OutColumn) :-
     NewRow is Row - 1, 
     NewColumn is Column - 1, 
-    (
-        isMoveValid(Board, NewRow, NewColumn) -> 
-            findNewPosition(6, Board, NewRow, NewColumn, OutRow, OutColumn);
-        findNewPosition('end', Board, Row, Column, OutRow, OutColumn)
-    ).
+    ((isMoveValid(Board, NewRow, NewColumn),
+        findNewPosition(6, Board, NewRow, NewColumn, OutRow, OutColumn));
+        findNewPosition('end', Board, Row, Column, OutRow, OutColumn)).
 
 %Gets the new position for a piece moving 'southeast'
 findNewPosition(7, Board, Row, Column, OutRow, OutColumn) :-
     NewRow is Row + 1, 
     NewColumn is Column + 1, 
-    (
-        isMoveValid(Board, NewRow, NewColumn) -> 
-            findNewPosition(7, Board, NewRow, NewColumn, OutRow, OutColumn);
-        findNewPosition('end', Board, Row, Column, OutRow, OutColumn)
-    ).
+    ((isMoveValid(Board, NewRow, NewColumn),
+        findNewPosition(7, Board, NewRow, NewColumn, OutRow, OutColumn));
+        findNewPosition('end', Board, Row, Column, OutRow, OutColumn)).
 
 %Gets the new position for a piece moving 'southwest'
 findNewPosition(8, Board, Row, Column, OutRow, OutColumn) :-
     NewRow is Row + 1, 
     NewColumn is Column - 1, 
-    (
-        isMoveValid(Board, NewRow, NewColumn) -> 
-            findNewPosition(8, Board, NewRow, NewColumn, OutRow, OutColumn);
-        findNewPosition('end', Board, Row, Column, OutRow, OutColumn)
-    ).
+    ((isMoveValid(Board, NewRow, NewColumn),
+        findNewPosition(8, Board, NewRow, NewColumn, OutRow, OutColumn));
+        findNewPosition('end', Board, Row, Column, OutRow, OutColumn)).
 
 %gets the possible moves
 valid_moves(Board, Player, ListOfMoves) :-
@@ -146,19 +156,17 @@ isMoveValid(Board, Row, Column) :-
 
 %If the movement in a certain direction is valid, that direction is added to the list fo valid moves
 isMoveValid(Board, Row, Column, Dir, InList, OutList) :-
-    getPiece(Row, Column, Board, Piece),
-    Piece = 'x'  -> append(InList, [Dir], OutList);
-    append(InList, [], OutList).
+    getPiece(Row, Column, Board, Piece),(
+    (Piece = 'x', append(InList, [Dir], OutList));
+    append(InList, [], OutList)).
 
 % Checks all conditions that end the game
 game_over(Board, Player) :-
-    (
-       (checkRow(Board, Player),  write('Row\n'));
-       (checkColumn(Board, Player), write('Column\n'));
-       (checkDiagonalNWSE(Board, Player), write('Diagonal NW-SE\n'));
-       (checkDiagonalNESW(Board, Player), write('Diagonal NE-SW\n'));
-       (Player = 'w' -> checkDraw(Board), write('Empate'))          
-    ).
+    (checkRow(Board, Player),  write('Row\n'));
+    (checkColumn(Board, Player), write('Column\n'));
+    (checkDiagonalNWSE(Board, Player), write('Diagonal NW-SE\n'));
+    (checkDiagonalNESW(Board, Player), write('Diagonal NE-SW\n'));
+    (Player = 'w', checkDraw(Board), write('Empate')).
 
 % Checks if any row has a game ending condition
 checkRow([H|T], Player) :-

@@ -37,9 +37,8 @@ readColumn(Column) :-
     ).
 
 %Gets direction of movement from user and validates it
-readDirection(Direction) :-
-    write('1 - North   2 - West   3 - East   4 - South \n'),
-    write('5 - Northeast   6 - Northwest   7 - Southeast   8 - Southwest \n'),
+readDirection(Board, Row, Column, Player, Direction) :-
+    printDirections(Board, Row, Column, Player),
     write('Enter the desired direction'),
     read(Input),
     (
@@ -54,3 +53,22 @@ readDirection(Direction) :-
         write('\nDirection is invalid. Try again.\n'),
         readDirection(Direction) 
     ).
+
+%Only the valid directions are displayed to the user
+printDirections(Board, Row, Column, Player) :-
+    valid_moves(Board, Row, Column, Player, ListOfMoves),
+    printDir(1, 'North', ListOfMoves),
+    printDir(2, 'West', ListOfMoves),
+    printDir(3, 'East', ListOfMoves),
+    printDir(4, 'South', ListOfMoves),
+    printDir(5, 'Northeast', ListOfMoves),
+    printDir(6, 'Northwest', ListOfMoves),
+    printDir(7, 'Southeast', ListOfMoves),
+    printDir(8, 'Southwest', ListOfMoves).
+
+
+printDir(Number, Direction, ListOfMoves) :-
+    (sublist([Direction], ListOfMoves),
+    format('~w - ', Number),
+    format('~w\n', Direction));
+    (format('~w not valid\n', Direction)).

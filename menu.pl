@@ -64,4 +64,3 @@ printRules :-
     write('- If the same position occurs three times, the match is declared a draw\n'),
     write('- When a player connects his pieces in a row, either orthogonally or diagonally, he is declared the winner\n\n'),
     write('1 - Back\n').
-   

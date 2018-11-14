@@ -1,4 +1,3 @@
-
 %Gets coordinates from piece that is going to be moved from user , and validates them.
 getMovingPiece(Board, Row, Column, Player) :-
     readRow(Row),

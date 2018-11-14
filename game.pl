@@ -19,7 +19,6 @@ playTurn(Board, N):-
         )
     ).
 
-
 % Proccesses black turn
 blackTurn(InBoard, OutBoard) :-
     display_game(InBoard, 'b'),
@@ -121,8 +120,8 @@ findNewPosition(8, Board, Row, Column, OutRow, OutColumn) :-
         findNewPosition('end', Board, Row, Column, OutRow, OutColumn)
     ).
 
-valid_findNewPositions(Board, Player, ListOffindNewPositions) :-
-    getFirstPiecePos(Board, Player, Row, Column),
+valid_moves(Board, Player, ListOfMoves) :-
+    getNthPiecePos(Board, Player, Row, Column, 1),
     RowDown is Row + 1,
     RowUp is Row - 1,
     ColumnRight is Column + 1,
@@ -136,13 +135,6 @@ valid_findNewPositions(Board, Player, ListOffindNewPositions) :-
     isfindNewPositionValid(Board, RowDown, ColumnRight, 'Southeast', OutList6, OutList7),
     isfindNewPositionValid(Board, RowDown, ColumnLeft, 'Southwest', OutList7, ListOffindNewPositions),
     printList(ListOffindNewPositions).
-
-
-printList([]).
-
-printList([H|T]) :-
-    format('~w \n', H),
-    printList(T).
 
 %Checks if position (Row, Column) is free
 isfindNewPositionValid(Board, Row, Column) :-

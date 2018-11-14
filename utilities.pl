@@ -91,4 +91,9 @@ getNPColumn(C, [H|Rest], Piece, Column, N, NewN) :-
     Next is C + 1,
     getNPColumn(Next, Rest, Piece, Column, NextN, NewN).
 
+%prints list
+printList([]).
 
+printList([H|T]) :-
+    format('~w \n', H),
+    printList(T).

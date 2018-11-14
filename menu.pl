@@ -25,7 +25,7 @@ playMenu :-
     read(Input),
     (
         Input = 1, initGame(1);
-        Input = 2, initGame(2);
+        Input = 2, difficultyMenu(Choice), initGame(2, Choice);
         Input = 3, initGame(3);
         Input = 4, mainMenu
     ).
@@ -41,6 +41,27 @@ printPlayMenu :-
     write('2 - Human vs Computer\n'),
     write('3 - Computer vs Computer\n'),
     write('4 - Back\n').
+
+%Difficulty menu
+difficultyMenu(Choice) :-
+    printDifficultyMenu,
+    read(Input),
+    (
+        Input = 1, Choice is 1;
+        Input = 2, Choice is 2;
+        Input = 3, playMenu
+    ).
+
+printDifficultyMenu :-
+    display_border(25),
+    put_code(0x2503),
+    write('   Difficulty   '),
+    put_code(0x2503),
+    write('\n'),
+    display_border(25),
+    write('1 - Easy\n'),
+    write('2 - Hard\n'),
+    write('3 - Back\n').
 
 %Rules menu
 rulesMenu :-

@@ -3,9 +3,9 @@ initGame(1) :-
     startBoard(Board),
     playTurn(Board, 1).
 
-initGame(2) :-
+initGame(2, Difficulty) :-
     startBoard(Board),
-    playTurnVSBot(Board, 1).
+    playTurnVSBot(Board, 1, Difficulty).
 
 initGame(3) :-
     startBoard(Board),
@@ -30,7 +30,7 @@ playTurn(Board, N):-
     ).
 
 % Game loop
-playTurnVSBot(Board, N):-
+playTurnVSBot(Board, N, Difficulty):-
     blackTurn(Board, IntBoard),
     (
         game_over(IntBoard, 'b');

@@ -18,9 +18,9 @@ readRow(Row) :-
         Input = 3, Row is 3;
         Input = 4, Row is 4;
         Input = 5, Row is 5;
-        write('\nRow is invalid. Try again.\n'),
-        readRow(Row) 
-    ).
+        (write('\nRow is invalid. Try again.\n'),
+        readRow(Row))
+    ), !.
 
 %Converts letter(a-e) to respective row and checks if row is valid
 readColumn(Column) :-
@@ -32,9 +32,9 @@ readColumn(Column) :-
         Input = 'c', Column is 3;
         Input = 'd', Column is 4;
         Input = 'e', Column is 5;
-        write('\nColumn is invalid. Try again.\n'),
-        readColumn(Column) 
-    ).
+        (write('\nColumn is invalid. Try again.\n'),
+        readColumn(Column))
+    ), !.
 
 %Gets direction of movement from user and validates it
 readDirection(Board, Row, Column, Player, Direction) :-
@@ -50,9 +50,9 @@ readDirection(Board, Row, Column, Player, Direction) :-
         Input = 6, Direction is 6;
         Input = 7, Direction is 7;
         Input = 8, Direction is 8;
-        write('\nDirection is invalid. Try again.\n'),
-        readDirection(Direction) 
-    ).
+        (write('\nDirection is invalid. Try again.\n'),
+        readDirection(Direction))
+    ), !.
 
 %Only the valid directions are displayed to the user
 printDirections(Board, Row, Column, Player) :-

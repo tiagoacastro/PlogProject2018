@@ -7,11 +7,11 @@ initGame(Player1, Player2) :-
 playTurn(Board, N):-
     blackTurn(Board, IntBoard),
     (
-        checkIfWin(IntBoard, 'b');
+        gameOver(IntBoard, 'b');
         (
             whiteTurn(IntBoard, FinalBoard),
             (
-                checkIfWin(FinalBoard, 'w');
+                gameOver(FinalBoard, 'w');
                 saveBoard(N, Board),
                 NewN is N + 1,
                 playTurn(FinalBoard, NewN)
@@ -149,7 +149,7 @@ isMoveValid(Board, Row, Column, Dir, InList, OutList) :-
     append(InList, [], OutList).
 
 % Checks all conditions that end the game
-checkIfWin(Board, Player) :-
+gameOver(Board, Player) :-
     (
        (checkRow(Board, Player),  write('Row\n'));
        (checkColumn(Board, Player), write('Column\n'));

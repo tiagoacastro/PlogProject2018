@@ -10,14 +10,15 @@ getMovingPiece(Board, Row, Column, Player) :-
         
 %Converts number(1-5) to respective row and checks if row is valid
 readRow(Row) :-
-    write('Enter the row of the piece you want to move (1-5)'),    
-    read(Input),
+    write('Enter the row of the piece you want to move (1-5)'),  
+    skip_line,  
+    get_code(Input),
     (
-        Input = 1, Row is 1;
-        Input = 2, Row is 2;
-        Input = 3, Row is 3;
-        Input = 4, Row is 4;
-        Input = 5, Row is 5;
+        Input = 49, Row is 1;
+        Input = 50, Row is 2;
+        Input = 51, Row is 3;
+        Input = 52, Row is 4;
+        Input = 53, Row is 5;
         (write('\nRow is invalid. Try again.\n'),
         readRow(Row))
     ), !.
@@ -25,13 +26,14 @@ readRow(Row) :-
 %Converts letter(a-e) to respective row and checks if row is valid
 readColumn(Column) :-
     write('Enter the column of the piece you want to move (a-e)'),
-    read(Input),
+    skip_line,  
+    get_code(Input),
     (
-        Input = 'a', Column is 1;
-        Input = 'b', Column is 2;
-        Input = 'c', Column is 3;
-        Input = 'd', Column is 4;
-        Input = 'e', Column is 5;
+        Input = 97, Column is 1;
+        Input = 98, Column is 2;
+        Input = 99, Column is 3;
+        Input = 100, Column is 4;
+        Input = 101, Column is 5;
         (write('\nColumn is invalid. Try again.\n'),
         readColumn(Column))
     ), !.
@@ -40,16 +42,17 @@ readColumn(Column) :-
 readDirection(ListOfMoves, Direction) :-
     printDirections(ListOfMoves),
     write('Enter the desired direction'),
-    read(Input),
+    skip_line,  
+    get_code(Input),
     (
-        Input = 1, sublist(['North'], ListOfMoves), Direction is 1;
-        Input = 2, sublist(['West'], ListOfMoves), Direction is 2;
-        Input = 3, sublist(['East'], ListOfMoves), Direction is 3;
-        Input = 4, sublist(['South'], ListOfMoves), Direction is 4;
-        Input = 5, sublist(['Northeast'], ListOfMoves), Direction is 5;
-        Input = 6, sublist(['Northwest'], ListOfMoves), Direction is 6;
-        Input = 7, sublist(['Southeast'], ListOfMoves), Direction is 7;
-        Input = 8, sublist(['Southwest'], ListOfMoves), Direction is 8;
+        Input = 49, sublist(['North'], ListOfMoves), Direction is 1;
+        Input = 50, sublist(['West'], ListOfMoves), Direction is 2;
+        Input = 51, sublist(['East'], ListOfMoves), Direction is 3;
+        Input = 52, sublist(['South'], ListOfMoves), Direction is 4;
+        Input = 53, sublist(['Northeast'], ListOfMoves), Direction is 5;
+        Input = 54, sublist(['Northwest'], ListOfMoves), Direction is 6;
+        Input = 55, sublist(['Southeast'], ListOfMoves), Direction is 7;
+        Input = 56, sublist(['Southwest'], ListOfMoves), Direction is 8;
         write('\nDirection is invalid. Try again.\n'),
         readDirection(ListOfMoves, Direction) 
     ), !.

@@ -51,16 +51,20 @@ playTurnVSBot(Board, N, Difficulty):-
 blackTurn(InBoard, OutBoard) :-
     display_game(InBoard, 'b'),
     write('\nNow playing: BLACK\n\n'),
-    move(Direction, InBoard, Row, Column, 'b', OutBoard).
+    move(Direction, InBoard, 'b', OutBoard).
 
 % Proccesses white turn
 whiteTurn(InBoard, OutBoard) :-
     display_game(InBoard, 'w'),
     write('\nNow playing: WHITE\n\n'),
-    move(Direction, InBoard, Row, Column, 'w', OutBoard).    
+    move(Direction, InBoard, 'w', OutBoard).    
+
+choose_move(Board, Level, Move) :-
+    findall(M, move(M, Board, 'b', Player), Moves),
+    printList(Moves).
 
 %Finds the position to where the piece is going to move and updates board
-move(Direction, InBoard, Row, Column, Player, OutBoard) :-
+move(Direction, InBoard, Player, OutBoard) :-
     getMovingPiece(InBoard, Row, Column, Player),
     valid_moves(InBoard, Row, Column, Player, ListOfMoves),
     readDirection(ListOfMoves, Direction),

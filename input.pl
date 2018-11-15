@@ -45,14 +45,14 @@ readDirection(ListOfMoves, Direction) :-
     skip_line,  
     get_code(Input),
     (
-        Input = 49, sublist(['North'], ListOfMoves), Direction is 1;
-        Input = 50, sublist(['West'], ListOfMoves), Direction is 2;
-        Input = 51, sublist(['East'], ListOfMoves), Direction is 3;
-        Input = 52, sublist(['South'], ListOfMoves), Direction is 4;
-        Input = 53, sublist(['Northeast'], ListOfMoves), Direction is 5;
-        Input = 54, sublist(['Northwest'], ListOfMoves), Direction is 6;
-        Input = 55, sublist(['Southeast'], ListOfMoves), Direction is 7;
-        Input = 56, sublist(['Southwest'], ListOfMoves), Direction is 8;
+        Input = 49, sublist([1], ListOfMoves), Direction is 1;
+        Input = 50, sublist([2], ListOfMoves), Direction is 2;
+        Input = 51, sublist([3], ListOfMoves), Direction is 3;
+        Input = 52, sublist([4], ListOfMoves), Direction is 4;
+        Input = 53, sublist([5], ListOfMoves), Direction is 5;
+        Input = 54, sublist([6], ListOfMoves), Direction is 6;
+        Input = 55, sublist([7], ListOfMoves), Direction is 7;
+        Input = 56, sublist([8], ListOfMoves), Direction is 8;
         write('\nDirection is invalid. Try again.\n'),
         readDirection(ListOfMoves, Direction) 
     ), !.
@@ -70,7 +70,7 @@ printDirections(ListOfMoves) :-
 
 
 printDir(Number, Direction, ListOfMoves) :-
-    (sublist([Direction], ListOfMoves),
+    (sublist([Number], ListOfMoves),
     format('~w - ', Number),
     format('~w\n', Direction));
     (format('~w not valid\n', Direction)).

@@ -59,9 +59,32 @@ whiteTurn(InBoard, OutBoard) :-
     write('\nNow playing: WHITE\n\n'),
     move(Direction, InBoard, 'w', OutBoard).    
 
-choose_move(Board, Level, Move) :-
-    findall(M, move(M, Board, 'b', Player), Moves),
-    printList(Moves).
+%Chooses computer move according to his level
+choose_move(Board, Player, Level, Move) :-
+    getNthPiecePos(Board, Player, Nrow, Ncolumn, 1),
+    valid_moves(Board, Nrow, Ncolumn, Player, Moves),
+    evaluate_and_choose(Board, Moves, Player, Nrow, Ncolumn, (nil, -100), Move).
+
+%Evaluates every valid move and chooses the best one
+evaluate_and_choose(Board, [Move|Moves], Player, Row, Column, Record, BestMove) :-
+    findNewPosition(Move, Board, Row, Column, NewRow, NewColumn),
+    value(Board, Player, Value),
+    update(Move, Value, Record, NewRecord),
+    evaluate_and_choose(Board, Moves, Player, Row, Column, NewRecord, BestMove).
+
+evaluate_and_choose(Board, [], Player, Row, Column, (Move, Value), Move) :-
+    format('Value: ~w \n', Value).
+
+%Evaluates board state
+value(Board, Player, Value) :-
+    Value is 1. %TODO
+
+%If value is bigger than the value stored in Record then 
+update(Move, Value, (Move1, Value1), (Move, Value)) :-
+    Value > Value1.
+
+update(Move, Value, (Move1, Value1), (Move1, Value1)) :-
+    Value =< Value1.
 
 %Finds the position to where the piece is going to move and updates board
 move(Direction, InBoard, Player, OutBoard) :-
@@ -137,20 +160,20 @@ findNewPosition(8, Board, Row, Column, OutRow, OutColumn) :-
         findNewPosition(8, Board, NewRow, NewColumn, OutRow, OutColumn));
         findNewPosition('end', Board, Row, Column, OutRow, OutColumn)).
 
-%gets the possible moves
+%Gets the possible moves
 valid_moves(Board, Row, Column, Player, ListOfMoves) :-
     RowDown is Row + 1,
     RowUp is Row - 1,
     ColumnRight is Column + 1,
     ColumnLeft is Column - 1,
-    isMoveValid(Board, RowUp, Column, 'North', [], OutList1),
-    isMoveValid(Board, Row, ColumnLeft, 'West', OutList1, OutList2),
-    isMoveValid(Board, Row, ColumnRight, 'East', OutList2, OutList3),
-    isMoveValid(Board, RowDown, Column, 'South', OutList3, OutList4),
-    isMoveValid(Board, RowUp, ColumnRight, 'Northeast', OutList4, OutList5),
-    isMoveValid(Board, RowUp, ColumnLeft, 'Northwest', OutList5, OutList6),
-    isMoveValid(Board, RowDown, ColumnRight, 'Southeast', OutList6, OutList7),
-    isMoveValid(Board, RowDown, ColumnLeft, 'Southwest', OutList7, ListOfMoves).
+    isMoveValid(Board, RowUp, Column, 1, [], OutList1),
+    isMoveValid(Board, Row, ColumnLeft, 2, OutList1, OutList2),
+    isMoveValid(Board, Row, ColumnRight, 3, OutList2, OutList3),
+    isMoveValid(Board, RowDown, Column, 4, OutList3, OutList4),
+    isMoveValid(Board, RowUp, ColumnRight, 5, OutList4, OutList5),
+    isMoveValid(Board, RowUp, ColumnLeft, 6, OutList5, OutList6),
+    isMoveValid(Board, RowDown, ColumnRight, 7, OutList6, OutList7),
+    isMoveValid(Board, RowDown, ColumnLeft, 8, OutList7, ListOfMoves).
 
 %Checks if position (Row, Column) is valid
 isMoveValid(Board, Row, Column) :-

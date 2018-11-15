@@ -67,7 +67,7 @@ choose_move(Board, Level, Move) :-
 move(Direction, InBoard, Player, OutBoard) :-
     getMovingPiece(InBoard, Row, Column, Player),
     valid_moves(InBoard, Row, Column, Player, ListOfMoves),
-    readDirection(ListOfMoves, Direction),
+    readDirection(ListOfMoves, Direction), 
     findNewPosition(Direction, InBoard, Row, Column, OutRow, OutColumn),
     changePiece(InBoard, Column, Row, 'x', IntBoard),
     changePiece(IntBoard, OutColumn, OutRow, Player, OutBoard).
@@ -159,7 +159,7 @@ isMoveValid(Board, Row, Column) :-
 
 %If the movement in a certain direction is valid, that direction is added to the list fo valid moves
 isMoveValid(Board, Row, Column, Dir, InList, OutList) :-
-    getPiece(Row, Column, Board, Piece),(
+    (getPiece(Row, Column, Board, Piece),
     (Piece = 'x', append(InList, [Dir], OutList));
     append(InList, [], OutList)).
 

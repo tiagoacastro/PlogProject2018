@@ -66,6 +66,7 @@ printDirections(ListOfMoves) :-
     printDir(2, 'West', ListOfMoves),
     printDir(3, 'East', ListOfMoves),
     printDir(4, 'South', ListOfMoves),
+    write('\n'),
     printDir(5, 'Northeast', ListOfMoves),
     printDir(6, 'Northwest', ListOfMoves),
     printDir(7, 'Southeast', ListOfMoves),
@@ -76,5 +77,5 @@ printDirections(ListOfMoves) :-
 printDir(Number, Direction, ListOfMoves) :-
     (sublist([Number], ListOfMoves),
     format('~w - ', Number),
-    format('~w\n', Direction));
-    (format('~w not valid\n', Direction)).
+    format('~w   ', Direction));
+    (format('~w not valid   ', Direction)).

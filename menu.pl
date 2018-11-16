@@ -31,8 +31,8 @@ playMenu :-
     skip_line,
     (
         Input = 49, initGame(1);
-        Input = 50, difficultyMenu(Choice), playMenu;
-        Input = 51, initGame(3);
+        Input = 50, difficultyMenu(2);
+        Input = 51, difficultyMenu(3);
         Input = 52;
         write('\nInvalid input\n'),
         fail
@@ -57,9 +57,9 @@ difficultyMenu(Choice) :-
     get_code(Input),
     skip_line,
     (
-        Input = 49, initGame(2, 1);
-        Input = 50, initGame(2, 2);
-        Input = 51;
+        Input = 49, initGame(Choice, 1);
+        Input = 50, initGame(Choice, 2);
+        Input = 51, playMenu;
         write('\nInvalid input\n'),
         fail
     ).

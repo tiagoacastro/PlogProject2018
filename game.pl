@@ -7,9 +7,9 @@ initGame(2, Difficulty) :-
     startBoard(Board),
     playTurnVSBot(Board, 1, Difficulty).
 
-initGame(3) :-
+initGame(3, Difficulty) :-
     startBoard(Board),
-    playTurn(Board, 1).
+    playTurnBotVSBot(Board, 1, Difficulty).
 
 % Game loop
 playTurn(Board, N):-
@@ -47,6 +47,36 @@ playTurnVSBot(Board, N, Dif):-
         )
     ).
 
+% Game loop bot vs bot
+playTurnBotVSBot(Board, N, Dif):-
+    botTurn(Board, IntBoard, Dif, 'b'),
+    (
+        game_over(IntBoard, 'b');
+        (
+            botTurn(IntBoard, FinalBoard, Dif, 'w'),
+            (
+                game_over(FinalBoard, 'w');
+                (
+                    saveBoard(N, Board),
+                    NewN is N + 1,
+                    playTurnBotVSBot(FinalBoard, NewN, Dif)
+                )
+            )
+        )
+    ).
+
+% Processes black turn
+blackTurn(InBoard, OutBoard) :-
+    display_game(InBoard, 'b'),
+    write('\nNow playing: BLACK\n\n'),
+    move(Direction, InBoard, 'b', OutBoard).
+
+% Processes white turn
+whiteTurn(InBoard, OutBoard) :-
+    display_game(InBoard, 'w'),
+    write('\nNow playing: WHITE\n\n'),
+    move(Direction, InBoard, 'w', OutBoard).  
+
 % Processes easy bot turn
 botTurn(InBoard, OutBoard, 1, Color) :-
     display_game(InBoard, Color),
@@ -61,25 +91,9 @@ botTurn(InBoard, OutBoard, 1, Color) :-
 
 % Processes hard bot turn
 botTurn(InBoard, OutBoard, 2, Color) :-
-    write('henlo\n').                       %nao implementado
-
-% Processes black turn
-blackTurn(InBoard, OutBoard) :-
-    display_game(InBoard, 'b'),
-    write('\nNow playing: BLACK\n\n'),
-    move(Direction, InBoard, 'b', OutBoard).
-
-% Processes white turn
-whiteTurn(InBoard, OutBoard) :-
-    display_game(InBoard, 'w'),
-    write('\nNow playing: WHITE\n\n'),
-    move(Direction, InBoard, 'w', OutBoard).    
-
-%Chooses computer move according to his level
-choose_move(Board, Player, Level, Move) :-
-    getNthPiecePos(Board, Player, Nrow, Ncolumn, 1),
-    valid_moves(Board, Nrow, Ncolumn, Player, Moves),
-    evaluate_and_choose(Board, Moves, Player, Nrow, Ncolumn, (nil, -100), Move).
+    getNthPiecePos(InBoard, Color, Nrow, Ncolumn, 1),
+    valid_moves(InBoard, Nrow, Ncolumn, Color, Moves),
+    evaluate_and_choose(InBoard, Moves, Color, Nrow, Ncolumn, (nil, -100), Move).  
 
 %Evaluates every valid move and chooses the best one
 evaluate_and_choose(Board, [Move|Moves], Player, Row, Column, Record, BestMove) :-

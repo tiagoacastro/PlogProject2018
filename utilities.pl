@@ -102,13 +102,13 @@ printList([H|T]) :-
 randomDirection(ListOfMoves, Direction) :-
     random(49, 57, Input),
     (
-        Input = 49, sublist([1], ListOfMoves), Direction is 1;
-        Input = 50, sublist([2], ListOfMoves), Direction is 2;
-        Input = 51, sublist([3], ListOfMoves), Direction is 3;
-        Input = 52, sublist([4], ListOfMoves), Direction is 4;
-        Input = 53, sublist([5], ListOfMoves), Direction is 5;
-        Input = 54, sublist([6], ListOfMoves), Direction is 6;
-        Input = 55, sublist([7], ListOfMoves), Direction is 7;
-        Input = 56, sublist([8], ListOfMoves), Direction is 8;
+        (Input = 49, sublist([1], ListOfMoves), Direction is 1);
+        (Input = 50, sublist([2], ListOfMoves), Direction is 2);
+        (Input = 51, sublist([3], ListOfMoves), Direction is 3);
+        (Input = 52, sublist([4], ListOfMoves), Direction is 4);
+        (Input = 53, sublist([5], ListOfMoves), Direction is 5);
+        (Input = 54, sublist([6], ListOfMoves), Direction is 6);
+        (Input = 55, sublist([7], ListOfMoves), Direction is 7);
+        (Input = 56, sublist([8], ListOfMoves), Direction is 8);
         randomDirection(ListOfMoves, Direction)
     ), !.

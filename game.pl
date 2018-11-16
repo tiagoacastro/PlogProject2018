@@ -91,6 +91,61 @@ botTurn(InBoard, OutBoard, 1, Color) :-
 
 % Processes hard bot turn
 botTurn(InBoard, OutBoard, 2, Color) :-
+    getBestPlay(1, InBoard, Color, Row1, Column1, Direction1, Value1),
+    getBestPlay(2, InBoard, Color, Row2, Column2, Direction2, Value2),
+    getBestPlay(3, InBoard, Color, Row3, Column3, Direction3, Value3),
+    checkBestPiece(Value1, Value2, Value3, Piece),
+    parse(Piece, Row, Row1, Row2, Row3, Column, Column1, Column2, Column3, Direction, Direction1, Direction2, Direction3),
+    findNewPosition(Direction, InBoard, Row, Column, OutRow, OutColumn),
+    changePiece(InBoard, Column, Row, 'x', IntBoard),
+    changePiece(IntBoard, OutColumn, OutRow, Color, OutBoard).
+
+parse(Piece, Row, Row1, Row2, Row3, Column, Column1, Column2, Column3, Direction, Direction1, Direction2, Direction3) :-
+    (
+        (Piece = 1, Direction is Direction1, Row is Row1, Column is Column1);
+        (Piece = 2, Direction is Direction2, Row is Row2, Column is Column2);
+        (Piece = 3, Direction is Direction3, Row is Row3, Column is Column3)
+    ), !.
+
+%gets piece with highest value move
+checkBestPiece(Value, Value2, Value3, Piece) :-
+    (
+        (Value1 > Value2, Value1 > Value3, Piece is 1);
+        (Value2 > Value1, Value2 > Value3, Piece is 2);
+        (Value3 > Value1, Value3 > Value2, Piece is 3);
+        Piece is 1
+    ), !.
+
+% Gets best play for the piece
+getBestPlay(N, Board, Color, Row, Column, Direction, Value) :-
+    getNthPiecePos(Board, Color, Row, Column, N),
+    valid_moves(Board, Row, Column, Color, Moves),
+    getBestDirection(8, Board, Color, Row, Column, TempDir, 0, Moves, Direction, Value).
+
+% Gets best direction for the play
+getBestDirection(0, Board, Color, Row, Column, TempDir, TempValue, Moves, Direction, Value) :-
+    Value is TempValue,
+    Direction is TempDir.
+
+getBestDirection(Dir, Board, Color, Row, Column, TempDir, TempValue, Moves, Direction, Value) :-
+    Next is Dir - 1,
+    ((sublist([Dir], Moves), % check is Dir is valid
+        findNewPosition(Dir, Board, Row, Column, OutRow, OutColumn),
+        changePiece(Board, Column, Nrow, 'x', IntBoard),
+        changePiece(IntBoard, OutColumn, OutRow, Color, OutBoard).
+        value(OutBoard, Color, Val), 
+        Val > TempVal, % check if value is superior to the one stored
+        getBestDirection(Next, Board, Color, Row, Column, Dir, Val, Moves, Direction, Value)
+    );(
+    getBestDirection(Next, Board, Color, Row, Column, TempDir, TempValue, Moves, Direction, Value))).
+
+%Evaluates board state
+value(Board, Color, Value) :-
+    Value is 1. %TODO
+
+/*
+% Processes hard bot turn
+botTurn(InBoard, OutBoard, 2, Color) :-
     getNthPiecePos(InBoard, Color, Nrow, Ncolumn, 1),
     valid_moves(InBoard, Nrow, Ncolumn, Color, Moves),
     evaluate_and_choose(InBoard, Moves, Color, Nrow, Ncolumn, (nil, -100), Move).  
@@ -115,6 +170,7 @@ update(Move, Value, (Move1, Value1), (Move, Value)) :-
 
 update(Move, Value, (Move1, Value1), (Move1, Value1)) :-
     Value =< Value1.
+*/
 
 %Finds the position to where the piece is going to move and updates board
 move(Direction, InBoard, Player, OutBoard) :-

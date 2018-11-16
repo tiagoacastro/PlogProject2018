@@ -110,7 +110,7 @@ parse(Piece, Row, Row1, Row2, Row3, Column, Column1, Column2, Column3, Direction
     ), !.
 
 % Gets piece with highest value move
-checkBestPiece(Value, Value2, Value3, Piece) :-
+checkBestPiece(Value1, Value2, Value3, Piece) :-
     (
         (Value1 > Value2, Value1 > Value3, Piece is 1);
         (Value2 > Value1, Value2 > Value3, Piece is 2);

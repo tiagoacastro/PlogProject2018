@@ -132,7 +132,7 @@ getBestDirection(Dir, Board, Color, Row, Column, TempDir, TempValue, Moves, Dire
     ((sublist([Dir], Moves), % check is Dir is valid
         findNewPosition(Dir, Board, Row, Column, OutRow, OutColumn),
         changePiece(Board, Column, Nrow, 'x', IntBoard),
-        changePiece(IntBoard, OutColumn, OutRow, Color, OutBoard).
+        changePiece(IntBoard, OutColumn, OutRow, Color, OutBoard),
         value(OutBoard, Color, Val), 
         Val > TempVal, % check if value is superior to the one stored
         getBestDirection(Next, Board, Color, Row, Column, Dir, Val, Moves, Direction, Value)
@@ -274,11 +274,11 @@ isMoveValid(Board, Row, Column, Dir, InList, OutList) :-
 
 % Checks all conditions that end the game
 game_over(Board, Player) :-
-    (checkRow(Board, Player),  write('Row Win\n'));
-    (checkColumn(Board, Player), write('Column Win\n'));
-    (checkDiagonalNWSE(Board, Player), write('Diagonal NW-SE Win\n'));
-    (checkDiagonalNESW(Board, Player), write('Diagonal NE-SW Win\n'));
-    (Player = 'w', checkDraw(Board), write('Draw')).
+    (checkRow(Board, Player), display_game(Board, Player), write('Row Win\n'));
+    (checkColumn(Board, Player), display_game(Board, Player), write('Column Win\n'));
+    (checkDiagonalNWSE(Board, Player), display_game(Board, Player), write('Diagonal NW-SE Win\n'));
+    (checkDiagonalNESW(Board, Player), display_game(Board, Player), write('Diagonal NE-SW Win\n'));
+    (Player = 'w', checkDraw(Board), display_game(Board, Player), write('Draw')).
 
 % Checks if any row has a game ending condition
 checkRow([H|T], Player) :-

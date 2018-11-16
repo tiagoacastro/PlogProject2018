@@ -113,7 +113,7 @@ checkBestPiece(Value, Value2, Value3, Piece) :-
         (Value1 > Value2, Value1 > Value3, Piece is 1);
         (Value2 > Value1, Value2 > Value3, Piece is 2);
         (Value3 > Value1, Value3 > Value2, Piece is 3);
-        Piece is 1
+        random(1, 4, Piece)
     ), !.
 
 % Gets best play for the piece
@@ -133,9 +133,14 @@ getBestDirection(Dir, Board, Color, Row, Column, TempDir, TempValue, Moves, Dire
         findNewPosition(Dir, Board, Row, Column, OutRow, OutColumn),
         changePiece(Board, Column, Nrow, 'x', IntBoard),
         changePiece(IntBoard, OutColumn, OutRow, Color, OutBoard),
-        value(OutBoard, Color, Val), 
-        Val > TempVal, % check if value is superior to the one stored
-        getBestDirection(Next, Board, Color, Row, Column, Dir, Val, Moves, Direction, Value)
+        value(OutBoard, Color, Val),(
+        (Val > TempVal, % check if value is superior to the one stored
+            getBestDirection(Next, Board, Color, Row, Column, Dir, Val, Moves, Direction, Value)
+        );(Val = TempVal, % check if value is equal to the one stored
+            random(1, 3, Check),
+            Check = 1, % check if the direction is changed based on a random number
+            getBestDirection(Next, Board, Color, Row, Column, Dir, Val, Moves, Direction, Value)
+        ))
     );(
     getBestDirection(Next, Board, Color, Row, Column, TempDir, TempValue, Moves, Direction, Value))).
 

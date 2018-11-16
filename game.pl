@@ -29,31 +29,43 @@ playTurn(Board, N):-
         )
     ).
 
-% Game loop
-playTurnVSBot(Board, N, Difficulty):-
+% Game loop player vs bot
+playTurnVSBot(Board, N, Dif):-
     blackTurn(Board, IntBoard),
     (
         game_over(IntBoard, 'b');
         (
-            whiteTurn(IntBoard, FinalBoard),
+            botTurn(IntBoard, FinalBoard, Dif, 'w'),
             (
                 game_over(FinalBoard, 'w');
                 (
                     saveBoard(N, Board),
                     NewN is N + 1,
-                    playTurn(FinalBoard, NewN)
+                    playTurnVSBot(FinalBoard, NewN, Dif)
                 )
             )
         )
     ).
 
-% Proccesses black turn
+% Processes bot turn
+botTurn(InBoard, OutBoard, 1, Color) :-
+    display_game(InBoard, Color),
+    write('\n'),
+    random(1, 4, Piece),
+    getNthPiecePos(InBoard, Color, Nrow, Ncolumn, Piece),
+    valid_moves(InBoard, Nrow, Ncolumn, Color, ListOfMoves),
+    randomDirection(ListOfMoves, Direction),
+    findNewPosition(Direction, InBoard, Nrow, Ncolumn, OutRow, OutColumn),
+    changePiece(InBoard, Ncolumn, Nrow, 'x', IntBoard),
+    changePiece(IntBoard, OutColumn, OutRow, Color, OutBoard).
+
+% Processes black turn
 blackTurn(InBoard, OutBoard) :-
     display_game(InBoard, 'b'),
     write('\nNow playing: BLACK\n\n'),
     move(Direction, InBoard, 'b', OutBoard).
 
-% Proccesses white turn
+% Processes white turn
 whiteTurn(InBoard, OutBoard) :-
     display_game(InBoard, 'w'),
     write('\nNow playing: WHITE\n\n'),
@@ -188,11 +200,11 @@ isMoveValid(Board, Row, Column, Dir, InList, OutList) :-
 
 % Checks all conditions that end the game
 game_over(Board, Player) :-
-    (checkRow(Board, Player),  write('Row\n'));
-    (checkColumn(Board, Player), write('Column\n'));
-    (checkDiagonalNWSE(Board, Player), write('Diagonal NW-SE\n'));
-    (checkDiagonalNESW(Board, Player), write('Diagonal NE-SW\n'));
-    (Player = 'w', checkDraw(Board), write('Empate')).
+    (checkRow(Board, Player),  write('Row Win\n'));
+    (checkColumn(Board, Player), write('Column Win\n'));
+    (checkDiagonalNWSE(Board, Player), write('Diagonal NW-SE Win\n'));
+    (checkDiagonalNESW(Board, Player), write('Diagonal NE-SW Win\n'));
+    (Player = 'w', checkDraw(Board), write('Draw')).
 
 % Checks if any row has a game ending condition
 checkRow([H|T], Player) :-

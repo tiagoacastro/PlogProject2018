@@ -1,11 +1,15 @@
 %Main menu
 mainMenu :-
+    repeat,
     printMenu, 
-    read(Input),
+    get_code(Input),
+    skip_line,
     (
-        Input = 1, playMenu;
-        Input = 2, rulesMenu, mainMenu;
-        Input = 3, write('Thanks for playing\n')
+        Input = 49, playMenu, mainMenu;
+        Input = 50, rulesMenu, mainMenu;
+        Input = 51, write('Thanks for playing\n');
+        write('\nInvalid input\n'),
+        fail
     ).
 
 printMenu :-    
@@ -21,13 +25,17 @@ printMenu :-
 
 %Play menu
 playMenu :-
+    repeat,
     printPlayMenu,
-    read(Input),
+    get_code(Input),
+    skip_line,
     (
-        Input = 1, initGame(1);
-        Input = 2, difficultyMenu(Choice), initGame(2, Choice);
-        Input = 3, initGame(3);
-        Input = 4, mainMenu
+        Input = 49, initGame(1);
+        Input = 50, difficultyMenu(Choice), playMenu;
+        Input = 51, initGame(3);
+        Input = 52;
+        write('\nInvalid input\n'),
+        fail
     ).
 
 printPlayMenu :-
@@ -44,12 +52,16 @@ printPlayMenu :-
 
 %Difficulty menu
 difficultyMenu(Choice) :-
+    repeat,
     printDifficultyMenu,
-    read(Input),
+    get_code(Input),
+    skip_line,
     (
-        Input = 1, Choice is 1;
-        Input = 2, Choice is 2;
-        Input = 3, playMenu
+        Input = 49, initGame(2, 1);
+        Input = 50, initGame(2, 2);
+        Input = 51;
+        write('\nInvalid input\n'),
+        fail
     ).
 
 printDifficultyMenu :-
@@ -65,10 +77,14 @@ printDifficultyMenu :-
 
 %Rules menu
 rulesMenu :-
+    repeat,
     printRules,
-    read(Input),
+    get_code(Input),  
+    skip_line,
     (
-        Input = 1
+        Input = 49;
+        write('\nInvalid input\n'),
+        fail
     ).
 
 printRules :-

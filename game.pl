@@ -135,19 +135,20 @@ getBestDirection(0, Board, Color, Row, Column, TempDir, TempValue, Moves, Direct
 
 getBestDirection(Dir, Board, Color, Row, Column, TempDir, TempValue, Moves, Direction, Value) :-
     Next is Dir - 1, format('~w\n', Dir),
-    ((sublist([Dir], Moves), write('ye\n'), % check is Dir is valid 
+    ((sublist([Dir], Moves), % check is Dir is valid 
         findNewPosition(Dir, Board, Row, Column, OutRow, OutColumn),
         changePiece(Board, Column, Row, 'x', IntBoard),
         changePiece(IntBoard, OutColumn, OutRow, Color, OutBoard),
         value(OutBoard, Color, Val), !,(
         (Val > TempValue, write('>\n'),% check if value is superior to the one stored
             getBestDirection(Next, Board, Color, Row, Column, Dir, Val, Moves, Direction, Value)
-        );(Val = TempValue, write('=\n'),% check if value is equal to the one stored
+        );((Val = TempValue, write('=\n'),% check if value is equal to the one stored
             random(1, 3, Check),
             Check = 1, write('==\n'), % check if the direction is changed based on a random number
-            getBestDirection(Next, Board, Color, Row, Column, Dir, Val, Moves, Direction, Value), !
+            getBestDirection(Next, Board, Color, Row, Column, Dir, Val, Moves, Direction, Value), !)
+            ;getBestDirection(Next, Board, Color, Row, Column, TempDir, TempValue, Moves, Direction, Value)
         ))
-    );(
+    );( 
     getBestDirection(Next, Board, Color, Row, Column, TempDir, TempValue, Moves, Direction, Value))).
 
 %Evaluates board state

@@ -47,7 +47,7 @@ playTurnVSBot(Board, N, Dif):-
         )
     ).
 
-% Processes bot turn
+% Processes easy bot turn
 botTurn(InBoard, OutBoard, 1, Color) :-
     display_game(InBoard, Color),
     write('\n'),
@@ -58,6 +58,10 @@ botTurn(InBoard, OutBoard, 1, Color) :-
     findNewPosition(Direction, InBoard, Nrow, Ncolumn, OutRow, OutColumn),
     changePiece(InBoard, Ncolumn, Nrow, 'x', IntBoard),
     changePiece(IntBoard, OutColumn, OutRow, Color, OutBoard).
+
+% Processes hard bot turn
+botTurn(InBoard, OutBoard, 2, Color) :-
+    write('henlo\n').                       %nao implementado
 
 % Processes black turn
 blackTurn(InBoard, OutBoard) :-

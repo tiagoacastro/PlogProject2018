@@ -124,7 +124,7 @@ checkBestPiece(Value1, Value2, Value3, Piece) :-
 getBestPlay(N, Board, Color, Row, Column, Direction, Value) :-
     getNthPiecePos(Board, Color, Row, Column, N),
     valid_moves(Board, Row, Column, Color, Moves),
-    getBestDirection(8, Board, Color, Row, Column, -1, -1, Moves, Direction, Value).
+    getBestDirection(8, Board, Color, Row, Column, -11, -11, Moves, Direction, Value).
 
 % Gets best direction for the play
 getBestDirection(0, Board, Color, Row, Column, TempDir, TempValue, Moves, Direction, Value) :-
@@ -150,9 +150,16 @@ getBestDirection(Dir, Board, Color, Row, Column, TempDir, TempValue, Moves, Dire
     getBestDirection(Next, Board, Color, Row, Column, TempDir, TempValue, Moves, Direction, Value))).
 
 %Evaluates board state
-value(Board, Player, Value) :-
-    (checkWin(Board, Player), Value is 100);
-    Value is 2.
+value(Board, 'b', Value) :-
+    (checkWin(Board, 'b'), Value is 10);
+    (checkWin(Board, 'w'), Value is -10);
+    Value is 0.
+
+%Evaluates board state
+value(Board, 'w', Value) :-
+    (checkWin(Board, 'w'), Value is 10);
+    (checkWin(Board, 'b'), Value is -10);
+    Value is 0.
 
 %Finds the position to where the piece is going to move and updates board
 move(Direction, InBoard, Player, OutBoard) :-

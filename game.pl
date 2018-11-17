@@ -153,7 +153,7 @@ getBestDirection(Dir, Board, Color, Row, Column, TempDir, TempValue, Moves, Dire
         findNewPosition(Dir, Board, Row, Column, OutRow, OutColumn),
         changePiece(Board, Column, Row, 'x', IntBoard),
         changePiece(IntBoard, OutColumn, OutRow, Color, OutBoard),
-        value(OutBoard, Color, Val), !,(
+        value(OutBoard, Color, Val, Board), !,(
         (Val > TempValue,% check if value is superior to the one stored
             getBestDirection(Next, Board, Color, Row, Column, Dir, Val, Moves, Direction, Value)
         );((Val = TempValue,% check if value is equal to the one stored
@@ -179,16 +179,17 @@ getWinDirection(Dir, Board, Color, Row, Column, Moves, A) :-
     );( 
     getWinDirection(Next, Board, Color, Row, Column, Moves, A))).
 
-%Evaluates board state
-value(Board, 'b', Value) :-
+%Evaluates board state checking if the move gives a win, if the moving of the piece gives a win and if by moving it a win is blocked.
+value(Board, 'b', Value, ActualBoard) :-
     (checkWin(Board, 'b'), Value is 10);
     (simulateBotWin(Board, 2, 'w'), Value is -10);
+    (simulateBotWin(ActualBoard, 2, 'w'), (simulateBotWin(Board, 2, 'w'); Value is 5));
     Value is 0.
 
-%Evaluates board state
-value(Board, 'w', Value) :-
+value(Board, 'w', Value, ActualBoard) :-
     (checkWin(Board, 'w'), Value is 10);
     (simulateBotWin(Board, 2, 'b'), Value is -10);
+    (simulateBotWin(ActualBoard, 2, 'b'), (simulateBotWin(Board, 2, 'b'); Value is 5));
     Value is 0.
 
 %Finds the position to where the piece is going to move and updates board

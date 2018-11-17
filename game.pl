@@ -35,6 +35,8 @@ playTurnVSBot(Board, N, Dif):-
     (
         game_over(IntBoard, 'b');
         (
+            display_game(IntBoard, 'w'),
+            write('\n'),
             botTurn(IntBoard, FinalBoard, Dif, 'w'),
             (
                 game_over(FinalBoard, 'w');
@@ -49,10 +51,14 @@ playTurnVSBot(Board, N, Dif):-
 
 % Game loop bot vs bot
 playTurnBotVSBot(Board, N, Dif):-
+    display_game(Board, 'b'),
+    write('\n'),
     botTurn(Board, IntBoard, Dif, 'b'),
     (
         game_over(IntBoard, 'b');
         (
+            display_game(IntBoard, 'w'),
+            write('\n'),
             botTurn(IntBoard, FinalBoard, Dif, 'w'),
             (
                 game_over(FinalBoard, 'w');
@@ -79,8 +85,6 @@ whiteTurn(InBoard, OutBoard) :-
 
 % Processes easy bot turn
 botTurn(InBoard, OutBoard, 1, Color) :-
-    display_game(InBoard, Color),
-    write('\n'),
     random(1, 4, Piece),
     getNthPiecePos(InBoard, Color, Nrow, Ncolumn, Piece),
     valid_moves(InBoard, Nrow, Ncolumn, Color, ListOfMoves),
@@ -91,8 +95,6 @@ botTurn(InBoard, OutBoard, 1, Color) :-
 
 % Processes hard bot turn
 botTurn(InBoard, OutBoard, 2, Color) :-
-    display_game(InBoard, Color),
-    write('\n'),
     getBestPlay(1, InBoard, Color, Row1, Column1, Direction1, Value1),
     getBestPlay(2, InBoard, Color, Row2, Column2, Direction2, Value2),
     getBestPlay(3, InBoard, Color, Row3, Column3, Direction3, Value3),
@@ -134,17 +136,17 @@ getBestDirection(0, Board, Color, Row, Column, TempDir, TempValue, Moves, Direct
     Direction is TempDir.
 
 getBestDirection(Dir, Board, Color, Row, Column, TempDir, TempValue, Moves, Direction, Value) :-
-    Next is Dir - 1, format('~w\n', Dir),
+    Next is Dir - 1,
     ((sublist([Dir], Moves), % check is Dir is valid 
         findNewPosition(Dir, Board, Row, Column, OutRow, OutColumn),
         changePiece(Board, Column, Row, 'x', IntBoard),
         changePiece(IntBoard, OutColumn, OutRow, Color, OutBoard),
         value(OutBoard, Color, Val), !,(
-        (Val > TempValue, write('>\n'),% check if value is superior to the one stored
+        (Val > TempValue,% check if value is superior to the one stored
             getBestDirection(Next, Board, Color, Row, Column, Dir, Val, Moves, Direction, Value)
-        );((Val = TempValue, write('=\n'),% check if value is equal to the one stored
+        );((Val = TempValue,% check if value is equal to the one stored
             random(1, 3, Check),
-            Check = 1, write('==\n'), % check if the direction is changed based on a random number
+            Check = 1, % check if the direction is changed based on a random number
             getBestDirection(Next, Board, Color, Row, Column, Dir, Val, Moves, Direction, Value), !)
             ;getBestDirection(Next, Board, Color, Row, Column, TempDir, TempValue, Moves, Direction, Value)
         ))
@@ -154,13 +156,13 @@ getBestDirection(Dir, Board, Color, Row, Column, TempDir, TempValue, Moves, Dire
 %Evaluates board state
 value(Board, 'b', Value) :-
     (checkWin(Board, 'b'), Value is 10);
-    %(checkWin(Board, 'w'), Value is -10);
+    %(botTurn(Board, OutBoard, 2, 'w'), checkWin(OutBoard, 'w'), Value is -10);
     Value is 0.
 
 %Evaluates board state
 value(Board, 'w', Value) :-
     (checkWin(Board, 'w'), Value is 10);
-    %(checkWin(Board, 'b'), Value is -10);
+    %(botTurn(Board, OutBoard, 2, 'b'), checkWin(OutBoard, 'b'), Value is -10);
     Value is 0.
 
 %Finds the position to where the piece is going to move and updates board

@@ -104,6 +104,12 @@ botTurn(InBoard, OutBoard, 2, Color) :-
     changePiece(InBoard, Column, Row, 'x', IntBoard),
     changePiece(IntBoard, OutColumn, OutRow, Color, OutBoard).
 
+% Processes hard bot turn
+simulateBotWin(Board, 2, Color) :-
+    (getWinPlay(1, Board, Color, A), A = 1);
+    (getWinPlay(2, Board, Color, B), B = 1);
+    (getWinPlay(3, Board, Color, C), C = 1).
+
 % Parses values for the chosen piece
 parse(Piece, Row, Row1, Row2, Row3, Column, Column1, Column2, Column3, Direction, Direction1, Direction2, Direction3) :-
     (
@@ -130,6 +136,12 @@ getBestPlay(N, Board, Color, Row, Column, Direction, Value) :-
     valid_moves(Board, Row, Column, Color, Moves),
     getBestDirection(8, Board, Color, Row, Column, -11, -11, Moves, Direction, Value).
 
+% Gets win play if there is one
+getWinPlay(N, Board, Color, A) :-
+    getNthPiecePos(Board, Color, Row, Column, N),
+    valid_moves(Board, Row, Column, Color, Moves),
+    getWinDirection(8, Board, Color, Row, Column, Moves, A), !.
+
 % Gets best direction for the play
 getBestDirection(0, Board, Color, Row, Column, TempDir, TempValue, Moves, Direction, Value) :-
     Value is TempValue,
@@ -153,16 +165,30 @@ getBestDirection(Dir, Board, Color, Row, Column, TempDir, TempValue, Moves, Dire
     );( 
     getBestDirection(Next, Board, Color, Row, Column, TempDir, TempValue, Moves, Direction, Value))).
 
+% Checks if any direction leads to victory
+getWinDirection(0, Board, Color, Row, Column, Moves, A) :-
+    A is 0, !.
+
+getWinDirection(Dir, Board, Color, Row, Column, Moves, A) :-
+    Next is Dir - 1,
+    ((sublist([Dir], Moves), % check is Dir is valid 
+        findNewPosition(Dir, Board, Row, Column, OutRow, OutColumn),
+        changePiece(Board, Column, Row, 'x', IntBoard),
+        changePiece(IntBoard, OutColumn, OutRow, Color, OutBoard),
+        checkWin(OutBoard, Color), A is 1
+    );( 
+    getWinDirection(Next, Board, Color, Row, Column, Moves, A))).
+
 %Evaluates board state
 value(Board, 'b', Value) :-
     (checkWin(Board, 'b'), Value is 10);
-    %(botTurn(Board, OutBoard, 2, 'w'), checkWin(OutBoard, 'w'), Value is -10);
+    (simulateBotWin(Board, 2, 'w'), Value is -10);
     Value is 0.
 
 %Evaluates board state
 value(Board, 'w', Value) :-
     (checkWin(Board, 'w'), Value is 10);
-    %(botTurn(Board, OutBoard, 2, 'b'), checkWin(OutBoard, 'b'), Value is -10);
+    (simulateBotWin(Board, 2, 'b'), Value is -10);
     Value is 0.
 
 %Finds the position to where the piece is going to move and updates board

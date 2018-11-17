@@ -154,35 +154,6 @@ value(Board, Player, Value) :-
     (checkWin(Board, Player), Value is 100);
     Value is 2.
 
-/*
-% Processes hard bot turn
-botTurn(InBoard, OutBoard, 2, Color) :-
-    getNthPiecePos(InBoard, Color, Nrow, Ncolumn, 1),
-    valid_moves(InBoard, Nrow, Ncolumn, Color, Moves),
-    evaluate_and_choose(InBoard, Moves, Color, Nrow, Ncolumn, (nil, -100), Move).  
-
-%Evaluates every valid move and chooses the best one
-evaluate_and_choose(Board, [Move|Moves], Player, Row, Column, Record, BestMove) :-
-    findNewPosition(Move, Board, Row, Column, NewRow, NewColumn),
-    value(Board, Player, Value),
-    update(Move, Value, Record, NewRecord),
-    evaluate_and_choose(Board, Moves, Player, Row, Column, NewRecord, BestMove).
-
-evaluate_and_choose(Board, [], Player, Row, Column, (Move, Value), Move) :-
-    format('Value: ~w \n', Value).
-
-%Evaluates board state
-value(Board, Player, Value) :-
-    Value is 1. %TODO
-
-%If value is bigger than the value stored in Record then 
-update(Move, Value, (Move1, Value1), (Move, Value)) :-
-    Value > Value1.
-
-update(Move, Value, (Move1, Value1), (Move1, Value1)) :-
-    Value =< Value1.
-*/
-
 %Finds the position to where the piece is going to move and updates board
 move(Direction, InBoard, Player, OutBoard) :-
     getMovingPiece(InBoard, Row, Column, Player),

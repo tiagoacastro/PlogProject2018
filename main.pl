@@ -5,6 +5,6 @@
 :- include('input.pl').
 :- use_module(library(random)).
 
-%main
+%Beginning of the game
 play:-
     mainMenu. 

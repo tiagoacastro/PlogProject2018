@@ -1,4 +1,5 @@
 %Main menu
+
 mainMenu :-
     repeat,
     printMenu, 
@@ -12,6 +13,7 @@ mainMenu :-
         fail
     ).
 
+%Display main menu
 printMenu :-    
     display_border(25),
     put_code(0x2503),
@@ -23,7 +25,10 @@ printMenu :-
     write('2 - Rules\n'),
     write('3 - Exit\n').
 
-%Play menu
+%-----------------------------------------------------------
+
+%Menu to choose game mode
+
 playMenu :-
     repeat,
     printPlayMenu,
@@ -38,6 +43,7 @@ playMenu :-
         fail
     ).
 
+%Displays play menu
 printPlayMenu :-
     display_border(25),
     put_code(0x2503),
@@ -50,7 +56,10 @@ printPlayMenu :-
     write('3 - Computer vs Computer\n'),
     write('4 - Back\n').
 
-%Difficulty menu
+%-----------------------------------------------------------
+
+%Menu to choose difficulty of bot
+
 difficultyMenu(Choice) :-
     repeat,
     printDifficultyMenu,
@@ -64,6 +73,8 @@ difficultyMenu(Choice) :-
         fail
     ).
 
+%Displays difficulty menu
+
 printDifficultyMenu :-
     display_border(25),
     put_code(0x2503),
@@ -75,7 +86,10 @@ printDifficultyMenu :-
     write('2 - Hard\n'),
     write('3 - Back\n').
 
-%Rules menu
+%-----------------------------------------------------------
+
+%Game rules 
+
 rulesMenu :-
     repeat,
     printRules,
@@ -86,6 +100,8 @@ rulesMenu :-
         write('\nInvalid input\n'),
         fail
     ).
+
+%Displays rules menu
 
 printRules :-
     display_border(26),
@@ -101,3 +117,5 @@ printRules :-
     write('- If the same position occurs three times, the match is declared a draw\n'),
     write('- When a player connects his pieces in a row, either orthogonally or diagonally, he is declared the winner\n\n'),
     write('1 - Back\n').
+
+%-----------------------------------------------------------

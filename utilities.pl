@@ -1,4 +1,5 @@
-%Checks if the desired sublist exists in the list
+%Checks if a list is sublist of another list
+
 sublist(Sub, List) :-
     prefix(Sub, List).
 
@@ -15,7 +16,10 @@ suffix(List, List).
 suffix(Suf, [HL|TL]) :-
     suffix(Suf, TL).
 
-%Get Piece
+%-----------------------------------------------------------
+
+%Gets piece from a specified position
+
 getPiece(Row, Column, Board, Piece) :-
     getRow(Row, Board, OutRow),
     getColumn(Column, OutRow, Piece).
@@ -34,7 +38,10 @@ getColumn(N, [_|Rest], Column) :-
     Previous is N-1,
     getColumn(Previous, Rest, Column).
 
-%Changes member on a certain position of the board
+%-----------------------------------------------------------
+
+%Updates a specified position of the board
+
 changePiece(BoardIn, Column, Row, NewPiece, BoardOut) :-
     setRow(Row, Column, BoardIn, NewPiece, BoardOut).
 
@@ -51,7 +58,10 @@ setColumn(N, [H|TIn], NewPiece, [H|TOut]) :-
     NewN is N-1,
     setColumn(NewN, TIn, NewPiece, TOut).
 
-%Get nth ocurrence of a piece starting from
+%-----------------------------------------------------------
+
+%Get nth ocurrence of a piece looking up to down and left to right
+
 getNthPiecePos(Board, Piece, Row, Column, N) :-
     R is 1,
     getNPRow(R, C, Board, Piece, Row, Column, N, NewN).
@@ -91,14 +101,10 @@ getNPColumn(C, [H|Rest], Piece, Column, N, NewN) :-
     Next is C + 1,
     getNPColumn(Next, Rest, Piece, Column, NextN, NewN).
 
-%prints list
-printList([]).
+%-----------------------------------------------------------
 
-printList([H|T]) :-
-    format('~w \n', H),
-    printList(T).
+%Returns a Random direction
 
-%gets random direction
 randomDirection(ListOfMoves, Direction) :-
     random(49, 57, Input),
     (
@@ -112,3 +118,5 @@ randomDirection(ListOfMoves, Direction) :-
         (Input = 56, sublist([8], ListOfMoves), Direction is 8);
         randomDirection(ListOfMoves, Direction)
     ), !.
+
+%-----------------------------------------------------------

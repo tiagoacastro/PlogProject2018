@@ -1,17 +1,29 @@
 % Starts a game with the start board 
+
+% Human vs Human 
+
 initGame(1) :-
     startBoard(Board),
     playTurn(Board, 1).
+
+% Human vs Computer 
 
 initGame(2, Difficulty) :-
     startBoard(Board),
     playTurnVSBot(Board, 1, Difficulty).
 
+% Computer vs Computer 
+
 initGame(3, Difficulty) :-
     startBoard(Board),
     playTurnBotVSBot(Board, 1, Difficulty).
 
+%-----------------------------------------------------------
+
 % Game loop
+
+% Human vs Human 
+
 playTurn(Board, N):-
     blackTurn(Board, IntBoard),
     (
@@ -29,7 +41,8 @@ playTurn(Board, N):-
         )
     ).
 
-% Game loop player vs bot
+% Human vs Computer
+
 playTurnVSBot(Board, N, Dif):-
     blackTurn(Board, IntBoard),
     (
@@ -37,7 +50,7 @@ playTurnVSBot(Board, N, Dif):-
         (
             display_game(IntBoard, 'w'),
             write('\n'),
-            botTurn(IntBoard, FinalBoard, Dif, 'w'),
+            choose_move(IntBoard, FinalBoard, Dif, 'w'),
             (
                 game_over(FinalBoard, 'w');
                 (
@@ -49,17 +62,18 @@ playTurnVSBot(Board, N, Dif):-
         )
     ).
 
-% Game loop bot vs bot
+% Computer vs Computer
+
 playTurnBotVSBot(Board, N, Dif):-
     display_game(Board, 'b'),
     write('\n'),
-    botTurn(Board, IntBoard, Dif, 'b'),
+    choose_move(Board, IntBoard, Dif, 'b'),
     (
         game_over(IntBoard, 'b');
         (
             display_game(IntBoard, 'w'),
             write('\n'),
-            botTurn(IntBoard, FinalBoard, Dif, 'w'),
+            choose_move(IntBoard, FinalBoard, Dif, 'w'),
             (
                 game_over(FinalBoard, 'w');
                 (
@@ -71,20 +85,24 @@ playTurnBotVSBot(Board, N, Dif):-
         )
     ).
 
-% Processes black turn
+%-----------------------------------------------------------
+
+%Turn processing
+
+% Processes black piece's turn
 blackTurn(InBoard, OutBoard) :-
     display_game(InBoard, 'b'),
     write('\nNow playing: BLACK\n\n'),
     move(Direction, InBoard, 'b', OutBoard).
 
-% Processes white turn
+% Processes white piece's turn
 whiteTurn(InBoard, OutBoard) :-
     display_game(InBoard, 'w'),
     write('\nNow playing: WHITE\n\n'),
     move(Direction, InBoard, 'w', OutBoard).  
 
-% Processes easy bot turn
-botTurn(InBoard, OutBoard, 1, Color) :-
+% Processes easy bot's turn
+choose_move(InBoard, OutBoard, 1, Color) :-
     random(1, 4, Piece),
     getNthPiecePos(InBoard, Color, Nrow, Ncolumn, Piece),
     valid_moves(InBoard, Nrow, Ncolumn, Color, ListOfMoves),
@@ -93,8 +111,8 @@ botTurn(InBoard, OutBoard, 1, Color) :-
     changePiece(InBoard, Ncolumn, Nrow, 'x', IntBoard),
     changePiece(IntBoard, OutColumn, OutRow, Color, OutBoard).
 
-% Processes hard bot turn
-botTurn(InBoard, OutBoard, 2, Color) :-
+% Processes hard bot's turn
+choose_move(InBoard, OutBoard, 2, Color) :-
     getBestPlay(1, InBoard, Color, Row1, Column1, Direction1, Value1),
     getBestPlay(2, InBoard, Color, Row2, Column2, Direction2, Value2),
     getBestPlay(3, InBoard, Color, Row3, Column3, Direction3, Value3),
@@ -103,6 +121,10 @@ botTurn(InBoard, OutBoard, 2, Color) :-
     findNewPosition(Direction, InBoard, Row, Column, OutRow, OutColumn),
     changePiece(InBoard, Column, Row, 'x', IntBoard),
     changePiece(IntBoard, OutColumn, OutRow, Color, OutBoard).
+
+%-----------------------------------------------------------
+
+%Choosing hard bot's move
 
 % Processes hard bot turn
 simulateBotWin(Board, 2, Color) :-
@@ -198,7 +220,11 @@ value(Board, 'w', Value, ActualBoard) :-
     (check2(ActualBoard, 'w'), \+check2(Board, 'w'), Value is -1);
     Value is 0.
 
-%Finds the position to where the piece is going to move and updates board
+%-----------------------------------------------------------
+
+% Processes move and updates board 
+
+%Finds the piece's new position and updates board
 move(Direction, InBoard, Player, OutBoard) :-
     getMovingPiece(InBoard, Row, Column, Player),
     valid_moves(InBoard, Row, Column, Player, ListOfMoves),
@@ -207,7 +233,7 @@ move(Direction, InBoard, Player, OutBoard) :-
     changePiece(InBoard, Column, Row, 'x', IntBoard),
     changePiece(IntBoard, OutColumn, OutRow, Player, OutBoard).
 
-%When a findNewPosition function was prematurely ended because a piece was found before reaching the border (TODO outColumn)
+%When a findNewPosition predicate is prematurely ended because a piece was found before reaching the border
 findNewPosition('end', Board, Row, Column, OutRow, OutColumn) :-
     OutRow is Row,
     OutColumn is Column.
@@ -272,7 +298,7 @@ findNewPosition(8, Board, Row, Column, OutRow, OutColumn) :-
         findNewPosition(8, Board, NewRow, NewColumn, OutRow, OutColumn));
         findNewPosition('end', Board, Row, Column, OutRow, OutColumn)).
 
-%Gets the possible moves
+%Gets valid moves and stores them in a list
 valid_moves(Board, Row, Column, Player, ListOfMoves) :-
     RowDown is Row + 1,
     RowUp is Row - 1,
@@ -298,7 +324,43 @@ isMoveValid(Board, Row, Column, Dir, InList, OutList) :-
     Piece = 'x', append(InList, [Dir], OutList));
     append(InList, [], OutList).
 
-% Checks all conditions that end the game
+%-----------------------------------------------------------
+
+%Board evaluation auxiliary functions
+
+
+% Checks all conditions that put bot in near victory condition
+check2(Board, Player) :-
+    checkRow2(Board, Player);
+    checkColumn2(Board, Player);
+    checkDiagonalNWSE2(Board, Player);
+    checkDiagonalNESW2(Board, Player).
+
+% Checks if any row has a two pieces together
+checkRow2([H|T], Player) :-
+    sublist([Player, Player], H);
+    checkRow2(T, Player).
+
+% Checks if any column has a two pieces together
+checkColumn2(Board, Player) :-
+    getNthPiecePos(Board, Player, Nrow, Ncolumn, 1),
+    Nrow2 is Nrow + 1, getPiece(Nrow2, Ncolumn, Board, Piece2), Piece2 = Player.
+
+% Checks if any diagonal has a two pieces together (NW-SE orientation)
+checkDiagonalNWSE2(Board, Player) :-
+    getNthPiecePos(Board, Player, Nrow, Ncolumn, 1),
+    Nrow2 is Nrow + 1, Ncolumn2 is Ncolumn + 1, getPiece(Nrow2, Ncolumn2, Board, Piece2), Piece2 = Player.
+
+% Checks if any diagonal has a two pieces together (NE-SW orientation)
+checkDiagonalNESW2(Board, Player) :-
+    getNthPiecePos(Board, Player, Nrow, Ncolumn, 1),
+    Nrow2 is Nrow + 1, Ncolumn2 is Ncolumn - 1, getPiece(Nrow2, Ncolumn2, Board, Piece2), Piece2 = Player.
+
+%-----------------------------------------------------------
+
+% Game ending conditions
+
+% Checks all conditions that end game
 game_over(Board, Player) :-
     (checkRow(Board, Player), display_game(Board, Player), write('Row Win\n'));
     (checkColumn(Board, Player), display_game(Board, Player), write('Column Win\n'));
@@ -306,6 +368,7 @@ game_over(Board, Player) :-
     (checkDiagonalNESW(Board, Player), display_game(Board, Player), write('Diagonal NE-SW Win\n'));
     (Player = 'w', checkDraw(Board), display_game(Board, Player), write('Draw')).
 
+% Checks all victory conditions without displaying anything
 checkWin(Board, Player) :-
     checkRow(Board, Player);
     checkColumn(Board, Player);
@@ -335,34 +398,12 @@ checkDiagonalNESW(Board, Player) :-
     Nrow2 is Nrow + 1, Ncolumn2 is Ncolumn - 1, getPiece(Nrow2, Ncolumn2, Board, Piece2), Piece2 = Player, 
     Nrow3 is Nrow + 2, Ncolumn3 is Ncolumn - 2, getPiece(Nrow3, Ncolumn3, Board, Piece3), Piece3 = Player.
 
-check2(Board, Player) :-
-    checkRow2(Board, Player);
-    checkColumn2(Board, Player);
-    checkDiagonalNWSE2(Board, Player);
-    checkDiagonalNESW2(Board, Player).
-
-% Checks if any row has a game ending condition
-checkRow2([H|T], Player) :-
-    sublist([Player, Player], H);
-    checkRow2(T, Player).
-
-% Checks if any column has a game ending condition
-checkColumn2(Board, Player) :-
-    getNthPiecePos(Board, Player, Nrow, Ncolumn, 1),
-    Nrow2 is Nrow + 1, getPiece(Nrow2, Ncolumn, Board, Piece2), Piece2 = Player.
-
-% Checks if any diagonal has a game ending condition (NW-SE orientation)
-checkDiagonalNWSE2(Board, Player) :-
-    getNthPiecePos(Board, Player, Nrow, Ncolumn, 1),
-    Nrow2 is Nrow + 1, Ncolumn2 is Ncolumn + 1, getPiece(Nrow2, Ncolumn2, Board, Piece2), Piece2 = Player.
-
-% Checks if any diagonal has a game ending condition (NE-SW orientation)
-checkDiagonalNESW2(Board, Player) :-
-    getNthPiecePos(Board, Player, Nrow, Ncolumn, 1),
-    Nrow2 is Nrow + 1, Ncolumn2 is Ncolumn - 1, getPiece(Nrow2, Ncolumn2, Board, Piece2), Piece2 = Player.
-
 % Checks if the same position occurred for the third time. If it did, then the game is declared a draw. 
 checkDraw(Board) :-
     previousBoards(N1, Board),
     previousBoards(N2, Board),
     N1 \= N2.
+
+%-----------------------------------------------------------
+
+

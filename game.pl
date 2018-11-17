@@ -91,6 +91,8 @@ botTurn(InBoard, OutBoard, 1, Color) :-
 
 % Processes hard bot turn
 botTurn(InBoard, OutBoard, 2, Color) :-
+    display_game(InBoard, Color),
+    write('\n'),
     getBestPlay(1, InBoard, Color, Row1, Column1, Direction1, Value1),
     getBestPlay(2, InBoard, Color, Row2, Column2, Direction2, Value2),
     getBestPlay(3, InBoard, Color, Row3, Column3, Direction3, Value3),
@@ -152,13 +154,13 @@ getBestDirection(Dir, Board, Color, Row, Column, TempDir, TempValue, Moves, Dire
 %Evaluates board state
 value(Board, 'b', Value) :-
     (checkWin(Board, 'b'), Value is 10);
-    (checkWin(Board, 'w'), Value is -10);
+    %(checkWin(Board, 'w'), Value is -10);
     Value is 0.
 
 %Evaluates board state
 value(Board, 'w', Value) :-
     (checkWin(Board, 'w'), Value is 10);
-    (checkWin(Board, 'b'), Value is -10);
+    %(checkWin(Board, 'b'), Value is -10);
     Value is 0.
 
 %Finds the position to where the piece is going to move and updates board

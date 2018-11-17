@@ -181,15 +181,19 @@ getWinDirection(Dir, Board, Color, Row, Column, Moves, A) :-
 
 %Evaluates board state checking if the move gives a win, if the moving of the piece gives a win and if by moving it a win is blocked.
 value(Board, 'b', Value, ActualBoard) :-
-    (checkWin(Board, 'b'), Value is 10);
-    (simulateBotWin(Board, 2, 'w'), Value is -10);
-    (simulateBotWin(ActualBoard, 2, 'w'), (simulateBotWin(Board, 2, 'w'); Value is 5));
+    (checkWin(Board, 'b'), Value is 3);
+    (simulateBotWin(Board, 2, 'w'), Value is -2);
+    (simulateBotWin(ActualBoard, 2, 'w'), \+simulateBotWin(Board, 2, 'w'), Value is 2);
+    (check2(Board, 'b'), \+check2(ActualBoard, 'b'), Value is 1);
+    (check2(ActualBoard, 'b'), \+check2(Board, 'b'), Value is -1);
     Value is 0.
 
 value(Board, 'w', Value, ActualBoard) :-
-    (checkWin(Board, 'w'), Value is 10);
-    (simulateBotWin(Board, 2, 'b'), Value is -10);
-    (simulateBotWin(ActualBoard, 2, 'b'), (simulateBotWin(Board, 2, 'b'); Value is 5));
+    (checkWin(Board, 'w'), Value is 3);
+    (simulateBotWin(Board, 2, 'b'), Value is -2);
+    (simulateBotWin(ActualBoard, 2, 'b'), \+simulateBotWin(Board, 2, 'b'), Value is 2);
+    (check2(Board, 'w'), \+check2(ActualBoard, 'w'), Value is 1);
+    (check2(ActualBoard, 'w'), \+check2(Board, 'w'), Value is -1);
     Value is 0.
 
 %Finds the position to where the piece is going to move and updates board
@@ -328,6 +332,32 @@ checkDiagonalNESW(Board, Player) :-
     getNthPiecePos(Board, Player, Nrow, Ncolumn, 1),
     Nrow2 is Nrow + 1, Ncolumn2 is Ncolumn - 1, getPiece(Nrow2, Ncolumn2, Board, Piece2), Piece2 = Player, 
     Nrow3 is Nrow + 2, Ncolumn3 is Ncolumn - 2, getPiece(Nrow3, Ncolumn3, Board, Piece3), Piece3 = Player.
+
+check2(Board, Player) :-
+    checkRow2(Board, Player);
+    checkColumn2(Board, Player);
+    checkDiagonalNWSE2(Board, Player);
+    checkDiagonalNESW2(Board, Player).
+
+% Checks if any row has a game ending condition
+checkRow2([H|T], Player) :-
+    sublist([Player, Player], H);
+    checkRow2(T, Player).
+
+% Checks if any column has a game ending condition
+checkColumn2(Board, Player) :-
+    getNthPiecePos(Board, Player, Nrow, Ncolumn, 1),
+    Nrow2 is Nrow + 1, getPiece(Nrow2, Ncolumn, Board, Piece2), Piece2 = Player.
+
+% Checks if any diagonal has a game ending condition (NW-SE orientation)
+checkDiagonalNWSE2(Board, Player) :-
+    getNthPiecePos(Board, Player, Nrow, Ncolumn, 1),
+    Nrow2 is Nrow + 1, Ncolumn2 is Ncolumn + 1, getPiece(Nrow2, Ncolumn2, Board, Piece2), Piece2 = Player.
+
+% Checks if any diagonal has a game ending condition (NE-SW orientation)
+checkDiagonalNESW2(Board, Player) :-
+    getNthPiecePos(Board, Player, Nrow, Ncolumn, 1),
+    Nrow2 is Nrow + 1, Ncolumn2 is Ncolumn - 1, getPiece(Nrow2, Ncolumn2, Board, Piece2), Piece2 = Player.
 
 % Checks if the same position occurred for the third time. If it did, then the game is declared a draw. 
 checkDraw(Board) :-

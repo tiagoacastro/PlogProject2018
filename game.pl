@@ -179,7 +179,9 @@ getWinDirection(Dir, Board, Color, Row, Column, Moves, A) :-
     );( 
     getWinDirection(Next, Board, Color, Row, Column, Moves, A))).
 
-%Evaluates board state checking if the move gives a win, if the moving of the piece gives a win and if by moving it a win is blocked.
+% Evaluates board state checking if the move gives a win, if the moving of the piece gives a win,
+% if by moving it a win is blocked, if the move puts 2 pieces together or if it separates the 2 
+% pieces that are together
 value(Board, 'b', Value, ActualBoard) :-
     (checkWin(Board, 'b'), Value is 3);
     (simulateBotWin(Board, 2, 'w'), Value is -2);

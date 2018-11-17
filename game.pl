@@ -91,10 +91,9 @@ botTurn(InBoard, OutBoard, 1, Color) :-
 
 % Processes hard bot turn
 botTurn(InBoard, OutBoard, 2, Color) :-
-    write('hi\n'),
-    getBestPlay(1, InBoard, Color, Row1, Column1, Direction1, Value1), write('pass1\n'),
-    getBestPlay(2, InBoard, Color, Row2, Column2, Direction2, Value2), write('pass2\n'),
-    getBestPlay(3, InBoard, Color, Row3, Column3, Direction3, Value3), write('pass3\n'),
+    getBestPlay(1, InBoard, Color, Row1, Column1, Direction1, Value1),
+    getBestPlay(2, InBoard, Color, Row2, Column2, Direction2, Value2),
+    getBestPlay(3, InBoard, Color, Row3, Column3, Direction3, Value3),
     checkBestPiece(Value1, Value2, Value3, Piece),
     parse(Piece, Row, Row1, Row2, Row3, Column, Column1, Column2, Column3, Direction, Direction1, Direction2, Direction3),
     findNewPosition(Direction, InBoard, Row, Column, OutRow, OutColumn),
@@ -125,11 +124,10 @@ checkBestPiece(Value1, Value2, Value3, Piece) :-
 getBestPlay(N, Board, Color, Row, Column, Direction, Value) :-
     getNthPiecePos(Board, Color, Row, Column, N),
     valid_moves(Board, Row, Column, Color, Moves),
-    getBestDirection(8, Board, Color, Row, Column, -1, -1, Moves, Direction, Value), write('passini\n').
+    getBestDirection(8, Board, Color, Row, Column, -1, -1, Moves, Direction, Value).
 
 % Gets best direction for the play
 getBestDirection(0, Board, Color, Row, Column, TempDir, TempValue, Moves, Direction, Value) :-
-    write('HENLO\n'),
     Value is TempValue,
     Direction is TempDir.
 
@@ -152,8 +150,9 @@ getBestDirection(Dir, Board, Color, Row, Column, TempDir, TempValue, Moves, Dire
     getBestDirection(Next, Board, Color, Row, Column, TempDir, TempValue, Moves, Direction, Value))).
 
 %Evaluates board state
-value(Board, Color, Value) :-
-    Value is 1. %TODO
+value(Board, Player, Value) :-
+    (checkWin(Board, Player), Value is 100);
+    Value is 2.
 
 /*
 % Processes hard bot turn
@@ -291,6 +290,12 @@ game_over(Board, Player) :-
     (checkDiagonalNWSE(Board, Player), display_game(Board, Player), write('Diagonal NW-SE Win\n'));
     (checkDiagonalNESW(Board, Player), display_game(Board, Player), write('Diagonal NE-SW Win\n'));
     (Player = 'w', checkDraw(Board), display_game(Board, Player), write('Draw')).
+
+checkWin(Board, Player) :-
+    checkRow(Board, Player);
+    checkColumn(Board, Player);
+    checkDiagonalNWSE(Board, Player);
+    checkDiagonalNESW(Board, Player).
 
 % Checks if any row has a game ending condition
 checkRow([H|T], Player) :-

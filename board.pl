@@ -1,6 +1,7 @@
 :- dynamic previousBoards/2.
 
 %Start board
+
 startBoard( [['x', 'w', 'x', 'w', 'x'],
              ['x', 'x', 'b', 'x', 'x'],
              ['x', 'x', 'x', 'x', 'x'],

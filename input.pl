@@ -1,5 +1,4 @@
 %Gets coordinates from piece that is going to be moved and validates them.
-
 getMovingPiece(Board, Row, Column, Player) :-
     readRow(Row),
     readColumn(Column),
@@ -9,7 +8,6 @@ getMovingPiece(Board, Row, Column, Player) :-
     getMovingPiece(Board, Row, Column, Player)).
         
 %Gets row from user, converts it to 1-5 and checks if it is valid
-
 readRow(Row) :-
     repeat,
     write('Enter the row of the piece you want to move (1-5): '),  
@@ -26,7 +24,6 @@ readRow(Row) :-
     ), !.
 
 %Gets column from user, converts it to number (1-5) and checks if it is valid
-
 readColumn(Column) :-
     repeat,
     write('Enter the column of the piece you want to move (a-e): '),
@@ -45,7 +42,6 @@ readColumn(Column) :-
 %-----------------------------------------------------------
 
 %Gets direction of movement from user and validates it
-
 readDirection(ListOfMoves, Direction) :-
     printDirections(ListOfMoves),
     repeat,
@@ -66,7 +62,6 @@ readDirection(ListOfMoves, Direction) :-
     ), !.
 
 %Displays directions. 
-
 printDirections(ListOfMoves) :-
     write('DIRECTION\n\n'),
     printDir(1, 'North', ListOfMoves),
@@ -81,7 +76,6 @@ printDirections(ListOfMoves) :-
     write('\n').
 
 %If a direction is in the list of valid moves, then it is displayed as valid, otherwise it is not valid
-
 printDir(Number, Direction, ListOfMoves) :-
     (sublist([Number], ListOfMoves),
     format('~w - ', Number),

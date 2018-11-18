@@ -1,19 +1,16 @@
 % Starts a game with the start board 
 
 % Human vs Human 
-
 initGame(1) :-
     startBoard(Board),
     playTurn(Board, 1).
 
 % Human vs Computer 
-
 initGame(2, Difficulty) :-
     startBoard(Board),
     playTurnVSBot(Board, 1, Difficulty).
 
 % Computer vs Computer 
-
 initGame(3, Difficulty) :-
     startBoard(Board),
     playTurnBotVSBot(Board, 1, Difficulty).
@@ -23,7 +20,6 @@ initGame(3, Difficulty) :-
 % Game loop
 
 % Human vs Human 
-
 playTurn(Board, N):-
     blackTurn(Board, IntBoard),
     (
@@ -42,7 +38,6 @@ playTurn(Board, N):-
     ).
 
 % Human vs Computer
-
 playTurnVSBot(Board, N, Dif):-
     blackTurn(Board, IntBoard),
     (
@@ -63,7 +58,6 @@ playTurnVSBot(Board, N, Dif):-
     ).
 
 % Computer vs Computer
-
 playTurnBotVSBot(Board, N, Dif):-
     display_game(Board, 'b'),
     write('\n'),
@@ -126,7 +120,7 @@ choose_move(InBoard, OutBoard, 2, Color) :-
 
 %Choosing hard bot's move
 
-% Processes hard bot turn
+% Processes hard bot turn for value purposes
 simulateBotWin(Board, 2, Color) :-
     (getWinPlay(1, Board, Color, A), A = 1);
     (getWinPlay(2, Board, Color, B), B = 1);
@@ -158,7 +152,7 @@ getBestPlay(N, Board, Color, Row, Column, Direction, Value) :-
     valid_moves(Board, Row, Column, Color, Moves),
     getBestDirection(8, Board, Color, Row, Column, -11, -11, Moves, Direction, Value).
 
-% Gets win play if there is one
+% Checks if there is a win play
 getWinPlay(N, Board, Color, A) :-
     getNthPiecePos(Board, Color, Row, Column, N),
     valid_moves(Board, Row, Column, Color, Moves),
@@ -176,9 +170,9 @@ getBestDirection(Dir, Board, Color, Row, Column, TempDir, TempValue, Moves, Dire
         changePiece(Board, Column, Row, 'x', IntBoard),
         changePiece(IntBoard, OutColumn, OutRow, Color, OutBoard),
         value(OutBoard, Color, Val, Board), !,(
-        (Val > TempValue,% check if value is superior to the one stored
+        (Val > TempValue, % check if value is superior to the one stored
             getBestDirection(Next, Board, Color, Row, Column, Dir, Val, Moves, Direction, Value)
-        );((Val = TempValue,% check if value is equal to the one stored
+        );((Val = TempValue, % check if value is equal to the one stored
             random(1, 3, Check),
             Check = 1, % check if the direction is changed based on a random number
             getBestDirection(Next, Board, Color, Row, Column, Dir, Val, Moves, Direction, Value), !)
@@ -193,7 +187,7 @@ getWinDirection(0, Board, Color, Row, Column, Moves, A) :-
 
 getWinDirection(Dir, Board, Color, Row, Column, Moves, A) :-
     Next is Dir - 1,
-    ((sublist([Dir], Moves), % check is Dir is valid 
+    ((sublist([Dir], Moves),
         findNewPosition(Dir, Board, Row, Column, OutRow, OutColumn),
         changePiece(Board, Column, Row, 'x', IntBoard),
         changePiece(IntBoard, OutColumn, OutRow, Color, OutBoard),
@@ -328,7 +322,6 @@ isMoveValid(Board, Row, Column, Dir, InList, OutList) :-
 
 %Board evaluation auxiliary functions
 
-
 % Checks all conditions that put bot in near victory condition
 check2(Board, Player) :-
     checkRow2(Board, Player);
@@ -406,6 +399,7 @@ checkDraw(Board) :-
 
 %-----------------------------------------------------------
 
+% Prints the Win of the player
 printVictory('b') :-
     display_border(25),
     put_code(0x2503),
@@ -421,4 +415,3 @@ printVictory('w'):-
     put_code(0x2503),
     write('\n'),
     display_border(25).    
-

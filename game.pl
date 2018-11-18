@@ -352,11 +352,11 @@ checkDiagonalNESW2(Board, Player) :-
 
 % Checks all conditions that end game
 game_over(Board, Player) :-
-    (checkRow(Board, Player), display_game(Board, Player), write('Row Win\n'), printVictory(Player));
-    (checkColumn(Board, Player), display_game(Board, Player), write('Column Win\n'), printVictory(Player));
-    (checkDiagonalNWSE(Board, Player), display_game(Board, Player), write('Diagonal NW-SE Win\n'), printVictory(Player));
-    (checkDiagonalNESW(Board, Player), display_game(Board, Player), write('Diagonal NE-SW Win\n'), printVictory(Player));
-    (Player = 'w', checkDraw(Board), display_game(Board, Player), write('Draw')).
+    (checkRow(Board, Player), display_game(Board, Player), printVictory(Player));
+    (checkColumn(Board, Player), display_game(Board, Player), printVictory(Player));
+    (checkDiagonalNWSE(Board, Player), display_game(Board, Player), printVictory(Player));
+    (checkDiagonalNESW(Board, Player), display_game(Board, Player), printVictory(Player));
+    (Player = 'w', checkDraw(Board), display_game(Board, Player), printDraw).
 
 % Checks all victory conditions without displaying anything
 checkWin(Board, Player) :-
@@ -412,3 +412,11 @@ printVictory('w'):-
     put_code(0x2503),
     write('\n'),
     display_border(30).    
+
+printDraw :-
+    display_border(30),
+    put_code(0x2503),
+    write('       DRAW        '),
+    put_code(0x2503),
+    write('\n'),
+    display_border(30).

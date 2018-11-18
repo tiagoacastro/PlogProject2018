@@ -169,7 +169,7 @@ getBestDirection(Dir, Board, Color, Row, Column, TempDir, TempValue, Moves, Dire
         findNewPosition(Dir, Board, Row, Column, OutRow, OutColumn),
         changePiece(Board, Column, Row, 'x', IntBoard),
         changePiece(IntBoard, OutColumn, OutRow, Color, OutBoard),
-        value(OutBoard, Color, Val, Board), !,(
+        value(OutBoard, Color, Val), !,(
         (Val > TempValue, % check if value is superior to the one stored
             getBestDirection(Next, Board, Color, Row, Column, Dir, Val, Moves, Direction, Value)
         );((Val = TempValue, % check if value is equal to the one stored
@@ -195,23 +195,20 @@ getWinDirection(Dir, Board, Color, Row, Column, Moves, A) :-
     );( 
     getWinDirection(Next, Board, Color, Row, Column, Moves, A))).
 
-% Evaluates board state checking if the move gives a win, if the moving of the piece gives a win,
-% if by moving it a win is blocked, if the move puts 2 pieces together or if it separates the 2 
-% pieces that are together
-value(Board, 'b', Value, ActualBoard) :-
+% Evaluates board state checking if it as a win for the player, if it has an opponent win,
+% if it has a win on the next turn and if it has 2 pieces together
+value(Board, 'b', Value) :-
     (checkWin(Board, 'b'), Value is 3);
-    (simulateBotWin(Board, 2, 'w'), Value is -2);
-    (simulateBotWin(ActualBoard, 2, 'w'), \+simulateBotWin(Board, 2, 'w'), Value is 2);
-    (check2(Board, 'b'), \+check2(ActualBoard, 'b'), Value is 1);
-    (check2(ActualBoard, 'b'), \+check2(Board, 'b'), Value is -1);
+    (simulateBotWin(Board, 2, 'w'), Value is -1);
+    (simulateBotWin(Board, 2, 'b'), Value is 2);
+    (check2(Board, 'b'), Value is 1);
     Value is 0.
 
-value(Board, 'w', Value, ActualBoard) :-
+value(Board, 'w', Value) :-
     (checkWin(Board, 'w'), Value is 3);
-    (simulateBotWin(Board, 2, 'b'), Value is -2);
-    (simulateBotWin(ActualBoard, 2, 'b'), \+simulateBotWin(Board, 2, 'b'), Value is 2);
-    (check2(Board, 'w'), \+check2(ActualBoard, 'w'), Value is 1);
-    (check2(ActualBoard, 'w'), \+check2(Board, 'w'), Value is -1);
+    (simulateBotWin(Board, 2, 'b'), Value is -1);
+    (simulateBotWin(Board, 2, 'w'), Value is 2);
+    (check2(Board, 'w'), Value is 1);
     Value is 0.
 
 %-----------------------------------------------------------
@@ -401,17 +398,17 @@ checkDraw(Board) :-
 
 % Prints the Win of the player
 printVictory('b') :-
-    display_border(25),
+    display_border(30),
     put_code(0x2503),
     write('    BLACK WINS     '),
     put_code(0x2503),
     write('\n'),
-    display_border(25).
+    display_border(30).
     
 printVictory('w'):-
-    display_border(25),
+    display_border(30),
     put_code(0x2503),
     write('    WHITE WINS     '),
     put_code(0x2503),
     write('\n'),
-    display_border(25).    
+    display_border(30).    

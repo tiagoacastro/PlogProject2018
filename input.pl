@@ -105,18 +105,36 @@ readDirection(ListOfMoves, Direction) :-
     write('Enter the desired direction: '),
     get_code(Input),
     skip_line,  
-    (
-        (Input = 49, sublist([1], ListOfMoves), Direction is 1);
-        (Input = 50, sublist([2], ListOfMoves), Direction is 2);
-        (Input = 51, sublist([3], ListOfMoves), Direction is 3);
-        (Input = 52, sublist([4], ListOfMoves), Direction is 4);
-        (Input = 53, sublist([5], ListOfMoves), Direction is 5);
-        (Input = 54, sublist([6], ListOfMoves), Direction is 6);
-        (Input = 55, sublist([7], ListOfMoves), Direction is 7);
-        (Input = 56, sublist([8], ListOfMoves), Direction is 8);
-        (write('\nDirection is invalid. Try again.\n'),
-        fail)
-    ), !.
+    validateDirection(Input, Direction, ListOfMoves), !.
+
+%Input = 1, Direction = North
+validateDirection(49, 1, ListOfMoves) :- sublist([1], ListOfMoves), !.
+
+%Input = 2, Direction = West
+validateDirection(50, 2, ListOfMoves) :- sublist([2], ListOfMoves), !.
+
+%Input = 3, Direction = East
+validateDirection(51, 3, ListOfMoves) :- sublist([3], ListOfMoves), !.
+
+%Input = 4, Direction = South
+validateDirection(52, 4, ListOfMoves) :- sublist([4], ListOfMoves), !.
+
+%Input = 5, Direction = Northeast
+validateDirection(53, 5, ListOfMoves) :- sublist([5], ListOfMoves), !.
+
+%Input = 6, Direction = Northwest
+validateDirection(54, 6, ListOfMoves) :- sublist([6], ListOfMoves), !.
+
+%Input = 7, Direction = Southeast
+validateDirection(55, 7, ListOfMoves) :- sublist([7], ListOfMoves), !.
+
+%Input = 8, Direction = Southwest
+validateDirection(56, 8, ListOfMoves) :- sublist([8], ListOfMoves), !.
+
+%Input is invalid
+validateDirection(_, Direction, ListOfMoves) :-
+    write('\nDirection is invalid. Try again.\n'),
+    fail.
 
 %Displays directions. 
 

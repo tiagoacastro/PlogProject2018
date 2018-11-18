@@ -5,13 +5,21 @@ mainMenu :-
     printMenu, 
     get_code(Input),
     skip_line,
-    (
-        Input = 49, playMenu, mainMenu;
-        Input = 50, rulesMenu, mainMenu;
-        Input = 51, write('Thanks for playing\n');
-        write('\nInvalid input\n'),
-        fail
-    ).
+    mainMenuInput(Input).
+
+%Input = 1
+mainMenuInput(49) :- playMenu, mainMenu, !.
+
+%Input = 2
+mainMenuInput(50) :- rulesMenu, mainMenu, !.
+
+%Input = 3
+mainMenuInput(51) :- write('Thanks for playing\n'), !.    
+
+%Input is invalid
+mainMenuInput(_) :-
+    write('\nInvalid input\n'),
+    fail.
 
 %Display main menu
 printMenu :-    
@@ -34,14 +42,24 @@ playMenu :-
     printPlayMenu,
     get_code(Input),
     skip_line,
-    (
-        Input = 49, initGame(1);
-        Input = 50, difficultyMenu(2);
-        Input = 51, difficultyMenu(3);
-        Input = 52;
-        write('\nInvalid input\n'),
-        fail
-    ).
+    playMenuInput(Input).
+
+%Input = 1
+playMenuInput(49) :- initGame(1), !.
+
+%Input = 2
+playMenuInput(50) :- difficultyMenu(2), !.
+
+%Input = 3
+playMenuInput(51) :- difficultyMenu(3), !.
+
+%Input = 4
+playMenuInput(52) :- !.
+
+%Input is invalid
+playMenuInput(_) :-         
+    write('\nInvalid input\n'),
+    fail.
 
 %Displays play menu
 printPlayMenu :-
@@ -65,13 +83,23 @@ difficultyMenu(Choice) :-
     printDifficultyMenu,
     get_code(Input),
     skip_line,
-    (
-        Input = 49, initGame(Choice, 1);
-        Input = 50, initGame(Choice, 2);
-        Input = 51, playMenu;
-        write('\nInvalid input\n'),
-        fail
-    ).
+    difficultyMenuInput(Input, Choice).
+
+
+%Input = 1
+difficultyMenuInput(49, Choice) :- initGame(Choice, 1), !. 
+
+%Input = 2
+difficultyMenuInput(50, Choice) :- initGame(Choice, 2), !.
+
+%Input = 3
+difficultyMenuInput(51, Choice) :- playMenu, !.
+
+%Input is invalid
+difficultyMenuInput(_, Choice) :-
+    write('\nInvalid input\n'),
+    fail.
+
 
 %Displays difficulty menu
 
@@ -95,11 +123,15 @@ rulesMenu :-
     printRules,
     get_code(Input),  
     skip_line,
-    (
-        Input = 49;
-        write('\nInvalid input\n'),
-        fail
-    ).
+    rulesMenuInput(Input).
+
+%Input = 1
+rulesMenuInput(49) :- !.
+
+%Input is invalid
+rulesMenuInput(_) :-
+    write('\nInvalid input\n'),
+    fail.
 
 %Displays rules menu
 

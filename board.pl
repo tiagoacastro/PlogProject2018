@@ -92,6 +92,9 @@ display_columns :-
 
 %Code used to store board in the end of each turn
 
+clean_previousBoards :-
+    retractall(previousBoards(N, Board)).
+    
 saveBoard(N, Board) :-
     assert(previousBoards(N, Board)).
 

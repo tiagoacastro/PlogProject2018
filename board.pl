@@ -12,18 +12,18 @@ startBoard( [['x', 'w', 'x', 'w', 'x'],
 
 %Code responsible for displaying board
 
-display_gameAux([], Player, _) :-
+display_gameAux([], _) :-
     display_border(31),
     display_columns.
 
-display_gameAux([A|B], Player, N) :-
+display_gameAux([A|B], N) :-
     display_border(31),
-    display_line(A, Player, N),
+    display_line(A, N),
     New is N+1,
-    display_gameAux(B, Player, New).
+    display_gameAux(B, New).
 
-display_game(List, Player) :-
-    display_gameAux(List, Player, 1).
+display_game(List) :-
+    display_gameAux(List, 1).
 %---------------------------------------------
 
 %Displays horizontal lines separating rows
@@ -41,20 +41,20 @@ display_border(N) :-
 
 %Displays rows 
 
-display_lineAux([], Player) :-
+display_lineAux([]) :-
     write('\n').
 
-display_lineAux([A|B], Player) :-
+display_lineAux([A|B]) :-
     write(' '),
     write_char(A),
     write(' '),
     put_code(0x2503),
-    display_lineAux(B, Player).
+    display_lineAux(B).
 
-display_line(List, Player, N) :-
+display_line(List, N) :-
     format('~w ', N),
     put_code(0x2503),
-    display_lineAux(List,Player).
+    display_lineAux(List).
 
 %---------------------------------------------
 

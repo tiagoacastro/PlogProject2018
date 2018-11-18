@@ -42,7 +42,7 @@ playTurnVSBot(Board, N, Dif):-
     (
         game_over(IntBoard, 'b');
         (
-            display_game(IntBoard, 'w'),
+            display_game(IntBoard),
             write('\n'),
             choose_move(IntBoard, FinalBoard, Dif, 'w'),
             (
@@ -57,13 +57,13 @@ playTurnVSBot(Board, N, Dif):-
 
 % Computer vs Computer
 playTurnBotVSBot(Board, N, Dif):-
-    display_game(Board, 'b'),
+    display_game(Board),
     write('\n'),
     choose_move(Board, IntBoard, Dif, 'b'),
     (
         game_over(IntBoard, 'b');
         (
-            display_game(IntBoard, 'w'),
+            display_game(IntBoard),
             write('\n'),
             choose_move(IntBoard, FinalBoard, Dif, 'w'),
             (
@@ -83,13 +83,13 @@ playTurnBotVSBot(Board, N, Dif):-
 
 % Processes black piece's turn
 blackTurn(InBoard, OutBoard) :-
-    display_game(InBoard, 'b'),
+    display_game(InBoard),
     write('\nNow playing: BLACK\n\n'),
     move(Direction, InBoard, 'b', OutBoard).
 
 % Processes white piece's turn
 whiteTurn(InBoard, OutBoard) :-
-    display_game(InBoard, 'w'),
+    display_game(InBoard),
     write('\nNow playing: WHITE\n\n'),
     move(Direction, InBoard, 'w', OutBoard).  
 
@@ -350,11 +350,11 @@ checkDiagonalNESW2(Board, Player) :-
 
 % Checks all conditions that end game
 game_over(Board, Player) :-
-    (checkRow(Board, Player), display_game(Board, Player), clean_previousBoards, printVictory(Player));
-    (checkColumn(Board, Player), display_game(Board, Player),  clean_previousBoards, printVictory(Player));
-    (checkDiagonalNWSE(Board, Player), display_game(Board, Player),  clean_previousBoards, printVictory(Player));
-    (checkDiagonalNESW(Board, Player), display_game(Board, Player),  clean_previousBoards, printVictory(Player));
-    (Player = 'w', checkDraw(Board), display_game(Board, Player), clean_previousBoards, printDraw).
+    (checkRow(Board, Player), display_game(Board), clean_previousBoards, printVictory(Player));
+    (checkColumn(Board, Player), display_game(Board),  clean_previousBoards, printVictory(Player));
+    (checkDiagonalNWSE(Board, Player), display_game(Board),  clean_previousBoards, printVictory(Player));
+    (checkDiagonalNESW(Board, Player), display_game(Board),  clean_previousBoards, printVictory(Player));
+    (Player = 'w', checkDraw(Board), display_game(Board), clean_previousBoards, printDraw).
 
 % Checks all victory conditions without displaying anything
 checkWin(Board, Player) :-

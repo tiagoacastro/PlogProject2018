@@ -5,10 +5,7 @@ getMovingPiece(Board, Row, Column, Player) :-
     readRow(Row),
     readColumn(Column),
     getPiece(Row, Column, Board, Piece),
-    validatePiece(Piece, Player).
-/*    (Piece = Player, write('\nPiece selected\n\n'));
-    (write('\nPiece selected is invalid. Try again.\n\n'), 
-    fail).*/
+    validatePiece(Board, Row, Column, Piece, Player).
         
 %Gets row from user, converts it to 1-5 and checks if it is valid
 
@@ -68,20 +65,37 @@ validateColumn(_, Column) :-
     write('\nColumn is invalid. Try again.\n'),
     fail.
 
-%Checks if piece belong to current player
+%-----------------------------------------------------------
+
+%Checks if piece belong to current player and if there are valid moves
 
 %Piece selected is valid
-validatePiece(Piece, Player) :-
+validatePiece(Board, Row, Column, Piece, Player) :-
     Piece = Player,
-    write('\nPiece selected\n\n').
+    valid_moves(Board, Row, Column, ListOfMoves),
+    length(ListOfMoves, Length),
+    hasValidMoves(Length),
+    write('\nPiece selected\n\n'), !.
 
 %Piece selected is invalid
-validatePiece(Piece, Player) :-
+validatePiece(Board, Row, Column, Piece, Player) :-
     Piece \= Player,
     write('\nPiece selected is invalid. Try again.\n\n'),
     fail.
 
-%----------------------d-------------------------------------
+%Piece selected doesnt have valid moves
+hasValidMoves(Length) :-
+    Length > 0.
+
+%Piece selected has valid moves
+hasValidMoves(Length) :-
+    Length = 0,
+    write('\nPiece selected is invalid. Try again.\n\n'),
+    fail.
+%-----------------------------------------------------------
+
+
+%-----------------------------------------------------------
 
 %Gets direction of movement from user and validates it
 

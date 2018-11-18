@@ -99,7 +99,7 @@ whiteTurn(InBoard, OutBoard) :-
 choose_move(InBoard, OutBoard, 1, Color) :-
     random(1, 4, Piece),
     getNthPiecePos(InBoard, Color, Nrow, Ncolumn, Piece),
-    valid_moves(InBoard, Nrow, Ncolumn, Color, ListOfMoves),
+    valid_moves(InBoard, Nrow, Ncolumn, ListOfMoves),
     randomDirection(ListOfMoves, Direction),
     findNewPosition(Direction, InBoard, Nrow, Ncolumn, OutRow, OutColumn),
     changePiece(InBoard, Ncolumn, Nrow, 'x', IntBoard),
@@ -149,13 +149,13 @@ checkBestPiece(Value1, Value2, Value3, Piece) :-
 % Gets best play for the piece
 getBestPlay(N, Board, Color, Row, Column, Direction, Value) :-
     getNthPiecePos(Board, Color, Row, Column, N),
-    valid_moves(Board, Row, Column, Color, Moves),
+    valid_moves(Board, Row, Column, Moves),
     getBestDirection(8, Board, Color, Row, Column, -11, -11, Moves, Direction, Value).
 
 % Checks if there is a win play
 getWinPlay(N, Board, Color, A) :-
     getNthPiecePos(Board, Color, Row, Column, N),
-    valid_moves(Board, Row, Column, Color, Moves),
+    valid_moves(Board, Row, Column, Moves),
     getWinDirection(8, Board, Color, Row, Column, Moves, A), !.
 
 % Gets best direction for the play
@@ -218,7 +218,7 @@ value(Board, 'w', Value) :-
 %Finds the piece's new position and updates board
 move(Direction, InBoard, Player, OutBoard) :-
     getMovingPiece(InBoard, Row, Column, Player),
-    valid_moves(InBoard, Row, Column, Player, ListOfMoves),
+    valid_moves(InBoard, Row, Column, ListOfMoves),
     readDirection(ListOfMoves, Direction), 
     findNewPosition(Direction, InBoard, Row, Column, OutRow, OutColumn),
     changePiece(InBoard, Column, Row, 'x', IntBoard),
@@ -290,7 +290,7 @@ findNewPosition(8, Board, Row, Column, OutRow, OutColumn) :-
         findNewPosition('end', Board, Row, Column, OutRow, OutColumn)).
 
 %Gets valid moves and stores them in a list
-valid_moves(Board, Row, Column, Player, ListOfMoves) :-
+valid_moves(Board, Row, Column, ListOfMoves) :-
     RowDown is Row + 1,
     RowUp is Row - 1,
     ColumnRight is Column + 1,

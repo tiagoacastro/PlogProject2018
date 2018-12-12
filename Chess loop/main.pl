@@ -1,4 +1,5 @@
 :- use_module(library(clpfd)).
+:- include('debug.pl').
 
 /*
 nqueens(N,D,Cols):-
@@ -50,7 +51,7 @@ solve(Npieces, Nrows, Ncols, Type1, Type2, Types, Rows, Cols) :-
     setTypes(Types, Type1, Type2, Npieces),
     setup(Types, Rows, Cols),
     labeling([ff], Rows),
-    labeling([ff], Cols).                   %meter tudo numa so lista e usar so um labeling
+    labeling([ff], Cols).   
 
 %Sets up the iteration function
 setup(Types, [R1|Rr], [C1|Cr]):-
@@ -66,19 +67,28 @@ iterate([H|Tr], [R1,R2|Rr], [C1,C2|Cr], Fr, Fc):-
     iterate(Tr, [R2|Rr], [C2|Cr], Fr, Fc).
     
 %King move
-eat(1, R1, R2, C1, C2).
+eat(1, R1, R2, C1, C2):-
+    (R2 #= R1+1 #/\ (C2 #= C1 #\/ C2 #= C1+1 #\/ C2 #= C1-1)) #\/
+    (R2 #= R1 #/\ (C2 #= C1+1 #\/ C2 #= C1-1)) #\/
+    (R2 #= R1-1 #/\ (C2 #= C1 #\/ C2 #= C1+1 #\/ C2 #= C1-1)).
 
 %Queen move
 eat(2, R1, R2, C1, C2).
 
 %Rook move
-eat(3, R1, R2, C1, C2). 
+eat(3, R1, R2, C1, C2):-
+    (R2 #= R1 #/\ C2 #\= C1) #\/ 
+    (R2 #\= R1 #/\ C2 #= C1).
     
 %Bishop move
 eat(4, R1, R2, C1, C2). 
 
 %Knight move
-eat(5, R1, R2, C1, C2). 
+eat(5, R1, R2, C1, C2):-
+    (R2 #= R1+2 #/\ (C2 #= C1+1 #\/ C2 #= C1-1)) #\/ 
+    (R2 #= R1-2 #/\ (C2 #= C1+1 #\/ C2 #= C1-1)) #\/ 
+    (C2 #= C1+2 #/\ (R2 #= R1+1 #\/ R2 #= R1-1)) #\/ 
+    (C2 #= C1+2 #/\ (R2 #= R1+1 #\/ R2 #= R1-1)).
 
 setTypes([], _, _, 0).
 

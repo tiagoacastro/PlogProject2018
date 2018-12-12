@@ -50,7 +50,7 @@ solve(Npieces, Nrows, Ncols, Type1, Type2, Types, Rows, Cols) :-
     setTypes(Types, Type1, Type2, Npieces),
     setup(Types, Rows, Cols),
     labeling([ff], Rows),
-    labeling([ff], Cols).
+    labeling([ff], Cols).                   %meter tudo numa so lista e usar so um labeling
 
 %Sets up the iteration function
 setup(Types, [R1|Rr], [C1|Cr]):-

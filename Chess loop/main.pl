@@ -49,18 +49,20 @@ solve(Npieces, Nrows, Ncols, Type1, Type2, Types, Rows, Cols) :-
     length(Cols, Npieces),
     domain(Cols, 1, Ncols),
     length(Res, Npieces),
-    setAllDiff(Ncols, Rows, Cols, Res),
+    prepare(Ncols, Rows, Cols, Res),
     all_distinct(Res),
-    setTypes(Types, Type1, Type2, Npieces),
+    set_types(Types, Type1, Type2, Npieces),
     setup(Types, Rows, Cols),
     labeling([ff], Rows),
     labeling([ff], Cols).   
 
-setAllDiff(Ncols, [], [], []).
+%prepare base case
+prepare(Ncols, [], [], []).
 
-setAllDiff(Ncols, [R|Rr], [C|Cr], [P|Pr]):-
+%makes a list of the positions in order to later call all_distinct on it
+prepare(Ncols, [R|Rr], [C|Cr], [P|Pr]):-
     P #= R * Ncols + C,
-    setAllDiff(Ncols, Rr, Cr, Pr).
+    prepare(Ncols, Rr, Cr, Pr).
 
 %Sets up the iteration function
 setup(Types, [R1|Rr], [C1|Cr]):-
@@ -99,17 +101,17 @@ eat(5, R1, R2, C1, C2):-
     (C2 #= C1+2 #/\ (R2 #= R1+1 #\/ R2 #= R1-1)) #\/ 
     (C2 #= C1-2 #/\ (R2 #= R1+1 #\/ R2 #= R1-1))).
 
-setTypes([], _, _, 0).
+set_types([], _, _, 0).
 
 %Alternates the types of the ordered pieces, so that after the move of a type1 piece, a type2 move follows and vice-versa.
-setTypes([H|R], Type1, Type2, Npieces):-
+set_types([H|R], Type1, Type2, Npieces):-
     Type is Npieces mod 2,
     Next is Npieces - 1,
-    giveType(H, Type1, Type2, Type),
-    setTypes(R, Type1, Type2, Next).
+    give_type(H, Type1, Type2, Type),
+    set_types(R, Type1, Type2, Next).
 
 %Sets the type1 for the even pieces
-giveType(Type1, Type1, Type2, 0).
+give_type(Type1, Type1, Type2, 0).
 
 %Sets the type2 for the odd pieces
-giveType(Type2, Type1, Type2, 1).
+give_type(Type2, Type1, Type2, 1).

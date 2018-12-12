@@ -1,5 +1,5 @@
 :- use_module(library(clpfd)).
-:- include('debug.pl').
+:- include('utilities.pl').
 
 /*
 nqueens(N,D,Cols):-
@@ -52,7 +52,8 @@ solve(Npieces, Nrows, Ncols, Type1, Type2, Types, Rows, Cols) :-
     prepare(Ncols, Rows, Cols, Res),
     all_distinct(Res),
     set_types(Types, Type1, Type2, Npieces),
-    setup(Types, Rows, Cols),
+    get_min(Nrows, Ncols, Min),
+    setup(Types, Rows, Cols, Min),
     labeling([ff], Rows),
     labeling([ff], Cols).   
 
@@ -65,42 +66,55 @@ prepare(Ncols, [R|Rr], [C|Cr], [P|Pr]):-
     prepare(Ncols, Rr, Cr, Pr).
 
 %Sets up the iteration function
-setup(Types, [R1|Rr], [C1|Cr]):-
-    iterate(Types, [R1|Rr], [C1|Cr], R1, C1).
+setup(Types, [R1|Rr], [C1|Cr], Min):-
+    iterate(Types, [R1|Rr], [C1|Cr], R1, C1, Min).
     
 %Base case for the iteration of the list, last pieces eats the first one
-iterate([H|[]], [R1|[]], [C1|[]], Fr, Fc):-
-    eat(H, R1, Fr, C1, Fc).
+iterate([H|[]], [R1|[]], [C1|[]], Fr, Fc, Min):-
+    eat(H, R1, Fr, C1, Fc, Min).
     
 %General case for the iteration of the list, a piece eats the next one
-iterate([H|Tr], [R1,R2|Rr], [C1,C2|Cr], Fr, Fc):-
-    eat(H, R1, R2, C1, C2),
-    iterate(Tr, [R2|Rr], [C2|Cr], Fr, Fc).
+iterate([H|Tr], [R1,R2|Rr], [C1,C2|Cr], Fr, Fc, Min):-
+    eat(H, R1, R2, C1, C2, Min),
+    iterate(Tr, [R2|Rr], [C2|Cr], Fr, Fc, Min).
     
 %King move
-eat(1, R1, R2, C1, C2):-
+eat(1, R1, R2, C1, C2, Min):-
     ((R2 #= R1+1 #/\ (C2 #= C1 #\/ (C2 #= C1+1 #\/ C2 #= C1-1))) #\/
     (R2 #= R1 #/\ (C2 #= C1+1 #\/ C2 #= C1-1)) #\/
     (R2 #= R1-1 #/\ (C2 #= C1 #\/ (C2 #= C1+1 #\/ C2 #= C1-1)))).
 
 %Queen move
-eat(2, R1, R2, C1, C2).
+eat(2, R1, R2, C1, C2, Min):-
+    domain([X],1,Min),
+    ((R2 #= R1+X #/\ C2 #= C1+X) #\/ 
+    (R2 #= R1+X #/\ C2 #= C1-X) #\/ 
+    (R2 #= R1-X #/\ C2 #= C1+X) #\/ 
+    (R2 #= R1-X #/\ C2 #= C1-X) #\/ 
+    (R2 #= R1 #/\ C2 #\= C1) #\/ 
+    (R2 #\= R1 #/\ C2 #= C1)).
 
 %Rook move
-eat(3, R1, R2, C1, C2):-
+eat(3, R1, R2, C1, C2, Min):-
     ((R2 #= R1 #/\ C2 #\= C1) #\/ 
     (R2 #\= R1 #/\ C2 #= C1)).
     
 %Bishop move
-eat(4, R1, R2, C1, C2). 
+eat(4, R1, R2, C1, C2, Min):-
+    domain([X],1,Min),
+    ((R2 #= R1+X #/\ C2 #= C1+X) #\/ 
+    (R2 #= R1+X #/\ C2 #= C1-X) #\/ 
+    (R2 #= R1-X #/\ C2 #= C1+X) #\/ 
+    (R2 #= R1-X #/\ C2 #= C1-X)).
 
 %Knight move
-eat(5, R1, R2, C1, C2):-
+eat(5, R1, R2, C1, C2, Min):-
     ((R2 #= R1+2 #/\ (C2 #= C1+1 #\/ C2 #= C1-1)) #\/ 
     (R2 #= R1-2 #/\ (C2 #= C1+1 #\/ C2 #= C1-1)) #\/ 
     (C2 #= C1+2 #/\ (R2 #= R1+1 #\/ R2 #= R1-1)) #\/ 
     (C2 #= C1-2 #/\ (R2 #= R1+1 #\/ R2 #= R1-1))).
 
+%set_types base case
 set_types([], _, _, 0).
 
 %Alternates the types of the ordered pieces, so that after the move of a type1 piece, a type2 move follows and vice-versa.

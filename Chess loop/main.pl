@@ -42,53 +42,64 @@ nbishop(N, Rows, Cols) :-
 */
 
 %Solves the position of the pieces
-solve(Npieces, Nrows, Ncols, Type1, Type2, Types, Rows, Cols) :-
+solve(Npieces, Nrows, Ncols, Type1, Type2, Types, Pos) :-
     length(Types, Npieces),
-    length(Rows, Npieces),
-    domain(Rows, 1, Nrows),
-    length(Cols, Npieces),
-    domain(Cols, 1, Ncols),
+    length(Pos, Npieces),
+    Npos is Nrows * Ncols, domain(Pos, 1, Npos),
+    all_distinct(Pos),
     setTypes(Types, Type1, Type2, Npieces),
-    setup(Types, Rows, Cols),
-    labeling([ff], Rows),
-    labeling([ff], Cols).   
+    setup(Types, Pos, Ncols),
+    labeling([ff], Pos).   
 
 %Sets up the iteration function
-setup(Types, [R1|Rr], [C1|Cr]):-
-    iterate(Types, [R1|Rr], [C1|Cr], R1, C1).
+setup(Types, [P1|Pr], Ncols):-
+    iterate(Types, [P1|Pr], Ncols, P1).
     
 %Base case for the iteration of the list, last pieces eats the first one
-iterate([H|[]], [R1|[]], [C1|[]], Fr, Fc):-
-    eat(H, R1, Fr, C1, Fc).
+iterate([H|[]], [P1|[]], Ncols, Fp):-
+    R1 #= P1 / Ncols,
+    R2 #= Fp / Ncols,
+    C1 #= P1 mod Ncols,
+    C2 #= Fp mod Ncols,
+    eat(H, R1, R2, C1, C2),
+    write('\n').
     
 %General case for the iteration of the list, a piece eats the next one
-iterate([H|Tr], [R1,R2|Rr], [C1,C2|Cr], Fr, Fc):-
+iterate([H|Tr], [P1,P2|Pr], Ncols, Fp):-
+    R1 #= div(P1, Ncols),
+    R2 #= div(P2, Ncols),
+    C1 #= mod(P1, Ncols),
+    C2 #= mod(P2, Ncols),
     eat(H, R1, R2, C1, C2),
-    iterate(Tr, [R2|Rr], [C2|Cr], Fr, Fc).
+    write('\n'),
+    iterate(Tr, [P2|Pr], Ncols, Fp).
     
 %King move
 eat(1, R1, R2, C1, C2):-
-    (R2 #= R1+1 #/\ (C2 #= C1 #\/ C2 #= C1+1 #\/ C2 #= C1-1)) #\/
+    write('1'),
+    ((R2 #= R1+1 #/\ (C2 #= C1 #\/ C2 #= C1+1 #\/ C2 #= C1-1)) #\/
     (R2 #= R1 #/\ (C2 #= C1+1 #\/ C2 #= C1-1)) #\/
-    (R2 #= R1-1 #/\ (C2 #= C1 #\/ C2 #= C1+1 #\/ C2 #= C1-1)).
+    (R2 #= R1-1 #/\ (C2 #= C1 #\/ C2 #= C1+1 #\/ C2 #= C1-1))).
 
 %Queen move
 eat(2, R1, R2, C1, C2).
 
 %Rook move
 eat(3, R1, R2, C1, C2):-
-    (R2 #= R1 #/\ C2 #\= C1) #\/ 
-    (R2 #\= R1 #/\ C2 #= C1).
+    write('3'),
+    ((R2 #= R1 #/\ C2 #\= C1) #\/ 
+    (R2 #\= R1 #/\ C2 #= C1)).
     
 %Bishop move
 eat(4, R1, R2, C1, C2). 
 
 %Knight move
 eat(5, R1, R2, C1, C2):-
-    (R2 #= R1+2 #/\ (C2 #= C1+1 #\/ C2 #= C1-1)) #\/ 
+    write('5'),
+    ((R2 #= R1+2 #/\ (C2 #= C1+1 #\/ C2 #= C1-1)) #\/ 
     (R2 #= R1-2 #/\ (C2 #= C1+1 #\/ C2 #= C1-1)) #\/ 
     (C2 #= C1+2 #/\ (R2 #= R1+1 #\/ R2 #= R1-1)) #\/ 
-    (C2 #= C1+2 #/\ (R2 #= R1+1 #\/ R2 #= R1-1)).
+    (C2 #= C1-2 #/\ (R2 #= R1+1 #\/ R2 #= R1-1))).
 
 setTypes([], _, _, 0).
 

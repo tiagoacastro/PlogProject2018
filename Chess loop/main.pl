@@ -15,7 +15,8 @@ solve(Npieces, Nrows, Ncols, Type1, Type2, Types, Rows, Cols) :-
     get_min(Nrows, Ncols, Min),
     setup(Types, Rows, Cols, Min),
     labeling([ff], Rows),
-    labeling([ff], Cols).   
+    labeling([ff], Cols),
+    display_solution(Nrows, Ncols, Types, Rows, Cols).
 
 %prepare base case
 prepare(Ncols, [], [], []).
@@ -89,3 +90,28 @@ give_type(Type1, Type1, Type2, 0).
 
 %Sets the type2 for the odd pieces
 give_type(Type2, Type1, Type2, 1).
+
+display_solution(Nrows, Ncols, Types, Rows, Cols) :-
+    length(IntBoard, Nrows),
+    init_board(IntBoard, Ncols),
+    fill_board(IntBoard, Types, Rows, Cols, Board),
+    display_board(Board, Ncols).
+
+init_board([], _).
+
+init_board([Row|T], Ncols) :-
+    length(Row, Ncols),
+    fillRow(Row),
+    init_board(T, Ncols).
+
+fillRow([]).
+
+fillRow([' '|T]) :-
+    fillRow(T).
+
+fill_board(Board, [], [], [], Board).
+
+fill_board(Board, [Htypes|Ttypes], [Hrows|Trows], [Hcols|Tcols], BoardOut) :-
+    changePosition(Board, Hrows, Hcols, Htypes, NewBoard),
+    fill_board(NewBoard, Ttypes, Trows, Tcols, BoardOut).
+

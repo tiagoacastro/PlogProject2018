@@ -70,5 +70,23 @@ display_line([H|T]) :-
 
 display_position(Elem) :-
     write(' '),
-    write(Elem),
+    convert_element(Elem),
+    write(' ').
+
+convert_element(1) :-
+    put_code(0x2654) , !.
+
+convert_element(2) :-
+    put_code(0x2655) , !.
+
+convert_element(3) :-
+    put_code(0x2656) , !.
+
+convert_element(4) :-
+    put_code(0x2657) , !.
+
+convert_element(5) :-
+    put_code(0x2658) , !.
+
+convert_element(_) :-
     write(' ').

@@ -5,8 +5,6 @@
 solve(Npieces, Nrows, Ncols, Type1, Type2, Types, Rows, Cols) :-
     length(Types, Npieces), length(Rows, Npieces), length(Cols, Npieces), length(Res, Npieces),
     domain(Rows, 1, Nrows), domain(Cols, 1, Ncols),
-    prepare(Ncols, Rows, Cols, Res),
-    all_distinct(Res),
     set_types(Types, Type1, Type2, Npieces),
     get_min(Nrows, Ncols, Min),
     setup(Types, Rows, Cols, Min),
@@ -14,32 +12,51 @@ solve(Npieces, Nrows, Ncols, Type1, Type2, Types, Rows, Cols) :-
     labeling([ff], Cols),
     display_solution(Nrows, Ncols, Types, Rows, Cols).
 
-%prepare base case
-prepare(Ncols, [], [], []).
-
-%makes a list of the positions in order to later call all_distinct on it
-prepare(Ncols, [R|Rr], [C|Cr], [P|Pr]):-
-    P #= R * Ncols + C,
-    prepare(Ncols, Rr, Cr, Pr).
-
 %Sets up the iteration function
 setup(Types, [R1|Rr], [C1|Cr], Min):-
-    iterate(Types, [R1|Rr], [C1|Cr], R1, C1, Min).
+    iterate(Types, [R1|Rr], [C1|Cr], R1, C1, Min, [R1|Rr], [C1|Cr], 1).
     
 %Base case for the iteration of the list, last pieces eats the first one
-iterate([H|[]], [R1|[]], [C1|[]], Fr, Fc, Min):-
-    eat(H, R1, Fr, C1, Fc, Min).
+iterate([H|[]], [R1|[]], [C1|[]], Fr, Fc, Min, Rows, Columns, Index):-
+    eat(H, R1, Fr, C1, Fc, Min),
+    Index2 is 1,
+    restrict(H, R1, C1, Rows, Columns, Index, Index2, Min, 1).
     
 %General case for the iteration of the list, a piece eats the next one
-iterate([H|Tr], [R1,R2|Rr], [C1,C2|Cr], Fr, Fc, Min):-
+iterate([H|Tr], [R1,R2|Rr], [C1,C2|Cr], Fr, Fc, Min, Rows, Columns, Index):-
     eat(H, R1, R2, C1, C2, Min),
-    iterate(Tr, [R2|Rr], [C2|Cr], Fr, Fc, Min).
+    Index2 is Index + 1,
+    restrict(H, R1, C1, Rows, Columns, Index, Index2, Min, 1),
+    iterate(Tr, [R2|Rr], [C2|Cr], Fr, Fc, Min, Rows, Columns, Index2).
+
+restrict(H, R1, C1, [], [], Index1, Index2, Min, N).
+
+restrict(H, R1, C1, [R2|R], [C2|C], Index1, Index2, Min, N):-
+    N = Index1,
+    New is N + 1,
+    restrict(H, R1, C1, R, C, Index1, Index2, Min, New), !.
+
+restrict(H, R1, C1, [R2|R], [C2|C], Index1, Index2, Min, N):-
+    N = Index2,
+    New is N + 1,
+    restrict(H, R1, C1, R, C, Index1, Index2, Min, New), !.
+
+restrict(H, R1, C1, [R2|R], [C2|C], Index1, Index2, Min, N):-
+    dont_eat(H, R1, R2, C1, C2, Min),
+    New is N + 1,
+    restrict(H, R1, C1, R, C, Index1, Index2, Min, New).
     
 %King move
 eat(1, R1, R2, C1, C2, Min):-
-    ((R2 #= R1+1 #/\ (C2 #= C1 #\/ (C2 #= C1+1 #\/ C2 #= C1-1))) #\/
+    (R2 #= R1+1 #/\ (C2 #= C1 #\/ (C2 #= C1+1 #\/ C2 #= C1-1))) #\/
     (R2 #= R1 #/\ (C2 #= C1+1 #\/ C2 #= C1-1)) #\/
-    (R2 #= R1-1 #/\ (C2 #= C1 #\/ (C2 #= C1+1 #\/ C2 #= C1-1)))).
+    (R2 #= R1-1 #/\ (C2 #= C1 #\/ (C2 #= C1+1 #\/ C2 #= C1-1))).
+
+dont_eat(1, R1, R2, C1, C2, Min):-
+    R2 #> R1+1 #\/
+    R2 #< R1-1 #\/
+    C2 #> C1+1 #\/
+    C2 #< C1-1.
 
 %Queen move
 eat(2, R1, R2, C1, C2, Min):-
@@ -66,10 +83,16 @@ eat(4, R1, R2, C1, C2, Min):-
 
 %Knight move
 eat(5, R1, R2, C1, C2, Min):-
+    (R2 #= R1+2 #/\ (C2 #= C1+1 #\/ C2 #= C1-1)) #\/ 
+    (R2 #= R1-2 #/\ (C2 #= C1+1 #\/ C2 #= C1-1)) #\/ 
+    (C2 #= C1+2 #/\ (R2 #= R1+1 #\/ R2 #= R1-1)) #\/ 
+    (C2 #= C1-2 #/\ (R2 #= R1+1 #\/ R2 #= R1-1)).    
+
+dont_eat(5, R1, R2, C1, C2, Min):-
     ((R2 #= R1+2 #/\ (C2 #= C1+1 #\/ C2 #= C1-1)) #\/ 
     (R2 #= R1-2 #/\ (C2 #= C1+1 #\/ C2 #= C1-1)) #\/ 
     (C2 #= C1+2 #/\ (R2 #= R1+1 #\/ R2 #= R1-1)) #\/ 
-    (C2 #= C1-2 #/\ (R2 #= R1+1 #\/ R2 #= R1-1))).    
+    (C2 #= C1-2 #/\ (R2 #= R1+1 #\/ R2 #= R1-1))) #<=> 0.
 
 %set_types base case
 set_types([], _, _, 0).

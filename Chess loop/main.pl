@@ -82,9 +82,13 @@ eat(2, R1, R2, C1, C2, Min):-
     (R2 #= R1 #/\ C2 #\= C1) #\/ 
     (R2 #\= R1 #/\ C2 #= C1)).
 
+%Restrictions applied to the foreign pieces when the attack is done by a Queen
 dont_eat(2, R1, R2, C1, C2, Min):-
     R2 #\= R1 #/\ C2 #\= C1,
-    
+    restrict_diagonal_NE(R1, R2, C1, C2, Min),
+    restrict_diagonal_SE(R1, R2, C1, C2, Min),
+    restrict_diagonal_SW(R1, R2, C1, C2, Min),
+    restrict_diagonal_NW(R1, R2, C1, C2, Min).
 
 %Rook move
 eat(3, R1, R2, C1, C2, Min):-
@@ -93,21 +97,7 @@ eat(3, R1, R2, C1, C2, Min):-
 
 %Restrictions applied to the foreign pieces when the attack is done by a Rook
 dont_eat(3, R1, R2, C1, C2, Min):-
-    R2 #\= R1 #/\ C2 #\= C1,
-    restrict_diagonal_NE(R1, R2, C1, C2, Min),
-    restrict_diagonal_SE(R1, R2, C1, C2, Min),
-    restrict_diagonal_SW(R1, R2, C1, C2, Min),
-    restrict_diagonal_NW(R1, R2, C1, C2, Min).
-
-/*
-dont_eat(3, R1, R2, C1, C2, Min):-
-    (Rp #= R1) #<=> R,
-    ((R = 1, R2 #\= R1);
-    R2 #\= R1),
-    (Cp #= C1) #<=> C,
-    ((C = 1, C2 #\= C1);
-    C2 #\= C1).
-*/
+    R2 #\= R1 #/\ C2 #\= C1.
 
 %Bishop move
 eat(4, R1, R2, C1, C2, Min):-
@@ -117,6 +107,7 @@ eat(4, R1, R2, C1, C2, Min):-
     (R2 #= R1-X #/\ C2 #= C1+X) #\/ 
     (R2 #= R1-X #/\ C2 #= C1-X)).
 
+%Restrictions applied to the foreign pieces when the attack is done by a Bishop
 dont_eat(4, R1, R2, C1, C2, Min):-
     restrict_diagonal_NE(R1, R2, C1, C2, Min),
     restrict_diagonal_SE(R1, R2, C1, C2, Min),

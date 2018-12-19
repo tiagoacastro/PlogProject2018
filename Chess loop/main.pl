@@ -10,15 +10,12 @@ solve(Npieces, Nrows, Ncols, Type1, Type2, Res) :-
     get_min(Nrows, Ncols, Min),
     setup(Types, Rows, Cols, Min),
     labeling([ff], Res),
-%    labeling([ff], Rows),
-%    labeling([ff], Cols),
     display_solution(Nrows, Ncols, Types, Rows, Cols).
-
 
 %prepare base case
 prepare(Ncols, [], [], []).
 
-%makes a list of the positions in order to later call all_distinct on it
+%makes a list of the absolute positions
 prepare(Ncols, [R|Rr], [C|Cr], [P|Pr]):-
     P #= R * Ncols + C - 4,
     prepare(Ncols, Rr, Cr, Pr).
@@ -40,18 +37,23 @@ iterate([H|Tr], [R1,R2|Rr], [C1,C2|Cr], Fr, Fc, Min, Rows, Columns, Index):-
     restrict(H, R1, C1, Rows, Columns, Index, Index2, Min, 1),
     iterate(Tr, [R2|Rr], [C2|Cr], Fr, Fc, Min, Rows, Columns, Index2).
 
+%restrict base case
 restrict(H, R1, C1, [], [], Index1, Index2, Min, N).
 
+%restrict when the analyzed piece is the one attacking (do nothing)
 restrict(H, R1, C1, [R2|R], [C2|C], Index1, Index2, Min, N):-
     N = Index1,
     New is N + 1,
     restrict(H, R1, C1, R, C, Index1, Index2, Min, New), !.
 
+%restrict when the analyzed piece is the one being attacked (do nothing)
 restrict(H, R1, C1, [R2|R], [C2|C], Index1, Index2, Min, N):-
     N = Index2,
     New is N + 1,
     restrict(H, R1, C1, R, C, Index1, Index2, Min, New), !.
 
+%restrict when the analyzed piece is foreign (not involved in the current play)
+%makes so the foreign piece can't be in positions attackable by the current atacker
 restrict(H, R1, C1, [R2|R], [C2|C], Index1, Index2, Min, N):-
     dont_eat(H, R1, R2, C1, C2, Min),
     New is N + 1,
@@ -63,6 +65,7 @@ eat(1, R1, R2, C1, C2, Min):-
     (R2 #= R1 #/\ (C2 #= C1+1 #\/ C2 #= C1-1)) #\/
     (R2 #= R1-1 #/\ (C2 #= C1 #\/ (C2 #= C1+1 #\/ C2 #= C1-1))).
 
+%Restrictions applied to the foreign pieces when the attack is done by a King
 dont_eat(1, R1, R2, C1, C2, Min):-
     R2 #> R1+1 #\/
     R2 #< R1-1 #\/
@@ -84,7 +87,7 @@ eat(3, R1, R2, C1, C2, Min):-
     (R2 #= R1 #/\ C2 #\= C1) #\/ 
     (R2 #\= R1 #/\ C2 #= C1).
 
-%Rook move
+%Restrictions applied to the foreign pieces when the attack is done by a Rook
 dont_eat(3, R1, R2, C1, C2, Min):-
     R2 #\= R1 #/\ C2 #\= C1.
     
@@ -103,6 +106,7 @@ eat(5, R1, R2, C1, C2, Min):-
     (C2 #= C1+2 #/\ (R2 #= R1+1 #\/ R2 #= R1-1)) #\/ 
     (C2 #= C1-2 #/\ (R2 #= R1+1 #\/ R2 #= R1-1)).    
 
+%Restrictions applied to the foreign pieces when the attack is done by a Knight
 dont_eat(5, R1, R2, C1, C2, Min):-
     ((R2 #= R1+2 #/\ (C2 #= C1+1 #\/ C2 #= C1-1)) #\/ 
     (R2 #= R1-2 #/\ (C2 #= C1+1 #\/ C2 #= C1-1)) #\/ 
@@ -155,4 +159,3 @@ fill_board(Board, [], [], [], Board).
 fill_board(Board, [Htypes|Ttypes], [Hrows|Trows], [Hcols|Tcols], BoardOut) :-
     changePosition(Board, Hrows, Hcols, Htypes, NewBoard),
     fill_board(NewBoard, Ttypes, Trows, Tcols, BoardOut).
-

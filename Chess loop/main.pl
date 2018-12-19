@@ -12,10 +12,10 @@ solve(Npieces, Nrows, Ncols, Type1, Type2, Res) :-
     labeling([ff], Res),
     display_solution(Nrows, Ncols, Types, Rows, Cols).
 
-%prepare base case
+%Prepare base case
 prepare(Ncols, [], [], []).
 
-%makes a list of the absolute positions
+%Makes a list of the absolute positions
 prepare(Ncols, [R|Rr], [C|Cr], [P|Pr]):-
     P #= R * Ncols + C - 4,
     prepare(Ncols, Rr, Cr, Pr).
@@ -37,23 +37,23 @@ iterate([H|Tr], [R1,R2|Rr], [C1,C2|Cr], Fr, Fc, Min, Rows, Columns, Index):-
     restrict(H, R1, C1, Rows, Columns, Index, Index2, Min, 1),
     iterate(Tr, [R2|Rr], [C2|Cr], Fr, Fc, Min, Rows, Columns, Index2).
 
-%restrict base case
+%Restrict base case
 restrict(H, R1, C1, [], [], Index1, Index2, Min, N).
 
-%restrict when the analyzed piece is the one attacking (do nothing)
+%Restrict when the analyzed piece is the one attacking (do nothing)
 restrict(H, R1, C1, [R2|R], [C2|C], Index1, Index2, Min, N):-
     N = Index1,
     New is N + 1,
     restrict(H, R1, C1, R, C, Index1, Index2, Min, New), !.
 
-%restrict when the analyzed piece is the one being attacked (do nothing)
+%Restrict when the analyzed piece is the one being attacked (do nothing)
 restrict(H, R1, C1, [R2|R], [C2|C], Index1, Index2, Min, N):-
     N = Index2,
     New is N + 1,
     restrict(H, R1, C1, R, C, Index1, Index2, Min, New), !.
 
-%restrict when the analyzed piece is foreign (not involved in the current play)
-%makes so the foreign piece can't be in positions attackable by the current atacker
+%Restrict when the analyzed piece is foreign (not involved in the current play)
+%Makes so the foreign piece can't be in positions attackable by the current atacker
 restrict(H, R1, C1, [R2|R], [C2|C], Index1, Index2, Min, N):-
     dont_eat(H, R1, R2, C1, C2, Min),
     New is N + 1,
@@ -113,7 +113,7 @@ dont_eat(5, R1, R2, C1, C2, Min):-
     (C2 #= C1+2 #/\ (R2 #= R1+1 #\/ R2 #= R1-1)) #\/ 
     (C2 #= C1-2 #/\ (R2 #= R1+1 #\/ R2 #= R1-1))) #<=> 0.
 
-%set_types base case
+%Set_types base case
 set_types([], _, _, 0).
 
 %Alternates the types of the ordered pieces, so that after the move of a type1 piece, a type2 move follows and vice-versa.

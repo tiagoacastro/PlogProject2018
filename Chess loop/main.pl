@@ -70,8 +70,12 @@ eat(2, R1, R2, C1, C2, Min):-
 
 %Rook move
 eat(3, R1, R2, C1, C2, Min):-
-    ((R2 #= R1 #/\ C2 #\= C1) #\/ 
-    (R2 #\= R1 #/\ C2 #= C1)).
+    (R2 #= R1 #/\ C2 #\= C1) #\/ 
+    (R2 #\= R1 #/\ C2 #= C1).
+
+%Rook move
+dont_eat(3, R1, R2, C1, C2, Min):-
+    R2 #\= R1 #/\ C2 #\= C1.
     
 %Bishop move
 eat(4, R1, R2, C1, C2, Min):-

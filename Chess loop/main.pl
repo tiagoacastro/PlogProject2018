@@ -2,15 +2,26 @@
 :- include('utilities.pl').
 
 %Solves the position of the pieces
-solve(Npieces, Nrows, Ncols, Type1, Type2, Types, Rows, Cols) :-
+solve(Npieces, Nrows, Ncols, Type1, Type2, Res) :-
     length(Types, Npieces), length(Rows, Npieces), length(Cols, Npieces), length(Res, Npieces),
     domain(Rows, 1, Nrows), domain(Cols, 1, Ncols),
+    prepare(Ncols, Rows, Cols, Res),
     set_types(Types, Type1, Type2, Npieces),
     get_min(Nrows, Ncols, Min),
     setup(Types, Rows, Cols, Min),
-    labeling([ff], Rows),
-    labeling([ff], Cols),
+    labeling([ff], Res),
+%    labeling([ff], Rows),
+%    labeling([ff], Cols),
     display_solution(Nrows, Ncols, Types, Rows, Cols).
+
+
+%prepare base case
+prepare(Ncols, [], [], []).
+
+%makes a list of the positions in order to later call all_distinct on it
+prepare(Ncols, [R|Rr], [C|Cr], [P|Pr]):-
+    P #= R * Ncols + C - 4,
+    prepare(Ncols, Rr, Cr, Pr).
 
 %Sets up the iteration function
 setup(Types, [R1|Rr], [C1|Cr], Min):-

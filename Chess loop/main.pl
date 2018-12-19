@@ -2,7 +2,8 @@
 :- include('utilities.pl').
 
 %Solves the position of the pieces
-solve(Npieces, Nrows, Ncols, Type1, Type2, Res) :-
+solve(N, Nrows, Ncols, Type1, Type2, Res) :-
+    Npieces is N * 2,
     length(Types, Npieces), length(Rows, Npieces), length(Cols, Npieces), length(Res, Npieces),
     domain(Rows, 1, Nrows), domain(Cols, 1, Ncols),
     prepare(Ncols, Rows, Cols, Res),
@@ -84,7 +85,8 @@ eat(2, R1, R2, C1, C2, Min):-
 
 %Restrictions applied to the foreign pieces when the attack is done by a Queen
 dont_eat(2, R1, R2, C1, C2, Min):-
-    R2 #\= R1 #/\ C2 #\= C1,
+    R2 #\= R1, 
+    C2 #\= C1,
     restrict_diagonal_NE(R1, R2, C1, C2, Min),
     restrict_diagonal_SE(R1, R2, C1, C2, Min),
     restrict_diagonal_SW(R1, R2, C1, C2, Min),
@@ -97,7 +99,8 @@ eat(3, R1, R2, C1, C2, Min):-
 
 %Restrictions applied to the foreign pieces when the attack is done by a Rook
 dont_eat(3, R1, R2, C1, C2, Min):-
-    R2 #\= R1 #/\ C2 #\= C1.
+    R2 #\= R1,
+    C2 #\= C1.
 
 %Bishop move
 eat(4, R1, R2, C1, C2, Min):-
@@ -109,6 +112,7 @@ eat(4, R1, R2, C1, C2, Min):-
 
 %Restrictions applied to the foreign pieces when the attack is done by a Bishop
 dont_eat(4, R1, R2, C1, C2, Min):-
+    (R2 #= R1 #/\ C2 #= C1) #<=> 0,
     restrict_diagonal_NE(R1, R2, C1, C2, Min),
     restrict_diagonal_SE(R1, R2, C1, C2, Min),
     restrict_diagonal_SW(R1, R2, C1, C2, Min),

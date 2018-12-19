@@ -3,12 +3,8 @@
 
 %Solves the position of the pieces
 solve(Npieces, Nrows, Ncols, Type1, Type2, Types, Rows, Cols) :-
-    length(Types, Npieces),
-    length(Rows, Npieces),
-    domain(Rows, 1, Nrows),
-    length(Cols, Npieces),
-    domain(Cols, 1, Ncols),
-    length(Res, Npieces),
+    length(Types, Npieces), length(Rows, Npieces), length(Cols, Npieces), length(Res, Npieces),
+    domain(Rows, 1, Nrows), domain(Cols, 1, Ncols),
     prepare(Ncols, Rows, Cols, Res),
     all_distinct(Res),
     set_types(Types, Type1, Type2, Npieces),
@@ -73,7 +69,7 @@ eat(5, R1, R2, C1, C2, Min):-
     ((R2 #= R1+2 #/\ (C2 #= C1+1 #\/ C2 #= C1-1)) #\/ 
     (R2 #= R1-2 #/\ (C2 #= C1+1 #\/ C2 #= C1-1)) #\/ 
     (C2 #= C1+2 #/\ (R2 #= R1+1 #\/ R2 #= R1-1)) #\/ 
-    (C2 #= C1-2 #/\ (R2 #= R1+1 #\/ R2 #= R1-1))).
+    (C2 #= C1-2 #/\ (R2 #= R1+1 #\/ R2 #= R1-1))).    
 
 %set_types base case
 set_types([], _, _, 0).
@@ -91,26 +87,33 @@ give_type(Type1, Type1, Type2, 0).
 %Sets the type2 for the odd pieces
 give_type(Type2, Type1, Type2, 1).
 
+%Creates empty board and fills it with pieces in the correct positions
 display_solution(Nrows, Ncols, Types, Rows, Cols) :-
     length(IntBoard, Nrows),
     init_board(IntBoard, Ncols),
     fill_board(IntBoard, Types, Rows, Cols, Board),
     display_board(Board, Ncols).
 
+%Base case
 init_board([], _).
 
+%For each row, creates an array with length = number of columns
 init_board([Row|T], Ncols) :-
     length(Row, Ncols),
     fillRow(Row),
     init_board(T, Ncols).
 
+%Base vase
 fillRow([]).
 
+%Fills row with empty spaces
 fillRow([' '|T]) :-
     fillRow(T).
 
+%Base case
 fill_board(Board, [], [], [], Board).
 
+%Fills board with pieces in their respective positions
 fill_board(Board, [Htypes|Ttypes], [Hrows|Trows], [Hcols|Tcols], BoardOut) :-
     changePosition(Board, Hrows, Hcols, Htypes, NewBoard),
     fill_board(NewBoard, Ttypes, Trows, Tcols, BoardOut).

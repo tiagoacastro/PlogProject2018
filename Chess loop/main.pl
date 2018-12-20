@@ -14,7 +14,7 @@ solve(N, Nrows, Ncols, Type1, Type2, Res) :-
     display_solution(Nrows, Ncols, Types, Rows, Cols).
 
 %Prepare base case
-prepare(Ncols, [], [], []).
+prepare(_, [], [], []).
 
 %Makes a list of the absolute positions
 prepare(Ncols, [R|Rr], [C|Cr], [P|Pr]):-
@@ -39,16 +39,16 @@ iterate([H|Tr], [R1,R2|Rr], [C1,C2|Cr], Fr, Fc, Min, Rows, Columns, Index):-
     iterate(Tr, [R2|Rr], [C2|Cr], Fr, Fc, Min, Rows, Columns, Index2).
 
 %Restrict base case
-restrict(H, R1, C1, [], [], Index1, Index2, Min, N).
+restrict(_, _, _, [], [], _, _, _, _).
 
 %Restrict when the analyzed piece is the one attacking (do nothing)
-restrict(H, R1, C1, [R2|R], [C2|C], Index1, Index2, Min, N):-
+restrict(H, R1, C1, [_|R], [_|C], Index1, Index2, Min, N):-
     N = Index1,
     New is N + 1,
     restrict(H, R1, C1, R, C, Index1, Index2, Min, New), !.
 
 %Restrict when the analyzed piece is the one being attacked (do nothing)
-restrict(H, R1, C1, [R2|R], [C2|C], Index1, Index2, Min, N):-
+restrict(H, R1, C1, [_|R], [_|C], Index1, Index2, Min, N):-
     N = Index2,
     New is N + 1,
     restrict(H, R1, C1, R, C, Index1, Index2, Min, New), !.
@@ -61,17 +61,10 @@ restrict(H, R1, C1, [R2|R], [C2|C], Index1, Index2, Min, N):-
     restrict(H, R1, C1, R, C, Index1, Index2, Min, New).
     
 %King move
-eat(1, R1, R2, C1, C2, Min):-
+eat(1, R1, R2, C1, C2, _):-
     (R2 #= R1+1 #/\ (C2 #= C1 #\/ (C2 #= C1+1 #\/ C2 #= C1-1))) #\/
     (R2 #= R1 #/\ (C2 #= C1+1 #\/ C2 #= C1-1)) #\/
     (R2 #= R1-1 #/\ (C2 #= C1 #\/ (C2 #= C1+1 #\/ C2 #= C1-1))).
-
-%Restrictions applied to the foreign pieces when the attack is done by a King
-dont_eat(1, R1, R2, C1, C2, Min):-
-    R2 #> R1+1 #\/
-    R2 #< R1-1 #\/
-    C2 #> C1+1 #\/
-    C2 #< C1-1.
 
 %Queen move
 eat(2, R1, R2, C1, C2, Min):-
@@ -83,24 +76,10 @@ eat(2, R1, R2, C1, C2, Min):-
     (R2 #= R1 #/\ C2 #\= C1) #\/ 
     (R2 #\= R1 #/\ C2 #= C1)).
 
-%Restrictions applied to the foreign pieces when the attack is done by a Queen
-dont_eat(2, R1, R2, C1, C2, Min):-
-    R2 #\= R1, 
-    C2 #\= C1,
-    restrict_diagonal_NE(R1, R2, C1, C2, Min),
-    restrict_diagonal_SE(R1, R2, C1, C2, Min),
-    restrict_diagonal_SW(R1, R2, C1, C2, Min),
-    restrict_diagonal_NW(R1, R2, C1, C2, Min).
-
 %Rook move
-eat(3, R1, R2, C1, C2, Min):-
+eat(3, R1, R2, C1, C2, _):-
     (R2 #= R1 #/\ C2 #\= C1) #\/ 
     (R2 #\= R1 #/\ C2 #= C1).
-
-%Restrictions applied to the foreign pieces when the attack is done by a Rook
-dont_eat(3, R1, R2, C1, C2, Min):-
-    R2 #\= R1,
-    C2 #\= C1.
 
 %Bishop move
 eat(4, R1, R2, C1, C2, Min):-
@@ -110,30 +89,51 @@ eat(4, R1, R2, C1, C2, Min):-
     (R2 #= R1-X #/\ C2 #= C1+X) #\/ 
     (R2 #= R1-X #/\ C2 #= C1-X)).
 
+%Knight move
+eat(5, R1, R2, C1, C2, _):-
+    (R2 #= R1+2 #/\ (C2 #= C1+1 #\/ C2 #= C1-1)) #\/ 
+    (R2 #= R1-2 #/\ (C2 #= C1+1 #\/ C2 #= C1-1)) #\/ 
+    (C2 #= C1+2 #/\ (R2 #= R1+1 #\/ R2 #= R1-1)) #\/ 
+    (C2 #= C1-2 #/\ (R2 #= R1+1 #\/ R2 #= R1-1)). 
+
+%Restrictions applied to the foreign pieces when the attack is done by a King
+dont_eat(1, R1, R2, C1, C2, _):-
+    R2 #> R1+1 #\/
+    R2 #< R1-1 #\/
+    C2 #> C1+1 #\/
+    C2 #< C1-1.
+
+%Restrictions applied to the foreign pieces when the attack is done by a Queen
+dont_eat(2, R1, R2, C1, C2, Min):-
+    R2 #\= R1, 
+    C2 #\= C1,
+    restrict_diagonal_NE(R1, R2, C1, C2, Min),
+    restrict_diagonal_SE(R1, R2, C1, C2, Min),
+    restrict_diagonal_SW(R1, R2, C1, C2, Min),
+    restrict_diagonal_NW(R1, R2, C1, C2, Min).
+
+%Restrictions applied to the foreign pieces when the attack is done by a Rook
+dont_eat(3, R1, R2, C1, C2, _):-
+    R2 #\= R1,
+    C2 #\= C1.
+
 %Restrictions applied to the foreign pieces when the attack is done by a Bishop
 dont_eat(4, R1, R2, C1, C2, Min):-
     (R2 #= R1 #/\ C2 #= C1) #<=> 0,
     restrict_diagonal_NE(R1, R2, C1, C2, Min),
     restrict_diagonal_SE(R1, R2, C1, C2, Min),
     restrict_diagonal_SW(R1, R2, C1, C2, Min),
-    restrict_diagonal_NW(R1, R2, C1, C2, Min).
-
-%Knight move
-eat(5, R1, R2, C1, C2, Min):-
-    (R2 #= R1+2 #/\ (C2 #= C1+1 #\/ C2 #= C1-1)) #\/ 
-    (R2 #= R1-2 #/\ (C2 #= C1+1 #\/ C2 #= C1-1)) #\/ 
-    (C2 #= C1+2 #/\ (R2 #= R1+1 #\/ R2 #= R1-1)) #\/ 
-    (C2 #= C1-2 #/\ (R2 #= R1+1 #\/ R2 #= R1-1)).    
+    restrict_diagonal_NW(R1, R2, C1, C2, Min).   
 
 %Restrictions applied to the foreign pieces when the attack is done by a Knight
-dont_eat(5, R1, R2, C1, C2, Min):-
+dont_eat(5, R1, R2, C1, C2, _):-
     ((R2 #= R1+2 #/\ (C2 #= C1+1 #\/ C2 #= C1-1)) #\/ 
     (R2 #= R1-2 #/\ (C2 #= C1+1 #\/ C2 #= C1-1)) #\/ 
     (C2 #= C1+2 #/\ (R2 #= R1+1 #\/ R2 #= R1-1)) #\/ 
     (C2 #= C1-2 #/\ (R2 #= R1+1 #\/ R2 #= R1-1))) #<=> 0.
 
 %Restrict_diagonal_NE base case
-restrict_diagonal_NE(R1, R2, C1, C2, 0).
+restrict_diagonal_NE(_, _, _, _, 0).
 
 %Restricts NE diagonal of the attacker as forbidden for all foreign pieces
 restrict_diagonal_NE(R1, R2, C1, C2, N):-
@@ -143,7 +143,7 @@ restrict_diagonal_NE(R1, R2, C1, C2, N):-
     restrict_diagonal_NE(R1, R2, C1, C2, Next).
 
 %Restrict_diagonal_SE base case
-restrict_diagonal_SE(R1, R2, C1, C2, 0).
+restrict_diagonal_SE(_, _, _, _, 0).
 
 %Restricts SE diagonal of the attacker as forbidden for all foreign pieces
 restrict_diagonal_SE(R1, R2, C1, C2, N):-
@@ -153,7 +153,7 @@ restrict_diagonal_SE(R1, R2, C1, C2, N):-
     restrict_diagonal_SE(R1, R2, C1, C2, Next).
 
 %Restrict_diagonal_SW base case
-restrict_diagonal_SW(R1, R2, C1, C2, 0).
+restrict_diagonal_SW(_, _, _, _, 0).
 
 %Restricts SW diagonal of the attacker as forbidden for all foreign pieces
 restrict_diagonal_SW(R1, R2, C1, C2, N):-
@@ -163,7 +163,7 @@ restrict_diagonal_SW(R1, R2, C1, C2, N):-
     restrict_diagonal_SW(R1, R2, C1, C2, Next).
 
 %Restrict_diagonal_NW base case
-restrict_diagonal_NW(R1, R2, C1, C2, 0).
+restrict_diagonal_NW(_, _, _, _, 0).
 
 %Restricts NW diagonal of the attacker as forbidden for all foreign pieces
 restrict_diagonal_NW(R1, R2, C1, C2, N):-
@@ -183,10 +183,10 @@ set_types([H|R], Type1, Type2, Npieces):-
     set_types(R, Type1, Type2, Next).
 
 %Sets the type1 for the even pieces
-give_type(Type1, Type1, Type2, 0).
+give_type(Type1, Type1, _, 0).
 
 %Sets the type2 for the odd pieces
-give_type(Type2, Type1, Type2, 1).
+give_type(Type2, _, Type2, 1).
 
 %Creates empty board and fills it with pieces in the correct positions
 display_solution(Nrows, Ncols, Types, Rows, Cols) :-

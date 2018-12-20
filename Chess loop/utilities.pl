@@ -25,7 +25,7 @@ setRow(N, Column, [H|TIn], Piece, [H|TOut]) :-
     NewN is N-1,
     setRow(NewN, Column, TIn, Piece, TOut).
 
-setColumn(1, [HIn|T], Piece, [Piece|T] ).
+setColumn(1, [_|T], Piece, [Piece|T] ).
 
 setColumn(N, [H|TIn], Piece, [H|TOut]) :-
     NewN is N-1,

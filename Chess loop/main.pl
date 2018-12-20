@@ -89,17 +89,22 @@ eat(1, R1, R2, C1, C2, _):-
 %Queen move
 eat(2, R1, R2, C1, C2, Min):-
     domain([X],1,Min),
-    ((R2 #= R1+X #/\ C2 #= C1+X) #\/ 
+    ((R2 #= R1 #/\ C2 #= C1+X) #\/ 
+    (R2 #= R1 #/\ C2 #= C1-X) #\/ 
+    (R2 #= R1+X #/\ C2 #= C1) #\/ 
+    (R2 #= R1-X #/\ C2 #= C1) #\/
+    (R2 #= R1+X #/\ C2 #= C1+X) #\/ 
     (R2 #= R1+X #/\ C2 #= C1-X) #\/ 
     (R2 #= R1-X #/\ C2 #= C1+X) #\/ 
-    (R2 #= R1-X #/\ C2 #= C1-X) #\/ 
-    (R2 #= R1 #/\ C2 #\= C1) #\/ 
-    (R2 #\= R1 #/\ C2 #= C1)).
+    (R2 #= R1-X #/\ C2 #= C1-X)).
 
 %Rook move
-eat(3, R1, R2, C1, C2, _):-
-    (R2 #= R1 #/\ C2 #\= C1) #\/ 
-    (R2 #\= R1 #/\ C2 #= C1).
+eat(3, R1, R2, C1, C2, Min):-
+    domain([X],1,Min),
+    ((R2 #= R1 #/\ C2 #= C1+X) #\/ 
+    (R2 #= R1 #/\ C2 #= C1-X) #\/ 
+    (R2 #= R1+X #/\ C2 #= C1) #\/ 
+    (R2 #= R1-X #/\ C2 #= C1)).
 
 %Bishop move
 eat(4, R1, R2, C1, C2, Min):-
@@ -125,18 +130,26 @@ dont_eat(1, R1, R2, C1, C2, _, _, _):-
 
 %Restrictions applied to the foreign pieces when the attack is done by a Queen
 dont_eat(2, R1, R2, C1, C2, Min, R, C):-
-    R2 #\= R1, 
-    C2 #\= C1,
-    V #= 0,
-    restrict_NE(R1, R2, C1, C2, 1, Min, R, C, V),
-    restrict_SE(R1, R2, C1, C2, 1, Min, R, C, V),
-    restrict_SW(R1, R2, C1, C2, 1, Min, R, C, V),
-    restrict_NW(R1, R2, C1, C2, 1, Min, R, C, V).
+    (R2 #= R1 #/\ C2 #= C1) #<=> 0,
+    V1 #= 0,
+    restrict_N(R1, R2, C1, C2, 1, Min, R, C, V1),
+    restrict_E(R1, R2, C1, C2, 1, Min, R, C, V1),
+    restrict_S(R1, R2, C1, C2, 1, Min, R, C, V1),
+    restrict_W(R1, R2, C1, C2, 1, Min, R, C, V1),
+    V2 #= 0,
+    restrict_NE(R1, R2, C1, C2, 1, Min, R, C, V2),
+    restrict_SE(R1, R2, C1, C2, 1, Min, R, C, V2),
+    restrict_SW(R1, R2, C1, C2, 1, Min, R, C, V2),
+    restrict_NW(R1, R2, C1, C2, 1, Min, R, C, V2).
 
 %Restrictions applied to the foreign pieces when the attack is done by a Rook
-dont_eat(3, R1, R2, C1, C2, _, _, _):-
-    R2 #\= R1,
-    C2 #\= C1.
+dont_eat(3, R1, R2, C1, C2, Min, R, C):-
+    (R2 #= R1 #/\ C2 #= C1) #<=> 0,
+    V #= 0,
+    restrict_N(R1, R2, C1, C2, 1, Min, R, C, V),
+    restrict_E(R1, R2, C1, C2, 1, Min, R, C, V),
+    restrict_S(R1, R2, C1, C2, 1, Min, R, C, V),
+    restrict_W(R1, R2, C1, C2, 1, Min, R, C, V).
 
 %Restrictions applied to the foreign pieces when the attack is done by a Bishop
 dont_eat(4, R1, R2, C1, C2, Min, R, C):-
@@ -154,6 +167,50 @@ dont_eat(5, R1, R2, C1, C2, _, _, _):-
     (R2 #= R1-2 #/\ (C2 #= C1+1 #\/ C2 #= C1-1)) #\/ 
     (C2 #= C1+2 #/\ (R2 #= R1+1 #\/ R2 #= R1-1)) #\/ 
     (C2 #= C1-2 #/\ (R2 #= R1+1 #\/ R2 #= R1-1))) #<=> 0.
+
+%Restrict_N base case
+restrict_N(_, _, _, _, Min, Min, _, _, _).
+
+%Restricts N direction of the attacker as forbidden for all foreign pieces
+restrict_N(R1, R2, C1, C2, N, Min, R, C, V):-
+    N < Min,
+    ((V #= 0) #=> (((R2 #= R1-N #/\ C2 #= C1) #<=> 0) #/\ ((R #= R1-N #/\ C #= C1) #<=> X))),
+    ((V #= 1) #=> (X #= 1)),
+    Next is N + 1,
+    restrict_N(R1, R2, C1, C2, Next, Min, R, C, X).
+
+%Restrict_E base case
+restrict_E(_, _, _, _, Min, Min, _, _, _).
+
+%Restricts E direction of the attacker as forbidden for all foreign pieces
+restrict_E(R1, R2, C1, C2, N, Min, R, C, V):-
+    N < Min,
+    ((V #= 0) #=> (((R2 #= R1 #/\ C2 #= C1+N) #<=> 0) #/\ ((R #= R1 #/\ C #= C1+N) #<=> X))),
+    ((V #= 1) #=> (X #= 1)),
+    Next is N + 1,
+    restrict_E(R1, R2, C1, C2, Next, Min, R, C, X).
+
+%Restrict_S base case
+restrict_S(_, _, _, _, Min, Min, _, _, _).
+
+%Restricts S direction of the attacker as forbidden for all foreign pieces
+restrict_S(R1, R2, C1, C2, N, Min, R, C, V):-
+    N < Min,
+    ((V #= 0) #=> (((R2 #= R1+N  #/\ C2 #= C1) #<=> 0) #/\ ((R #= R1+N #/\ C #= C1) #<=> X))),
+    ((V #= 1) #=> (X #= 1)),
+    Next is N + 1,
+    restrict_S(R1, R2, C1, C2, Next, Min, R, C, X).
+
+%Restrict_W base case
+restrict_W(_, _, _, _, Min, Min, _, _, _).
+
+%Restricts W direction of the attacker as forbidden for all foreign pieces
+restrict_W(R1, R2, C1, C2, N, Min, R, C, V):-
+    N < Min,
+    ((V #= 0) #=> (((R2 #= R1  #/\ C2 #= C1-N) #<=> 0) #/\ ((R #= R1 #/\ C #= C1-N) #<=> X))),
+    ((V #= 1) #=> (X #= 1)),
+    Next is N + 1,
+    restrict_W(R1, R2, C1, C2, Next, Min, R, C, X).
 
 %Restrict_NE base case
 restrict_NE(_, _, _, _, Min, Min, _, _, _).

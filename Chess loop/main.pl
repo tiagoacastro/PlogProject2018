@@ -127,6 +127,7 @@ dont_eat(4, R1, R2, C1, C2, Min):-
 
 %Restrictions applied to the foreign pieces when the attack is done by a Knight
 dont_eat(5, R1, R2, C1, C2, _):-
+    (R2 #= R1 #/\ C2 #= C1) #<=> 0,
     ((R2 #= R1+2 #/\ (C2 #= C1+1 #\/ C2 #= C1-1)) #\/ 
     (R2 #= R1-2 #/\ (C2 #= C1+1 #\/ C2 #= C1-1)) #\/ 
     (C2 #= C1+2 #/\ (R2 #= R1+1 #\/ R2 #= R1-1)) #\/ 

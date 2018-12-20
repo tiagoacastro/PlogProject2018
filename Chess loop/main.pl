@@ -29,7 +29,8 @@ solve(N, Nrows, Ncols, Type1, Type2, Res) :-
     prepare(Ncols, Rows, Cols, Res),
     set_types(Types, Type1, Type2, Npieces),
     get_min(Nrows, Ncols, Min),
-    setup(Types, Rows, Cols, Min),
+    get_max(Nrows, Ncols, Max),
+    setup(Types, Rows, Cols, Min, Max),
     labeling([ff], Res),
     display_solution(Nrows, Ncols, Types, Rows, Cols).
 
@@ -42,72 +43,73 @@ prepare(Ncols, [R|Rr], [C|Cr], [P|Pr]):-
     prepare(Ncols, Rr, Cr, Pr).
 
 %Sets up the iteration function
-setup(Types, [R1|Rr], [C1|Cr], Min):-
-    iterate(Types, [R1|Rr], [C1|Cr], R1, C1, Min, [R1|Rr], [C1|Cr], 1).
+setup(Types, [R1|Rr], [C1|Cr], Min, Max):-
+    iterate(Types, [R1|Rr], [C1|Cr], R1, C1, Min, Max, [R1|Rr], [C1|Cr], 1).
     
 %Base case for the iteration of the list, last pieces eats the first one
-iterate([H|[]], [R1|[]], [C1|[]], Fr, Fc, Min, Rows, Columns, Index):-
-    eat(H, R1, Fr, C1, Fc, Min),
+iterate([H|[]], [R1|[]], [C1|[]], Fr, Fc, Min, Max, Rows, Columns, Index):-
+    eat(H, R1, Fr, C1, Fc, Min, Max),
     Index2 is 1,
-    restrict(H, R1, C1, Rows, Columns, Index, Index2, Min, 1, Fr, Fc).
+    restrict(H, R1, C1, Rows, Columns, Index, Index2, Min, Max, 1, Fr, Fc).
     
 %General case for the iteration of the list, a piece eats the next one
-iterate([H|Tr], [R1,R2|Rr], [C1,C2|Cr], Fr, Fc, Min, Rows, Columns, Index):-
-    eat(H, R1, R2, C1, C2, Min),
+iterate([H|Tr], [R1,R2|Rr], [C1,C2|Cr], Fr, Fc, Min, Max, Rows, Columns, Index):-
+    eat(H, R1, R2, C1, C2, Min, Max),
     Index2 is Index + 1,
-    restrict(H, R1, C1, Rows, Columns, Index, Index2, Min, 1, R2, C2),
-    iterate(Tr, [R2|Rr], [C2|Cr], Fr, Fc, Min, Rows, Columns, Index2).
+    restrict(H, R1, C1, Rows, Columns, Index, Index2, Min, Max, 1, R2, C2),
+    iterate(Tr, [R2|Rr], [C2|Cr], Fr, Fc, Min, Max, Rows, Columns, Index2).
 
 %Restrict base case
-restrict(_, _, _, [], [], _, _, _, _, _, _).
+restrict(_, _, _, [], [], _, _, _, _, _, _, _).
 
 %Restrict when the analyzed piece is the one attacking (do nothing)
-restrict(H, R1, C1, [_|R], [_|C], Index1, Index2, Min, N, _, _):-
+restrict(H, R1, C1, [_|R], [_|C], Index1, Index2, Min, Max, N, _, _):-
     N = Index1,
     New is N + 1,
-    restrict(H, R1, C1, R, C, Index1, Index2, Min, New, _, _), !.
+    restrict(H, R1, C1, R, C, Index1, Index2, Min, Max, New, _, _), !.
 
 %Restrict when the analyzed piece is the one being attacked (do nothing)
-restrict(H, R1, C1, [_|R], [_|C], Index1, Index2, Min, N, _, _):-
+restrict(H, R1, C1, [_|R], [_|C], Index1, Index2, Min, Max, N, _, _):-
     N = Index2,
     New is N + 1,
-    restrict(H, R1, C1, R, C, Index1, Index2, Min, New, _, _), !.
+    restrict(H, R1, C1, R, C, Index1, Index2, Min, Max, New, _, _), !.
 
 %Restrict when the analyzed piece is foreign (not involved in the current play)
 %Makes so the foreign piece can't be in positions attackable by the current atacker
-restrict(H, R1, C1, [R2|R], [C2|C], Index1, Index2, Min, N, Pr, Pc):-
-    dont_eat(H, R1, R2, C1, C2, Min, Pr, Pc),
+restrict(H, R1, C1, [R2|R], [C2|C], Index1, Index2, Min, Max, N, Pr, Pc):-
+    dont_eat(H, R1, R2, C1, C2, Min, Max, Pr, Pc),
     New is N + 1,
-    restrict(H, R1, C1, R, C, Index1, Index2, Min, New, Pr, Pc).
+    restrict(H, R1, C1, R, C, Index1, Index2, Min, Max, New, Pr, Pc).
     
 %King move
-eat(1, R1, R2, C1, C2, _):-
+eat(1, R1, R2, C1, C2, _, _):-
     (R2 #= R1+1 #/\ (C2 #= C1 #\/ (C2 #= C1+1 #\/ C2 #= C1-1))) #\/
     (R2 #= R1 #/\ (C2 #= C1+1 #\/ C2 #= C1-1)) #\/
     (R2 #= R1-1 #/\ (C2 #= C1 #\/ (C2 #= C1+1 #\/ C2 #= C1-1))).
 
 %Queen move
-eat(2, R1, R2, C1, C2, Min):-
-    domain([X],1,Min),
-    ((R2 #= R1 #/\ C2 #= C1+X) #\/ 
-    (R2 #= R1 #/\ C2 #= C1-X) #\/ 
-    (R2 #= R1+X #/\ C2 #= C1) #\/ 
-    (R2 #= R1-X #/\ C2 #= C1) #\/
-    (R2 #= R1+X #/\ C2 #= C1+X) #\/ 
-    (R2 #= R1+X #/\ C2 #= C1-X) #\/ 
-    (R2 #= R1-X #/\ C2 #= C1+X) #\/ 
-    (R2 #= R1-X #/\ C2 #= C1-X)).
+eat(2, R1, R2, C1, C2, Min, Max):-
+    domain([X1],1,Max),
+    domain([X2],1,Min),
+    ((R2 #= R1 #/\ C2 #= C1+X2) #\/ 
+    (R2 #= R1 #/\ C2 #= C1-X2) #\/ 
+    (R2 #= R1+X2 #/\ C2 #= C1) #\/ 
+    (R2 #= R1-X2 #/\ C2 #= C1) #\/
+    (R2 #= R1+X1 #/\ C2 #= C1+X1) #\/ 
+    (R2 #= R1+X1 #/\ C2 #= C1-X1) #\/ 
+    (R2 #= R1-X1 #/\ C2 #= C1+X1) #\/ 
+    (R2 #= R1-X1 #/\ C2 #= C1-X1)).
 
 %Rook move
-eat(3, R1, R2, C1, C2, Min):-
-    domain([X],1,Min),
+eat(3, R1, R2, C1, C2, _, Max):-
+    domain([X],1,Max),
     ((R2 #= R1 #/\ C2 #= C1+X) #\/ 
     (R2 #= R1 #/\ C2 #= C1-X) #\/ 
     (R2 #= R1+X #/\ C2 #= C1) #\/ 
     (R2 #= R1-X #/\ C2 #= C1)).
 
 %Bishop move
-eat(4, R1, R2, C1, C2, Min):-
+eat(4, R1, R2, C1, C2, Min, _):-
     domain([X],1,Min),
     ((R2 #= R1+X #/\ C2 #= C1+X) #\/ 
     (R2 #= R1+X #/\ C2 #= C1-X) #\/ 
@@ -115,27 +117,27 @@ eat(4, R1, R2, C1, C2, Min):-
     (R2 #= R1-X #/\ C2 #= C1-X)).
 
 %Knight move
-eat(5, R1, R2, C1, C2, _):-
+eat(5, R1, R2, C1, C2, _, _):-
     (R2 #= R1+2 #/\ (C2 #= C1+1 #\/ C2 #= C1-1)) #\/ 
     (R2 #= R1-2 #/\ (C2 #= C1+1 #\/ C2 #= C1-1)) #\/ 
     (C2 #= C1+2 #/\ (R2 #= R1+1 #\/ R2 #= R1-1)) #\/ 
     (C2 #= C1-2 #/\ (R2 #= R1+1 #\/ R2 #= R1-1)). 
 
 %Restrictions applied to the foreign pieces when the attack is done by a King
-dont_eat(1, R1, R2, C1, C2, _, _, _):-
+dont_eat(1, R1, R2, C1, C2, _, _, _, _):-
     R2 #> R1+1 #\/
     R2 #< R1-1 #\/
     C2 #> C1+1 #\/
     C2 #< C1-1.
 
 %Restrictions applied to the foreign pieces when the attack is done by a Queen
-dont_eat(2, R1, R2, C1, C2, Min, R, C):-
+dont_eat(2, R1, R2, C1, C2, Min, Max, R, C):-
     (R2 #= R1 #/\ C2 #= C1) #<=> 0,
     V1 #= 0,
-    restrict_N(R1, R2, C1, C2, 1, Min, R, C, V1),
-    restrict_E(R1, R2, C1, C2, 1, Min, R, C, V1),
-    restrict_S(R1, R2, C1, C2, 1, Min, R, C, V1),
-    restrict_W(R1, R2, C1, C2, 1, Min, R, C, V1),
+    restrict_N(R1, R2, C1, C2, 1, Max, R, C, V1),
+    restrict_E(R1, R2, C1, C2, 1, Max, R, C, V1),
+    restrict_S(R1, R2, C1, C2, 1, Max, R, C, V1),
+    restrict_W(R1, R2, C1, C2, 1, Max, R, C, V1),
     V2 #= 0,
     restrict_NE(R1, R2, C1, C2, 1, Min, R, C, V2),
     restrict_SE(R1, R2, C1, C2, 1, Min, R, C, V2),
@@ -143,16 +145,16 @@ dont_eat(2, R1, R2, C1, C2, Min, R, C):-
     restrict_NW(R1, R2, C1, C2, 1, Min, R, C, V2).
 
 %Restrictions applied to the foreign pieces when the attack is done by a Rook
-dont_eat(3, R1, R2, C1, C2, Min, R, C):-
+dont_eat(3, R1, R2, C1, C2, _, Max, R, C):-
     (R2 #= R1 #/\ C2 #= C1) #<=> 0,
     V #= 0,
-    restrict_N(R1, R2, C1, C2, 1, Min, R, C, V),
-    restrict_E(R1, R2, C1, C2, 1, Min, R, C, V),
-    restrict_S(R1, R2, C1, C2, 1, Min, R, C, V),
-    restrict_W(R1, R2, C1, C2, 1, Min, R, C, V).
+    restrict_N(R1, R2, C1, C2, 1, Max, R, C, V),
+    restrict_E(R1, R2, C1, C2, 1, Max, R, C, V),
+    restrict_S(R1, R2, C1, C2, 1, Max, R, C, V),
+    restrict_W(R1, R2, C1, C2, 1, Max, R, C, V).
 
 %Restrictions applied to the foreign pieces when the attack is done by a Bishop
-dont_eat(4, R1, R2, C1, C2, Min, R, C):-
+dont_eat(4, R1, R2, C1, C2, Min, _, R, C):-
     (R2 #= R1 #/\ C2 #= C1) #<=> 0,
     V #= 0,
     restrict_NE(R1, R2, C1, C2, 1, Min, R, C, V),
@@ -161,7 +163,7 @@ dont_eat(4, R1, R2, C1, C2, Min, R, C):-
     restrict_NW(R1, R2, C1, C2, 1, Min, R, C, V).   
 
 %Restrictions applied to the foreign pieces when the attack is done by a Knight
-dont_eat(5, R1, R2, C1, C2, _, _, _):-
+dont_eat(5, R1, R2, C1, C2, _, _, _, _):-
     (R2 #= R1 #/\ C2 #= C1) #<=> 0,
     ((R2 #= R1+2 #/\ (C2 #= C1+1 #\/ C2 #= C1-1)) #\/ 
     (R2 #= R1-2 #/\ (C2 #= C1+1 #\/ C2 #= C1-1)) #\/ 

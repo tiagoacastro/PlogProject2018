@@ -49,36 +49,36 @@ setup(Types, [R1|Rr], [C1|Cr], Min):-
 iterate([H|[]], [R1|[]], [C1|[]], Fr, Fc, Min, Rows, Columns, Index):-
     eat(H, R1, Fr, C1, Fc, Min),
     Index2 is 1,
-    restrict(H, R1, C1, Rows, Columns, Index, Index2, Min, 1).
+    restrict(H, R1, C1, Rows, Columns, Index, Index2, Min, 1, Fr, Fc).
     
 %General case for the iteration of the list, a piece eats the next one
 iterate([H|Tr], [R1,R2|Rr], [C1,C2|Cr], Fr, Fc, Min, Rows, Columns, Index):-
     eat(H, R1, R2, C1, C2, Min),
     Index2 is Index + 1,
-    restrict(H, R1, C1, Rows, Columns, Index, Index2, Min, 1),
+    restrict(H, R1, C1, Rows, Columns, Index, Index2, Min, 1, R2, C2),
     iterate(Tr, [R2|Rr], [C2|Cr], Fr, Fc, Min, Rows, Columns, Index2).
 
 %Restrict base case
-restrict(_, _, _, [], [], _, _, _, _).
+restrict(_, _, _, [], [], _, _, _, _, _, _).
 
 %Restrict when the analyzed piece is the one attacking (do nothing)
-restrict(H, R1, C1, [_|R], [_|C], Index1, Index2, Min, N):-
+restrict(H, R1, C1, [_|R], [_|C], Index1, Index2, Min, N, _, _):-
     N = Index1,
     New is N + 1,
-    restrict(H, R1, C1, R, C, Index1, Index2, Min, New), !.
+    restrict(H, R1, C1, R, C, Index1, Index2, Min, New, _, _), !.
 
 %Restrict when the analyzed piece is the one being attacked (do nothing)
-restrict(H, R1, C1, [_|R], [_|C], Index1, Index2, Min, N):-
+restrict(H, R1, C1, [_|R], [_|C], Index1, Index2, Min, N, _, _):-
     N = Index2,
     New is N + 1,
-    restrict(H, R1, C1, R, C, Index1, Index2, Min, New), !.
+    restrict(H, R1, C1, R, C, Index1, Index2, Min, New, _, _), !.
 
 %Restrict when the analyzed piece is foreign (not involved in the current play)
 %Makes so the foreign piece can't be in positions attackable by the current atacker
-restrict(H, R1, C1, [R2|R], [C2|C], Index1, Index2, Min, N):-
-    dont_eat(H, R1, R2, C1, C2, Min),
+restrict(H, R1, C1, [R2|R], [C2|C], Index1, Index2, Min, N, Pr, Pc):-
+    dont_eat(H, R1, R2, C1, C2, Min, Pr, Pc),
     New is N + 1,
-    restrict(H, R1, C1, R, C, Index1, Index2, Min, New).
+    restrict(H, R1, C1, R, C, Index1, Index2, Min, New, Pr, Pc).
     
 %King move
 eat(1, R1, R2, C1, C2, _):-
@@ -117,81 +117,87 @@ eat(5, R1, R2, C1, C2, _):-
     (C2 #= C1-2 #/\ (R2 #= R1+1 #\/ R2 #= R1-1)). 
 
 %Restrictions applied to the foreign pieces when the attack is done by a King
-dont_eat(1, R1, R2, C1, C2, _):-
+dont_eat(1, R1, R2, C1, C2, _, _, _):-
     R2 #> R1+1 #\/
     R2 #< R1-1 #\/
     C2 #> C1+1 #\/
     C2 #< C1-1.
 
 %Restrictions applied to the foreign pieces when the attack is done by a Queen
-dont_eat(2, R1, R2, C1, C2, Min):-
+dont_eat(2, R1, R2, C1, C2, Min, R, C):-
     R2 #\= R1, 
     C2 #\= C1,
-    restrict_diagonal_NE(R1, R2, C1, C2, 1, Min),
-    restrict_diagonal_SE(R1, R2, C1, C2, 1, Min),
-    restrict_diagonal_SW(R1, R2, C1, C2, 1, Min),
-    restrict_diagonal_NW(R1, R2, C1, C2, 1, Min).
+    V #= 0,
+    restrict_NE(R1, R2, C1, C2, 1, Min, R, C, V),
+    restrict_SE(R1, R2, C1, C2, 1, Min, R, C, V),
+    restrict_SW(R1, R2, C1, C2, 1, Min, R, C, V),
+    restrict_NW(R1, R2, C1, C2, 1, Min, R, C, V).
 
 %Restrictions applied to the foreign pieces when the attack is done by a Rook
-dont_eat(3, R1, R2, C1, C2, _):-
+dont_eat(3, R1, R2, C1, C2, _, _, _):-
     R2 #\= R1,
     C2 #\= C1.
 
 %Restrictions applied to the foreign pieces when the attack is done by a Bishop
-dont_eat(4, R1, R2, C1, C2, Min):-
+dont_eat(4, R1, R2, C1, C2, Min, R, C):-
     (R2 #= R1 #/\ C2 #= C1) #<=> 0,
-    restrict_diagonal_NE(R1, R2, C1, C2, 1, Min),
-    restrict_diagonal_SE(R1, R2, C1, C2, 1, Min),
-    restrict_diagonal_SW(R1, R2, C1, C2, 1, Min),
-    restrict_diagonal_NW(R1, R2, C1, C2, 1, Min).   
+    V #= 0,
+    restrict_NE(R1, R2, C1, C2, 1, Min, R, C, V),
+    restrict_SE(R1, R2, C1, C2, 1, Min, R, C, V),
+    restrict_SW(R1, R2, C1, C2, 1, Min, R, C, V),
+    restrict_NW(R1, R2, C1, C2, 1, Min, R, C, V).   
 
 %Restrictions applied to the foreign pieces when the attack is done by a Knight
-dont_eat(5, R1, R2, C1, C2, _):-
+dont_eat(5, R1, R2, C1, C2, _, _, _):-
     (R2 #= R1 #/\ C2 #= C1) #<=> 0,
     ((R2 #= R1+2 #/\ (C2 #= C1+1 #\/ C2 #= C1-1)) #\/ 
     (R2 #= R1-2 #/\ (C2 #= C1+1 #\/ C2 #= C1-1)) #\/ 
     (C2 #= C1+2 #/\ (R2 #= R1+1 #\/ R2 #= R1-1)) #\/ 
     (C2 #= C1-2 #/\ (R2 #= R1+1 #\/ R2 #= R1-1))) #<=> 0.
 
-%Restrict_diagonal_NE base case
-restrict_diagonal_NE(_, _, _, _, Min, Min).
+%Restrict_NE base case
+restrict_NE(_, _, _, _, Min, Min, _, _, _).
 
 %Restricts NE diagonal of the attacker as forbidden for all foreign pieces
-restrict_diagonal_NE(R1, R2, C1, C2, N, Min):-
+restrict_NE(R1, R2, C1, C2, N, Min, R, C, V):-
     N < Min,
-    (R2 #= R1-N #/\ C2 #= C1+N) #<=> 0,
+    ((V #= 0) #=> (((R2 #= R1-N #/\ C2 #= C1+N) #<=> 0) #/\ ((R #= R1-N #/\ C #= C1+N) #<=> X))),
+    ((V #= 1) #=> (X #= 1)),
     Next is N + 1,
-    restrict_diagonal_NE(R1, R2, C1, C2, Next, Min).
+    restrict_NE(R1, R2, C1, C2, Next, Min, R, C, X).
 
-%Restrict_diagonal_SE base case
-restrict_diagonal_SE(_, _, _, _, Min, Min).
+%Restrict_SE base case
+restrict_SE(_, _, _, _, Min, Min, _, _, _).
 
 %Restricts SE diagonal of the attacker as forbidden for all foreign pieces
-restrict_diagonal_SE(R1, R2, C1, C2, N, Min):-
+restrict_SE(R1, R2, C1, C2, N, Min, R, C, V):-
     N < Min,
-    (R2 #= R1+N #/\ C2 #= C1+N) #<=> 0,
+    ((V #= 0) #=> (((R2 #= R1+N #/\ C2 #= C1+N) #<=> 0) #/\ ((R #= R1+N #/\ C #= C1+N) #<=> X))),
+    ((V #= 1) #=> (X #= 1)),
     Next is N + 1,
-    restrict_diagonal_SE(R1, R2, C1, C2, Next, Min).
+    restrict_SE(R1, R2, C1, C2, Next, Min, R, C, X).
 
-%Restrict_diagonal_SW base case
-restrict_diagonal_SW(_, _, _, _, Min, Min).
+%Restrict_SW base case
+restrict_SW(_, _, _, _, Min, Min, _, _, _).
 
 %Restricts SW diagonal of the attacker as forbidden for all foreign pieces
-restrict_diagonal_SW(R1, R2, C1, C2, N, Min):-
+restrict_SW(R1, R2, C1, C2, N, Min, R, C, V):-
     N < Min,
-    (R2 #= R1+N #/\ C2 #= C1-N) #<=> 0,
+    ((V #= 0) #=> (((R2 #= R1+N #/\ C2 #= C1-N) #<=> 0) #/\ ((R #= R1+N #/\ C #= C1-N) #<=> X))),
+    ((V #= 1) #=> (X #= 1)),
     Next is N + 1,
-    restrict_diagonal_SW(R1, R2, C1, C2, Next, Min).
+    restrict_SW(R1, R2, C1, C2, Next, Min, R, C, X).
 
-%Restrict_diagonal_NW base case
-restrict_diagonal_NW(_, _, _, _, Min, Min).
+%Restrict_NW base case
+restrict_NW(_, _, _, _, Min, Min, _, _, _).
 
 %Restricts NW diagonal of the attacker as forbidden for all foreign pieces
-restrict_diagonal_NW(R1, R2, C1, C2, N, Min):-
+restrict_NW(R1, R2, C1, C2, N, Min, R, C, V):-
     N < Min,
-    (R2 #= R1-N #/\ C2 #= C1-N) #<=> 0,
+    ((V #= 0) #=> (((R2 #= R1-N #/\ C2 #= C1-N) #<=> 0) #/\ ((R #= R1-N #/\ C #= C1-N) #<=> X))),
+    ((V #= 1) #=> (X #= 1)),
     Next is N + 1,
-    restrict_diagonal_NW(R1, R2, C1, C2, Next, Min).
+    restrict_NW(R1, R2, C1, C2, Next, Min, R, C, X).
 
 %Set_types base case
 set_types([], _, _, 0).

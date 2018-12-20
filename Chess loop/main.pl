@@ -29,13 +29,13 @@ setup(Types, [R1|Rr], [C1|Cr], Min):-
 iterate([H|[]], [R1|[]], [C1|[]], Fr, Fc, Min, Rows, Columns, Index):-
     eat(H, R1, Fr, C1, Fc, Min),
     Index2 is 1,
-    restrict(H, R1, C1, Rows, Columns, Index, Index2, Min, 1, Fr, Fc).
+    restrict(H, R1, C1, Rows, Columns, Index, Index2, Min, 1).
     
 %General case for the iteration of the list, a piece eats the next one
 iterate([H|Tr], [R1,R2|Rr], [C1,C2|Cr], Fr, Fc, Min, Rows, Columns, Index):-
     eat(H, R1, R2, C1, C2, Min),
     Index2 is Index + 1,
-    restrict(H, R1, C1, Rows, Columns, Index, Index2, Min, 1, R2, C2),
+    restrict(H, R1, C1, Rows, Columns, Index, Index2, Min, 1),
     iterate(Tr, [R2|Rr], [C2|Cr], Fr, Fc, Min, Rows, Columns, Index2).
 
 %Restrict base case

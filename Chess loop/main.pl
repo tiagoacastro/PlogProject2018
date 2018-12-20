@@ -146,7 +146,7 @@ dont_eat(2, R1, R2, C1, C2, Min, Max, R, C):-
 %Restrictions applied to the foreign pieces when the attack is done by a Rook
 dont_eat(3, R1, R2, C1, C2, _, Max, R, C):-
     (R2 #= R1 #/\ C2 #= C1) #<=> 0,
-    V #= 0,
+    V #= 0, 
     restrict_N(R1, R2, C1, C2, 1, Max, R, C, V),
     restrict_E(R1, R2, C1, C2, 1, Max, R, C, V),
     restrict_S(R1, R2, C1, C2, 1, Max, R, C, V),

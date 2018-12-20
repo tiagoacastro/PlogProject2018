@@ -13,7 +13,7 @@ get_min(Nrows, Ncols, Min):-
 
 %-----------------------------------------------------------
 
-%Updates a specified position of the board
+%Updates a specified position of the board 
 
 changePosition(BoardIn, Row, Column, Piece, BoardOut) :-
     setRow(Row, Column, BoardIn, Piece, BoardOut).

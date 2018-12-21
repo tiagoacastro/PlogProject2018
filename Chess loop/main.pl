@@ -2,14 +2,12 @@
 :- use_module(library(random)).
 :- include('utilities.pl').
 
-
-random_problem(Nrows, Ncols, Type1, Type2, Npieces, Pos) :-
-    random(1, 6, T1),
-    random(1, 6, T2),
+random_problem(Nrows, Ncols, Type1String, Type2String, Npieces, Pos) :-
+    repeat,
+    random(1, 6, T1), random(1, 6, T2),
     check_types(T1, T2, Type1, Type2),
-    random(2, 10, Nrows),
-    random(2, 10, Ncols),
-    random(2, 5, Npieces),
+    convert_to_string(Type1, Type1String), convert_to_string(Type2, Type2String),
+    random(2, 10, Nrows), random(2, 10, Ncols), random(2, 5, Npieces),
     solve(Npieces, Nrows, Ncols, Type1, Type2, Pos).
 
 check_types(T1, T2, T1, T2) :- 
@@ -20,6 +18,12 @@ check_types(T1, T2, Type1, Type2) :-
     random(1, 3, NewT1),
     random(1, 3, NewT2),
     check_types(NewT1, NewT2, Type1, Type2).
+
+convert_to_string(1, 'King').
+convert_to_string(2, 'Queen').
+convert_to_string(3, 'Rook').
+convert_to_string(4, 'Bishop').
+convert_to_string(5, 'Knight').
 
 %Solves the position of the pieces
 solve(N, Nrows, Ncols, Type1, Type2, Res) :-

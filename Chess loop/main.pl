@@ -31,7 +31,7 @@ solve(N, Nrows, Ncols, Type1, Type2, Res) :-
     get_min(Nrows, Ncols, Min),
     get_max(Nrows, Ncols, Max),
     setup(Types, Rows, Cols, Min, Max),
-    labeling([ff], Res),
+    once(labeling([ffc], Res)),
     display_solution(Nrows, Ncols, Types, Rows, Cols).
 
 %Prepare base case
@@ -175,8 +175,9 @@ restrict_N(_, _, _, _, M, M, _, _, _).
 %Restricts N direction of the attacker as forbidden for all foreign pieces
 restrict_N(R1, R2, C1, C2, N, M, R, C, V):-
     N < M,
-    (((V #= 0) #=> (((R2 #= R1-N #/\ C2 #= C1) #<=> 0) #/\ ((R #= R1-N #/\ C #= C1) #<=> X))) #/\
-    ((V #= 1) #=> (X #= 1))),
+    ((V #= 0) #=> ((R2 #= R1-N #/\ C2 #= C1) #<=> 0)),
+    ((V #= 0) #=> ((R #= R1-N #/\ C #= C1) #<=> X)),
+    ((V #= 1) #=> (X #= 1)),
     Next is N + 1,
     restrict_N(R1, R2, C1, C2, Next, M, R, C, X).
 
@@ -186,7 +187,9 @@ restrict_E(_, _, _, _, M, M, _, _, _).
 %Restricts E direction of the attacker as forbidden for all foreign pieces
 restrict_E(R1, R2, C1, C2, N, M, R, C, V):-
     N < M,
-    ((V #= 0) #<=> (((R2 #= R1 #/\ C2 #= C1+N) #<=> 0) #/\ ((R #= R1 #/\ C #= C1+N) #<=> X))),
+    ((V #= 0) #=> ((R2 #= R1 #/\ C2 #= C1+N) #<=> 0)),
+    ((V #= 0) #=> ((R #= R1 #/\ C #= C1+N) #<=> X)),
+    ((V #= 1) #=> (X #= 1)),
     Next is N + 1,
     restrict_E(R1, R2, C1, C2, Next, M, R, C, X).
 
@@ -196,8 +199,9 @@ restrict_S(_, _, _, _, M, M, _, _, _).
 %Restricts S direction of the attacker as forbidden for all foreign pieces
 restrict_S(R1, R2, C1, C2, N, M, R, C, V):-
     N < M,
-    (((V #= 0) #=> (((R2 #= R1+N  #/\ C2 #= C1) #<=> 0) #/\ ((R #= R1+N #/\ C #= C1) #<=> X))) #/\
-    ((V #= 1) #=> (X #= 1))),
+    ((V #= 0) #=> ((R2 #= R1+N #/\ C2 #= C1) #<=> 0)),
+    ((V #= 0) #=> ((R #= R1+N #/\ C #= C1) #<=> X)),
+    ((V #= 1) #=> (X #= 1)),
     Next is N + 1,
     restrict_S(R1, R2, C1, C2, Next, M, R, C, X).
 
@@ -207,8 +211,9 @@ restrict_W(_, _, _, _, M, M, _, _, _).
 %Restricts W direction of the attacker as forbidden for all foreign pieces
 restrict_W(R1, R2, C1, C2, N, M, R, C, V):-
     N < M,
-    (((V #= 0) #=> (((R2 #= R1  #/\ C2 #= C1-N) #<=> 0) #/\ ((R #= R1 #/\ C #= C1-N) #<=> X))) #/\
-    ((V #= 1) #=> (X #= 1))),
+    ((V #= 0) #=> ((R2 #= R1 #/\ C2 #= C1-N) #<=> 0)),
+    ((V #= 0) #=> ((R #= R1 #/\ C #= C1-N) #<=> X)),
+    ((V #= 1) #=> (X #= 1)),
     Next is N + 1,
     restrict_W(R1, R2, C1, C2, Next, M, R, C, X).
 
@@ -218,7 +223,8 @@ restrict_NE(_, _, _, _, M, M, _, _, _).
 %Restricts NE diagonal of the attacker as forbidden for all foreign pieces
 restrict_NE(R1, R2, C1, C2, N, M, R, C, V):-
     N < M,
-    ((V #= 0) #=> (((R2 #= R1-N #/\ C2 #= C1+N) #<=> 0) #/\ ((R #= R1-N #/\ C #= C1+N) #<=> X))),
+    ((V #= 0) #=> ((R2 #= R1-N #/\ C2 #= C1+N) #<=> 0)),
+    ((V #= 0) #=> ((R #= R1-N #/\ C #= C1+N) #<=> X)),
     ((V #= 1) #=> (X #= 1)),
     Next is N + 1,
     restrict_NE(R1, R2, C1, C2, Next, M, R, C, X).
@@ -229,7 +235,8 @@ restrict_SE(_, _, _, _, M, M, _, _, _).
 %Restricts SE diagonal of the attacker as forbidden for all foreign pieces
 restrict_SE(R1, R2, C1, C2, N, M, R, C, V):-
     N < M,
-    ((V #= 0) #=> (((R2 #= R1+N #/\ C2 #= C1+N) #<=> 0) #/\ ((R #= R1+N #/\ C #= C1+N) #<=> X))),
+    ((V #= 0) #=> ((R2 #= R1+N #/\ C2 #= C1+N) #<=> 0)),
+    ((V #= 0) #=> ((R #= R1+N #/\ C #= C1+N) #<=> X)),
     ((V #= 1) #=> (X #= 1)),
     Next is N + 1,
     restrict_SE(R1, R2, C1, C2, Next, M, R, C, X).
@@ -240,7 +247,8 @@ restrict_SW(_, _, _, _, M, M, _, _, _).
 %Restricts SW diagonal of the attacker as forbidden for all foreign pieces
 restrict_SW(R1, R2, C1, C2, N, M, R, C, V):-
     N < M,
-    ((V #= 0) #=> (((R2 #= R1+N #/\ C2 #= C1-N) #<=> 0) #/\ ((R #= R1+N #/\ C #= C1-N) #<=> X))),
+    ((V #= 0) #=> ((R2 #= R1+N #/\ C2 #= C1-N) #<=> 0)),
+    ((V #= 0) #=> ((R #= R1+N #/\ C #= C1-N) #<=> X)),
     ((V #= 1) #=> (X #= 1)),
     Next is N + 1,
     restrict_SW(R1, R2, C1, C2, Next, M, R, C, X).
@@ -251,7 +259,8 @@ restrict_NW(_, _, _, _, M, M, _, _, _).
 %Restricts NW diagonal of the attacker as forbidden for all foreign pieces
 restrict_NW(R1, R2, C1, C2, N, M, R, C, V):-
     N < M,
-    ((V #= 0) #=> (((R2 #= R1-N #/\ C2 #= C1-N) #<=> 0) #/\ ((R #= R1-N #/\ C #= C1-N) #<=> X))),
+    ((V #= 0) #=> ((R2 #= R1-N #/\ C2 #= C1-N) #<=> 0)),
+    ((V #= 0) #=> ((R #= R1-N #/\ C #= C1-N) #<=> X)),
     ((V #= 1) #=> (X #= 1)),
     Next is N + 1,
     restrict_NW(R1, R2, C1, C2, Next, M, R, C, X).

@@ -31,7 +31,7 @@ solve(N, Nrows, Ncols, Type1, Type2, Res) :-
     get_min(Nrows, Ncols, Min),
     get_max(Nrows, Ncols, Max),
     setup(Types, Rows, Cols, Min, Max),
-    once(labeling([ffc], Res)),
+    once(labeling([ff], Res)),
     display_solution(Nrows, Ncols, Types, Rows, Cols).
 
 %Prepare base case
@@ -91,14 +91,14 @@ eat(1, R1, R2, C1, C2, _, _):-
 eat(2, R1, R2, C1, C2, Min, Max):-
     domain([X1],1,Max),
     domain([X2],1,Min),
-    ((R2 #= R1 #/\ C2 #= C1+X2) #\/ 
-    (R2 #= R1 #/\ C2 #= C1-X2) #\/ 
-    (R2 #= R1+X2 #/\ C2 #= C1) #\/ 
-    (R2 #= R1-X2 #/\ C2 #= C1) #\/
-    (R2 #= R1+X1 #/\ C2 #= C1+X1) #\/ 
-    (R2 #= R1+X1 #/\ C2 #= C1-X1) #\/ 
-    (R2 #= R1-X1 #/\ C2 #= C1+X1) #\/ 
-    (R2 #= R1-X1 #/\ C2 #= C1-X1)).
+    ((R2 #= R1 #/\ C2 #= C1+X1) #\/ 
+    (R2 #= R1 #/\ C2 #= C1-X1) #\/ 
+    (R2 #= R1+X1 #/\ C2 #= C1) #\/ 
+    (R2 #= R1-X1 #/\ C2 #= C1) #\/
+    (R2 #= R1+X2 #/\ C2 #= C1+X2) #\/ 
+    (R2 #= R1+X2 #/\ C2 #= C1-X2) #\/ 
+    (R2 #= R1-X2 #/\ C2 #= C1+X2) #\/ 
+    (R2 #= R1-X2 #/\ C2 #= C1-X2)).
 
 %Rook move
 eat(3, R1, R2, C1, C2, _, Max):-

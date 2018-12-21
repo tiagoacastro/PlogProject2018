@@ -38,7 +38,7 @@ prepare(_, [], [], []).
 
 %Makes a list of the absolute positions
 prepare(Ncols, [R|Rr], [C|Cr], [P|Pr]):-
-    P #= R * Ncols + C - 4,
+    P #= (R-1) * Ncols + C,
     prepare(Ncols, Rr, Cr, Pr).
 
 %Sets up the iteration function

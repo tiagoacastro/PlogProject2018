@@ -133,33 +133,30 @@ dont_eat(1, R1, R2, C1, C2, _, _, _, _):-
 %Restrictions applied to the foreign pieces when the attack is done by a Queen
 dont_eat(2, R1, R2, C1, C2, Min, Max, R, C):-
     (R2 #= R1 #/\ C2 #= C1) #<=> 0,
-    V #= 0,
-    restrict_N(R1, R2, C1, C2, 1, Max, R, C, V),
-    restrict_E(R1, R2, C1, C2, 1, Max, R, C, V),
-    restrict_S(R1, R2, C1, C2, 1, Max, R, C, V),
-    restrict_W(R1, R2, C1, C2, 1, Max, R, C, V),
-    restrict_NE(R1, R2, C1, C2, 1, Min, R, C, V),
-    restrict_SE(R1, R2, C1, C2, 1, Min, R, C, V),
-    restrict_SW(R1, R2, C1, C2, 1, Min, R, C, V),
-    restrict_NW(R1, R2, C1, C2, 1, Min, R, C, V).
+    restrict_N(R1, R2, C1, C2, 1, Max, R, C),
+    restrict_E(R1, R2, C1, C2, 1, Max, R, C),
+    restrict_S(R1, R2, C1, C2, 1, Max, R, C),
+    restrict_W(R1, R2, C1, C2, 1, Max, R, C),
+    restrict_NE(R1, R2, C1, C2, 1, Min, R, C),
+    restrict_SE(R1, R2, C1, C2, 1, Min, R, C),
+    restrict_SW(R1, R2, C1, C2, 1, Min, R, C),
+    restrict_NW(R1, R2, C1, C2, 1, Min, R, C).
 
 %Restrictions applied to the foreign pieces when the attack is done by a Rook
 dont_eat(3, R1, R2, C1, C2, _, Max, R, C):-
     (R2 #= R1 #/\ C2 #= C1) #<=> 0,
-    V #= 0, 
-    restrict_N(R1, R2, C1, C2, 1, Max, R, C, V),
-    restrict_E(R1, R2, C1, C2, 1, Max, R, C, V),
-    restrict_S(R1, R2, C1, C2, 1, Max, R, C, V),
-    restrict_W(R1, R2, C1, C2, 1, Max, R, C, V).
+    restrict_N(R1, R2, C1, C2, 1, Max, R, C),
+    restrict_E(R1, R2, C1, C2, 1, Max, R, C),
+    restrict_S(R1, R2, C1, C2, 1, Max, R, C),
+    restrict_W(R1, R2, C1, C2, 1, Max, R, C).
 
 %Restrictions applied to the foreign pieces when the attack is done by a Bishop
 dont_eat(4, R1, R2, C1, C2, Min, _, R, C):-
     (R2 #= R1 #/\ C2 #= C1) #<=> 0,
-    V #= 0,
-    restrict_NE(R1, R2, C1, C2, 1, Min, R, C, V),
-    restrict_SE(R1, R2, C1, C2, 1, Min, R, C, V),
-    restrict_SW(R1, R2, C1, C2, 1, Min, R, C, V),
-    restrict_NW(R1, R2, C1, C2, 1, Min, R, C, V).   
+    restrict_NE(R1, R2, C1, C2, 1, Min, R, C),
+    restrict_SE(R1, R2, C1, C2, 1, Min, R, C),
+    restrict_SW(R1, R2, C1, C2, 1, Min, R, C),
+    restrict_NW(R1, R2, C1, C2, 1, Min, R, C).   
 
 %Restrictions applied to the foreign pieces when the attack is done by a Knight
 dont_eat(5, R1, R2, C1, C2, _, _, _, _):-
@@ -170,92 +167,84 @@ dont_eat(5, R1, R2, C1, C2, _, _, _, _):-
     (C2 #= C1-2 #/\ (R2 #= R1+1 #\/ R2 #= R1-1))) #<=> 0.
 
 %Restrict_N base case
-restrict_N(_, _, _, _, M, M, _, _, _).
+restrict_N(_, _, _, _, M, M, _, _).
 
 %Restricts N direction of the attacker as forbidden for all foreign pieces
-restrict_N(R1, R2, C1, C2, N, M, R, C, V):-
+restrict_N(R1, R2, C1, C2, N, M, R, C):-
     N < M,
-    ((#\V) #=> (((R2 #= R1-N #/\ C2 #= C1) #<=> 0) #/\ ((R #= R1-N #/\ C #= C1) #<=> X))),
-    (V #=> (X #= 1)),
+    ((#\(C #= C1 #/\ R #< R1 #/\ R1-N #< R)) #=> ((R2 #= R1-N #/\ C2 #= C1) #<=> 0)),
     Next is N + 1,
-    restrict_N(R1, R2, C1, C2, Next, M, R, C, X).
+    restrict_N(R1, R2, C1, C2, Next, M, R, C).
 
 %Restrict_E base case
-restrict_E(_, _, _, _, M, M, _, _, _).
+restrict_E(_, _, _, _, M, M, _, _).
 
 %Restricts E direction of the attacker as forbidden for all foreign pieces
-restrict_E(R1, R2, C1, C2, N, M, R, C, V):-
+restrict_E(R1, R2, C1, C2, N, M, R, C):-
     N < M,
-    ((#\V) #=> (((R2 #= R1 #/\ C2 #= C1+N) #<=> 0) #/\ ((R #= R1 #/\ C #= C1+N) #<=> X))),
-    (V #=> (X #= 1)),
+    ((#\(R #= R1 #/\ C #> C1 #/\ C1+N #> C)) #=> ((R2 #= R1 #/\ C2 #= C1+N) #<=> 0)),
     Next is N + 1,
-    restrict_E(R1, R2, C1, C2, Next, M, R, C, X).
+    restrict_E(R1, R2, C1, C2, Next, M, R, C).
 
 %Restrict_S base case
-restrict_S(_, _, _, _, M, M, _, _, _).
+restrict_S(_, _, _, _, M, M, _, _).
 
 %Restricts S direction of the attacker as forbidden for all foreign pieces
-restrict_S(R1, R2, C1, C2, N, M, R, C, V):-
+restrict_S(R1, R2, C1, C2, N, M, R, C):-
     N < M,
-    ((#\V) #=> (((R2 #= R1+N #/\ C2 #= C1) #<=> 0) #/\ ((R #= R1+N #/\ C #= C1) #<=> X))),
-    (V #=> (X #= 1)),
+    ((#\(C #= C1 #/\ R #> R1 #/\ R1+N #> R)) #=> ((R2 #= R1+N #/\ C2 #= C1) #<=> 0)),
     Next is N + 1,
-    restrict_S(R1, R2, C1, C2, Next, M, R, C, X).
+    restrict_S(R1, R2, C1, C2, Next, M, R, C).
 
 %Restrict_W base case
-restrict_W(_, _, _, _, M, M, _, _, _).
+restrict_W(_, _, _, _, M, M, _, _).
 
 %Restricts W direction of the attacker as forbidden for all foreign pieces
-restrict_W(R1, R2, C1, C2, N, M, R, C, V):-
+restrict_W(R1, R2, C1, C2, N, M, R, C):-
     N < M,
-    ((#\V) #=> (((R2 #= R1 #/\ C2 #= C1-N) #<=> 0) #/\ ((R #= R1 #/\ C #= C1-N) #<=> X))),
-    (V #=> (X #= 1)),
+    ((#\(R #= R1 #/\ C #< C1 #/\ C1-N #< C)) #=> ((R2 #= R1 #/\ C2 #= C1-N) #<=> 0)),
     Next is N + 1,
-    restrict_W(R1, R2, C1, C2, Next, M, R, C, X).
+    restrict_W(R1, R2, C1, C2, Next, M, R, C).
 
 %Restrict_NE base case
-restrict_NE(_, _, _, _, M, M, _, _, _).
+restrict_NE(_, _, _, _, M, M, _, _).
 
 %Restricts NE diagonal of the attacker as forbidden for all foreign pieces
-restrict_NE(R1, R2, C1, C2, N, M, R, C, V):-
+restrict_NE(R1, R2, C1, C2, N, M, R, C):-
     N < M,
-    ((V #= 0) #=> ((R2 #= R1-N #/\ C2 #= C1+N) #<=> 0) #/\ ((R #= R1-N #/\ C #= C1+N) #<=> X)),
-    ((V #= 1) #=> (X #= 1)),
+    ((#\(R #< R1 #/\ C #> C1 #/\ C-C1 #= R1-R #/\ C1+N #> C)) #=> ((R2 #= R1-N #/\ C2 #= C1+N) #<=> 0)),
     Next is N + 1,
-    restrict_NE(R1, R2, C1, C2, Next, M, R, C, X).
+    restrict_NE(R1, R2, C1, C2, Next, M, R, C).
 
 %Restrict_SE base case
-restrict_SE(_, _, _, _, M, M, _, _, _).
+restrict_SE(_, _, _, _, M, M, _, _).
 
 %Restricts SE diagonal of the attacker as forbidden for all foreign pieces
-restrict_SE(R1, R2, C1, C2, N, M, R, C, V):-
+restrict_SE(R1, R2, C1, C2, N, M, R, C):-
     N < M,
-    ((V #= 0) #=> ((R2 #= R1+N #/\ C2 #= C1+N) #<=> 0) #/\ ((R #= R1+N #/\ C #= C1+N) #<=> X)),
-    ((V #= 1) #=> (X #= 1)),
+    ((#\(R #> R1 #/\ C #> C1 #/\ C-C1 #= R-R1 #/\ C1+N #> C)) #=> ((R2 #= R1+N #/\ C2 #= C1+N) #<=> 0)),
     Next is N + 1,
-    restrict_SE(R1, R2, C1, C2, Next, M, R, C, X).
+    restrict_SE(R1, R2, C1, C2, Next, M, R, C).
 
 %Restrict_SW base case
-restrict_SW(_, _, _, _, M, M, _, _, _).
+restrict_SW(_, _, _, _, M, M, _, _).
 
 %Restricts SW diagonal of the attacker as forbidden for all foreign pieces
-restrict_SW(R1, R2, C1, C2, N, M, R, C, V):-
+restrict_SW(R1, R2, C1, C2, N, M, R, C):-
     N < M,
-    ((V #= 0) #=> ((R2 #= R1+N #/\ C2 #= C1-N) #<=> 0) #/\ ((R #= R1+N #/\ C #= C1-N) #<=> X)),
-    ((V #= 1) #=> (X #= 1)),
+    ((#\(R #> R1 #/\ C #< C1 #/\ C1-C #= R-R1 #/\ C1-N #< C)) #=> ((R2 #= R1+N #/\ C2 #= C1-N) #<=> 0)),
     Next is N + 1,
-    restrict_SW(R1, R2, C1, C2, Next, M, R, C, X).
+    restrict_SW(R1, R2, C1, C2, Next, M, R, C).
 
 %Restrict_NW base case
-restrict_NW(_, _, _, _, M, M, _, _, _).
+restrict_NW(_, _, _, _, M, M, _, _).
 
 %Restricts NW diagonal of the attacker as forbidden for all foreign pieces
-restrict_NW(R1, R2, C1, C2, N, M, R, C, V):-
+restrict_NW(R1, R2, C1, C2, N, M, R, C):-
     N < M,
-    ((V #= 0) #=> ((R2 #= R1-N #/\ C2 #= C1-N) #<=> 0) #/\ ((R #= R1-N #/\ C #= C1-N) #<=> X)),
-    ((V #= 1) #=> (X #= 1)),
+    ((#\(R #< R1 #/\ C #< C1 #/\ C1-C #= R1-R #/\ C1-N #< C)) #=> ((R2 #= R1-N #/\ C2 #= C1-N) #<=> 0)),
     Next is N + 1,
-    restrict_NW(R1, R2, C1, C2, Next, M, R, C, X).
+    restrict_NW(R1, R2, C1, C2, Next, M, R, C).
 
 %Set_types base case
 set_types([], _, _, 0).

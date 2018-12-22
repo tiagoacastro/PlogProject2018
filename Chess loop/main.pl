@@ -175,8 +175,8 @@ restrict_N(_, _, _, _, M, M, _, _, _).
 %Restricts N direction of the attacker as forbidden for all foreign pieces
 restrict_N(R1, R2, C1, C2, N, M, R, C, V):-
     N < M,
-    ((V #= 0) #=> ((R2 #= R1-N #/\ C2 #= C1) #<=> 0) #/\ ((R #= R1-N #/\ C #= C1) #<=> X)),
-    ((V #= 1) #=> (X #= 1)),
+    ((#\V) #=> (((R2 #= R1-N #/\ C2 #= C1) #<=> 0) #/\ ((R #= R1-N #/\ C #= C1) #<=> X))),
+    (V #=> (X #= 1)),
     Next is N + 1,
     restrict_N(R1, R2, C1, C2, Next, M, R, C, X).
 
@@ -186,8 +186,8 @@ restrict_E(_, _, _, _, M, M, _, _, _).
 %Restricts E direction of the attacker as forbidden for all foreign pieces
 restrict_E(R1, R2, C1, C2, N, M, R, C, V):-
     N < M,
-    ((V #= 0) #=> ((R2 #= R1 #/\ C2 #= C1+N) #<=> 0) #/\ ((R #= R1 #/\ C #= C1+N) #<=> X)),
-    ((V #= 1) #=> (X #= 1)),
+    ((#\V) #=> (((R2 #= R1 #/\ C2 #= C1+N) #<=> 0) #/\ ((R #= R1 #/\ C #= C1+N) #<=> X))),
+    (V #=> (X #= 1)),
     Next is N + 1,
     restrict_E(R1, R2, C1, C2, Next, M, R, C, X).
 
@@ -197,8 +197,8 @@ restrict_S(_, _, _, _, M, M, _, _, _).
 %Restricts S direction of the attacker as forbidden for all foreign pieces
 restrict_S(R1, R2, C1, C2, N, M, R, C, V):-
     N < M,
-    ((V #= 0) #=> ((R2 #= R1+N #/\ C2 #= C1) #<=> 0) #/\ ((R #= R1+N #/\ C #= C1) #<=> X)),
-    ((V #= 1) #=> (X #= 1)),
+    ((#\V) #=> (((R2 #= R1+N #/\ C2 #= C1) #<=> 0) #/\ ((R #= R1+N #/\ C #= C1) #<=> X))),
+    (V #=> (X #= 1)),
     Next is N + 1,
     restrict_S(R1, R2, C1, C2, Next, M, R, C, X).
 
@@ -208,8 +208,8 @@ restrict_W(_, _, _, _, M, M, _, _, _).
 %Restricts W direction of the attacker as forbidden for all foreign pieces
 restrict_W(R1, R2, C1, C2, N, M, R, C, V):-
     N < M,
-    ((V #= 0) #=> ((R2 #= R1 #/\ C2 #= C1-N) #<=> 0) #/\ ((R #= R1 #/\ C #= C1-N) #<=> X)),
-    ((V #= 1) #=> (X #= 1)),
+    ((#\V) #=> (((R2 #= R1 #/\ C2 #= C1-N) #<=> 0) #/\ ((R #= R1 #/\ C #= C1-N) #<=> X))),
+    (V #=> (X #= 1)),
     Next is N + 1,
     restrict_W(R1, R2, C1, C2, Next, M, R, C, X).
 

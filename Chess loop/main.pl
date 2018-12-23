@@ -85,7 +85,7 @@ solve(N, Nrows, Ncols, Type1, Type2, Res) :-
     set_types(Types, Type1, Type2, Npieces),
     get_min_max(Nrows, Ncols, Min, Max),
     setup(Types, Rows, Cols, Min, Max),
-    once(labeling([ff], Res)),
+    once(labeling([ff, bisect, up], Res)),
     display_solution(Nrows, Ncols, Types, Rows, Cols).
 
 %Solve used when generating a random problem. Initializes board but does not displays it.
@@ -97,7 +97,7 @@ aux(N, Nrows, Ncols, Type1, Type2, Board) :-
     set_types(Types, Type1, Type2, Npieces),
     get_min_max(Nrows, Ncols, Min, Max),
     setup(Types, Rows, Cols, Min, Max),
-    labeling([ff], Res),
+    labeling([ff, bisect, up], Res),
     length(IntBoard, Nrows),
     init_board(IntBoard, Ncols),
     fill_board(IntBoard, Types, Rows, Cols, Board).

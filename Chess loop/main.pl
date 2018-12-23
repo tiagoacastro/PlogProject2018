@@ -2,13 +2,43 @@
 :- use_module(library(random)).
 :- include('utilities.pl').
 
+stats :-
+    statistics(walltime, [Start1,_]),
+    solve_stats(2, 2, 3, 1, 5), %%Problem 1
+    statistics(walltime, [End1,_]),
+    statistics(walltime, [Start2,_]),
+    solve_stats(3, 4, 5, 1, 3), %Problem 4
+    statistics(walltime, [End2,_]),
+    statistics(walltime, [Start3,_]),
+    solve_stats(4, 4, 6, 1, 4), %Problem 8
+    statistics(walltime, [End3,_]),
+    Time1 is End1 - Start1, Time2 is End2 -  Start2, Time3 is End3 - Start3,
+    format('Problem 1: ~3d s\n', [Time1]),
+    format('Problem 4: ~3d s\n', [Time2]),
+    format('Problem 8: ~3d s\n', [Time3]).
+
+
 random_problem(Nrows, Ncols, Type1String, Type2String, Npieces, Pos) :-
     repeat,
     random(1, 6, T1), random(1, 6, T2),
     check_types(T1, T2, Type1, Type2),
     convert_to_string(Type1, Type1String), convert_to_string(Type2, Type2String),
-    random(2, 10, Nrows), random(2, 10, Ncols), random(2, 5, Npieces),
-    solve(Npieces, Nrows, Ncols, Type1, Type2, Pos).
+    random(2, 6, Nrows), random(2, 6, Ncols), random(2, 4, Npieces),
+    findall(Board, aux(Npieces, Nrows, Ncols, Type1, Type2, Board), X1), length(X1, L),
+    valid_solution(L, Npieces),
+    get_first_board(X1, FirstBoard),
+    display_board(FirstBoard, Ncols).
+
+get_first_board([H|T], H).
+
+
+valid_solution(N, N).
+
+valid_solution(Length, N) :-
+    Length is 2 * N.
+
+valid_solution(Length, N) :-
+    Length is 4 * N.
 
 check_types(T1, T2, T1, T2) :- 
     T1 \= T2.
@@ -37,6 +67,32 @@ solve(N, Nrows, Ncols, Type1, Type2, Res) :-
     setup(Types, Rows, Cols, Min, Max),
     once(labeling([ff], Res)),
     display_solution(Nrows, Ncols, Types, Rows, Cols).
+
+%Solve used when generating a random problem. Initializes board but does not displays it.
+aux(N, Nrows, Ncols, Type1, Type2, Board) :-
+    Npieces #= N * 2,
+    length(Types, Npieces), length(Rows, Npieces), length(Cols, Npieces), length(Res, Npieces),
+    domain(Rows, 1, Nrows), domain(Cols, 1, Ncols),
+    prepare(Ncols, Rows, Cols, Res),
+    set_types(Types, Type1, Type2, Npieces),
+    get_min(Nrows, Ncols, Min),
+    setup(Types, Rows, Cols, Min),
+    labeling([ff], Res),
+    length(IntBoard, Nrows),
+    init_board(IntBoard, Ncols),
+    fill_board(IntBoard, Types, Rows, Cols, Board).
+
+%Solve used when getting execution times. Does not initializes board.
+solve_stats(N, Nrows, Ncols, Type1, Type2) :-
+    Npieces is N * 2,
+    length(Types, Npieces), length(Rows, Npieces), length(Cols, Npieces), length(Res, Npieces),
+    domain(Rows, 1, Nrows), domain(Cols, 1, Ncols),
+    prepare(Ncols, Rows, Cols, Res),
+    set_types(Types, Type1, Type2, Npieces),
+    get_min(Nrows, Ncols, Min),
+    get_max(Nrows, Ncols, Max),
+    setup(Types, Rows, Cols, Min, Max),
+    once(labeling([ff], Res)).
 
 %Prepare base case
 prepare(_, [], [], []).

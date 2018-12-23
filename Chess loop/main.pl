@@ -62,8 +62,7 @@ solve(N, Nrows, Ncols, Type1, Type2, Res) :-
     domain(Rows, 1, Nrows), domain(Cols, 1, Ncols),
     prepare(Ncols, Rows, Cols, Res),
     set_types(Types, Type1, Type2, Npieces),
-    get_min(Nrows, Ncols, Min),
-    get_max(Nrows, Ncols, Max),
+    get_min_max(Nrows, Ncols, Min, Max),
     setup(Types, Rows, Cols, Min, Max),
     once(labeling([ff], Res)),
     display_solution(Nrows, Ncols, Types, Rows, Cols).
@@ -75,7 +74,7 @@ aux(N, Nrows, Ncols, Type1, Type2, Board) :-
     domain(Rows, 1, Nrows), domain(Cols, 1, Ncols),
     prepare(Ncols, Rows, Cols, Res),
     set_types(Types, Type1, Type2, Npieces),
-    get_min(Nrows, Ncols, Min),
+    get_min_max(Nrows, Ncols, Min, _),
     setup(Types, Rows, Cols, Min),
     labeling([ff], Res),
     length(IntBoard, Nrows),
@@ -89,8 +88,7 @@ solve_stats(N, Nrows, Ncols, Type1, Type2) :-
     domain(Rows, 1, Nrows), domain(Cols, 1, Ncols),
     prepare(Ncols, Rows, Cols, Res),
     set_types(Types, Type1, Type2, Npieces),
-    get_min(Nrows, Ncols, Min),
-    get_max(Nrows, Ncols, Max),
+    get_min_max(Nrows, Ncols, Min, Max),
     setup(Types, Rows, Cols, Min, Max),
     once(labeling([ff], Res)).
 
@@ -230,6 +228,9 @@ dont_eat(5, R1, R2, C1, C2, _, _, _, _):-
 restrict_N(_, _, _, _, M, M, _, _).
 
 %Restricts N direction of the attacker as forbidden for all foreign pieces
+%R1 C1 - atacking piece position
+%R2 C2 - avaliated position
+%R C - atacked piece position
 restrict_N(R1, R2, C1, C2, N, M, R, C):-
     N < M,
     ((#\(C #= C1 #/\ R #< R1 #/\ R1-N #< R)) #=> ((R2 #= R1-N #/\ C2 #= C1) #<=> 0)),
@@ -240,6 +241,9 @@ restrict_N(R1, R2, C1, C2, N, M, R, C):-
 restrict_E(_, _, _, _, M, M, _, _).
 
 %Restricts E direction of the attacker as forbidden for all foreign pieces
+%R1 C1 - atacking piece position
+%R2 C2 - avaliated position
+%R C - atacked piece position
 restrict_E(R1, R2, C1, C2, N, M, R, C):-
     N < M,
     ((#\(R #= R1 #/\ C #> C1 #/\ C1+N #> C)) #=> ((R2 #= R1 #/\ C2 #= C1+N) #<=> 0)),
@@ -250,6 +254,9 @@ restrict_E(R1, R2, C1, C2, N, M, R, C):-
 restrict_S(_, _, _, _, M, M, _, _).
 
 %Restricts S direction of the attacker as forbidden for all foreign pieces
+%R1 C1 - atacking piece position
+%R2 C2 - avaliated position
+%R C - atacked piece position
 restrict_S(R1, R2, C1, C2, N, M, R, C):-
     N < M,
     ((#\(C #= C1 #/\ R #> R1 #/\ R1+N #> R)) #=> ((R2 #= R1+N #/\ C2 #= C1) #<=> 0)),
@@ -260,6 +267,9 @@ restrict_S(R1, R2, C1, C2, N, M, R, C):-
 restrict_W(_, _, _, _, M, M, _, _).
 
 %Restricts W direction of the attacker as forbidden for all foreign pieces
+%R1 C1 - atacking piece position
+%R2 C2 - avaliated position
+%R C - atacked piece position
 restrict_W(R1, R2, C1, C2, N, M, R, C):-
     N < M,
     ((#\(R #= R1 #/\ C #< C1 #/\ C1-N #< C)) #=> ((R2 #= R1 #/\ C2 #= C1-N) #<=> 0)),
@@ -270,6 +280,9 @@ restrict_W(R1, R2, C1, C2, N, M, R, C):-
 restrict_NE(_, _, _, _, M, M, _, _).
 
 %Restricts NE diagonal of the attacker as forbidden for all foreign pieces
+%R1 C1 - atacking piece position
+%R2 C2 - avaliated position
+%R C - atacked piece position
 restrict_NE(R1, R2, C1, C2, N, M, R, C):-
     N < M,
     ((#\(R #< R1 #/\ C #> C1 #/\ C-C1 #= R1-R #/\ C1+N #> C)) #=> ((R2 #= R1-N #/\ C2 #= C1+N) #<=> 0)),
@@ -280,6 +293,9 @@ restrict_NE(R1, R2, C1, C2, N, M, R, C):-
 restrict_SE(_, _, _, _, M, M, _, _).
 
 %Restricts SE diagonal of the attacker as forbidden for all foreign pieces
+%R1 C1 - atacking piece position
+%R2 C2 - avaliated position
+%R C - atacked piece position
 restrict_SE(R1, R2, C1, C2, N, M, R, C):-
     N < M,
     ((#\(R #> R1 #/\ C #> C1 #/\ C-C1 #= R-R1 #/\ C1+N #> C)) #=> ((R2 #= R1+N #/\ C2 #= C1+N) #<=> 0)),
@@ -290,6 +306,9 @@ restrict_SE(R1, R2, C1, C2, N, M, R, C):-
 restrict_SW(_, _, _, _, M, M, _, _).
 
 %Restricts SW diagonal of the attacker as forbidden for all foreign pieces
+%R1 C1 - atacking piece position
+%R2 C2 - avaliated position
+%R C - atacked piece position
 restrict_SW(R1, R2, C1, C2, N, M, R, C):-
     N < M,
     ((#\(R #> R1 #/\ C #< C1 #/\ C1-C #= R-R1 #/\ C1-N #< C)) #=> ((R2 #= R1+N #/\ C2 #= C1-N) #<=> 0)),
@@ -300,6 +319,9 @@ restrict_SW(R1, R2, C1, C2, N, M, R, C):-
 restrict_NW(_, _, _, _, M, M, _, _).
 
 %Restricts NW diagonal of the attacker as forbidden for all foreign pieces
+%R1 C1 - atacking piece position
+%R2 C2 - avaliated position
+%R C - atacked piece position
 restrict_NW(R1, R2, C1, C2, N, M, R, C):-
     N < M,
     ((#\(R #< R1 #/\ C #< C1 #/\ C1-C #= R1-R #/\ C1-N #< C)) #=> ((R2 #= R1-N #/\ C2 #= C1-N) #<=> 0)),

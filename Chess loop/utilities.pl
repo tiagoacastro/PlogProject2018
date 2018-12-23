@@ -1,23 +1,15 @@
-print_list([]).
-print_list([A|B]) :-
-    format("~w", A),
-    print_list(B).
+%Returns the max and the min values
 
-get_min(Nrows, Ncols, Min):-
+get_min_max(Nrows, Ncols, Min, Max):-
     Nrows =< Ncols,
-    Min is Nrows, !.
+    Min is Nrows, 
+    Max is Ncols, 
+    !.
 
-get_min(Nrows, Ncols, Min):-
+get_min_max(Nrows, Ncols, Min, Max):-
     Nrows > Ncols,
-    Min is Ncols.
-
-get_max(Nrows, Ncols, Min):-
-    Nrows >= Ncols,
-    Min is Nrows, !.
-
-get_max(Nrows, Ncols, Min):-
-    Nrows < Ncols,
-    Min is Ncols.
+    Min is Ncols, 
+    Max is Nrows.
 
 %-----------------------------------------------------------
 
@@ -40,6 +32,8 @@ setColumn(N, [H|TIn], Piece, [H|TOut]) :-
     setColumn(NewN, TIn, Piece, TOut).
 
 %-----------------------------------------------------------
+
+%Board display functions
 
 display_board([], Ncols) :-
     display_border(Ncols).

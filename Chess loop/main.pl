@@ -35,7 +35,7 @@ solve(N, Nrows, Ncols, Type1, Type2, Res) :-
     get_min(Nrows, Ncols, Min),
     get_max(Nrows, Ncols, Max),
     setup(Types, Rows, Cols, Min, Max),
-    labeling([ff], Res),
+    once(labeling([ff], Res)),
     display_solution(Nrows, Ncols, Types, Rows, Cols).
 
 %Prepare base case

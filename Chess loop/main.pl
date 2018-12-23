@@ -3,6 +3,7 @@
 :- use_module(library(random)).
 :- include('utilities.pl').
 
+%Function used to calculae execution times
 stats(Selection, Choice, Direction) :-
     write('\33\[2J'),
 
@@ -32,6 +33,7 @@ stats(Selection, Choice, Direction) :-
     format('5 knights and rooks on 3x8: ~4d s\n', [Time4]).
 
 
+%Generates a random problem and solves it
 random_problem(Nrows, Ncols, Type1String, Type2String, Npieces) :-
     repeat,
     random(1, 6, T1), random(1, 6, T2),
@@ -57,17 +59,22 @@ erase_duplicates([H|T], Out):-
     delete(T3, RevTransRevTrans, T4),
     append([H],T4,Out).
 
+%Gets the first board from the list
 get_first_board([H|[]], H).
 
+%Checks if types are different. If true, transfers value in temporary variable to original value
 check_types(T1, T2, T1, T2) :- 
     T1 \= T2.
 
+%Checks if types are equal. If true, gets new values and tests it again
 check_types(T1, T2, Type1, Type2) :- 
     T1 = T2,
     random(1, 3, NewT1),
     random(1, 3, NewT2),
     check_types(NewT1, NewT2, Type1, Type2).
 
+
+%Convert piece number to string, in order to make random problem generator user-friendly
 convert_to_string(1, 'King').
 convert_to_string(2, 'Queen').
 convert_to_string(3, 'Rook').

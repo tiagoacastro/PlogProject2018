@@ -31,7 +31,6 @@ random_problem(Nrows, Ncols, Type1String, Type2String, Npieces) :-
 
 get_first_board([H|_], H).
 
-
 valid_solution(N, N).
 
 valid_solution(Length, N) :-

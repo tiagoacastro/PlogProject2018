@@ -37,20 +37,29 @@ random_problem(Nrows, Ncols, Type1String, Type2String, Npieces) :-
     check_types(T1, T2, Type1, Type2),
     convert_to_string(Type1, Type1String), convert_to_string(Type2, Type2String),
     random(2, 6, Nrows), random(2, 6, Ncols), random(2, 4, Npieces),
-    findall(Board, aux(Npieces, Nrows, Ncols, Type1, Type2, Board), X1), length(X1, L),
-    valid_solution(L, Npieces),
+    findall(Board, aux(Npieces, Nrows, Ncols, Type1, Type2, Board), X1), 
+    erase_duplicates(X1, Fixed, 1, Npieces),
+    length(Fixed, 1),
     get_first_board(X1, FirstBoard),
     display_board(FirstBoard, Ncols).
 
-get_first_board([H|_], H).
+erase_duplicates(Out, Out, A, A).
 
-valid_solution(N, N).
+erase_duplicates(In, Out, N, A):-
+    erase_simetrics(In, Temp),
+    offset(Temp, List),
+    Next is N+1,
+    erase_duplicates(List, Out, Next, A).
 
-valid_solution(Length, N) :-
-    Length is 2 * N.
+erase_simetrics([H|T], Out):-
+    reverse_matrix(H, [], Rev),
+    delete(T, Rev, T1),
+    transpose(H, Trans),
+    delete(T1, Trans, T2),
+    transpose(Rev, [], RevTrans),
+    delete(T2, RevTrans, Out).
 
-valid_solution(Length, N) :-
-    Length is 4 * N.
+get_first_board([H|[]], H).
 
 check_types(T1, T2, T1, T2) :- 
     T1 \= T2.

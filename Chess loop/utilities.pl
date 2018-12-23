@@ -13,6 +13,24 @@ get_min_max(Nrows, Ncols, Min, Max):-
 
 %-----------------------------------------------------------
 
+%Reverses a matrix
+
+reverse_matrix([], Temp, Temp).
+
+reverse_matrix([H|T], Temp, Out):-
+    reverse(H,R),
+    append(Temp, [R], Next),
+    reverse_matrix(T,Next,Out).
+
+%-----------------------------------------------------------
+
+%Offsets a matrix
+
+offset([H1,H2|T], Out):-
+    append(T,[H1,H2],Out).
+
+%-----------------------------------------------------------
+
 %Updates a specified position of the board 
 
 changePosition(BoardIn, Row, Column, Piece, BoardOut) :-

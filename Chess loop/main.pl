@@ -6,23 +6,18 @@
 %Function used to calculae execution times
 stats(Selection, Choice, Direction) :-
     write('\33\[2J'),
-
     statistics(walltime, [Start1,_]),
     solve_stats(2, 2, 4, 1, 3, Selection, Choice, Direction),
     statistics(walltime, [End1,_]),
-
     statistics(walltime, [Start2,_]),
     solve_stats(3, 4, 5, 1, 3, Selection, Choice, Direction), 
     statistics(walltime, [End2,_]),
-
     statistics(walltime, [Start3,_]),
     solve_stats(4, 4, 6, 1, 4, Selection, Choice, Direction), 
     statistics(walltime, [End3,_]),
-
     statistics(walltime, [Start4,_]),
     solve_stats(4, 4, 7, 2, 5, Selection, Choice, Direction), 
     statistics(walltime, [End4,_]),
-
     Time1 is End1 - Start1, Time2 is End2 -  Start2, Time3 is End3 - Start3, Time4 is End4 - Start4,  
     format('Options: ~w, ', Selection),
     format('~w, ', Choice),

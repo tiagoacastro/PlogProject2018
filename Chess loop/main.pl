@@ -18,7 +18,7 @@ stats :-
     format('Problem 8: ~3d s\n', [Time3]).
 
 
-random_problem(Nrows, Ncols, Type1String, Type2String, Npieces, Pos) :-
+random_problem(Nrows, Ncols, Type1String, Type2String, Npieces) :-
     repeat,
     random(1, 6, T1), random(1, 6, T2),
     check_types(T1, T2, Type1, Type2),
@@ -29,7 +29,7 @@ random_problem(Nrows, Ncols, Type1String, Type2String, Npieces, Pos) :-
     get_first_board(X1, FirstBoard),
     display_board(FirstBoard, Ncols).
 
-get_first_board([H|T], H).
+get_first_board([H|_], H).
 
 
 valid_solution(N, N).

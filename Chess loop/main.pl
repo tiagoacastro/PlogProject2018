@@ -2,23 +2,36 @@
 :- use_module(library(random)).
 :- include('utilities.pl').
 
-stats :-
+stats(Selection, Choice, Direction) :-
+    write('\33\[2J'),
+
     statistics(walltime, [Start1,_]),
-    solve_stats(2, 2, 3, 1, 5), %%Problem 1
+    solve_stats(2, 2, 4, 1, 3, Selection, Choice, Direction),
     statistics(walltime, [End1,_]),
+
     statistics(walltime, [Start2,_]),
-    solve_stats(3, 4, 5, 1, 3), %Problem 4
+    solve_stats(3, 4, 5, 1, 3, Selection, Choice, Direction), 
     statistics(walltime, [End2,_]),
+
     statistics(walltime, [Start3,_]),
-    solve_stats(4, 4, 6, 1, 4), %Problem 8
+    solve_stats(4, 4, 6, 1, 4, Selection, Choice, Direction), 
     statistics(walltime, [End3,_]),
-    Time1 is End1 - Start1, Time2 is End2 -  Start2, Time3 is End3 - Start3,
-    format('Problem 1: ~3d s\n', [Time1]),
-    format('Problem 4: ~3d s\n', [Time2]),
-    format('Problem 8: ~3d s\n', [Time3]).
+
+    statistics(walltime, [Start4,_]),
+    solve_stats(4, 4, 7, 2, 5, Selection, Choice, Direction), 
+    statistics(walltime, [End4,_]),
+
+    Time1 is End1 - Start1, Time2 is End2 -  Start2, Time3 is End3 - Start3, Time4 is End4 - Start4,  
+    format('Options: ~w, ', Selection),
+    format('~w, ', Choice),
+    format('~w\n', Direction),
+    format('2 rooks and kings on a 2x4: ~4d s\n', [Time1]),
+    format('3 rooks and kings on a 4x5: ~4d s\n', [Time2]),
+    format('4 bischop and kings on a 4x6: ~4d s\n', [Time3]),
+    format('5 knights and rooks on 3x8: ~4d s\n', [Time4]).
 
 
-random_problem(Nrows, Ncols, Type1String, Type2String, Npieces, Pos) :-
+random_problem(Nrows, Ncols, Type1String, Type2String, Npieces) :-
     repeat,
     random(1, 6, T1), random(1, 6, T2),
     check_types(T1, T2, Type1, Type2),
@@ -30,7 +43,6 @@ random_problem(Nrows, Ncols, Type1String, Type2String, Npieces, Pos) :-
     display_board(FirstBoard, Ncols).
 
 get_first_board([H|T], H).
-
 
 valid_solution(N, N).
 
@@ -76,14 +88,15 @@ aux(N, Nrows, Ncols, Type1, Type2, Board) :-
     prepare(Ncols, Rows, Cols, Res),
     set_types(Types, Type1, Type2, Npieces),
     get_min(Nrows, Ncols, Min),
-    setup(Types, Rows, Cols, Min),
+    get_max(Nrows, Ncols, Max),
+    setup(Types, Rows, Cols, Min, Max),
     labeling([ff], Res),
     length(IntBoard, Nrows),
     init_board(IntBoard, Ncols),
     fill_board(IntBoard, Types, Rows, Cols, Board).
 
 %Solve used when getting execution times. Does not initializes board.
-solve_stats(N, Nrows, Ncols, Type1, Type2) :-
+solve_stats(N, Nrows, Ncols, Type1, Type2, Selection, Choice, Direction) :-
     Npieces is N * 2,
     length(Types, Npieces), length(Rows, Npieces), length(Cols, Npieces), length(Res, Npieces),
     domain(Rows, 1, Nrows), domain(Cols, 1, Ncols),
@@ -92,7 +105,7 @@ solve_stats(N, Nrows, Ncols, Type1, Type2) :-
     get_min(Nrows, Ncols, Min),
     get_max(Nrows, Ncols, Max),
     setup(Types, Rows, Cols, Min, Max),
-    once(labeling([ff], Res)).
+    once(labeling([Selection, Choice, Direction], Res)).
 
 %Prepare base case
 prepare(_, [], [], []).

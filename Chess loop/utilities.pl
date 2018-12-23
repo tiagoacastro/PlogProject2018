@@ -5,10 +5,18 @@ print_list([A|B]) :-
 
 get_min(Nrows, Ncols, Min):-
     Nrows =< Ncols,
-    Min is Nrows.
+    Min is Nrows, !.
 
 get_min(Nrows, Ncols, Min):-
     Nrows > Ncols,
+    Min is Ncols.
+
+get_max(Nrows, Ncols, Min):-
+    Nrows >= Ncols,
+    Min is Nrows, !.
+
+get_max(Nrows, Ncols, Min):-
+    Nrows < Ncols,
     Min is Ncols.
 
 %-----------------------------------------------------------

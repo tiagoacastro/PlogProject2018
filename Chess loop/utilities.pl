@@ -1,3 +1,24 @@
+%Prints lists or matrixes or lists of matrixes
+
+print_list_of_matrixes([]).
+print_list_of_matrixes([A|B]) :-
+    print_matrix(A),
+    write('\n---\n'),
+    print_list_of_matrixes(B).
+
+print_matrix([]).
+print_matrix([A|B]) :-
+    print_list(A),
+    write('\n'),
+    print_matrix(B).
+
+print_list([]).
+print_list([A|B]) :-
+    format("~w ", A),
+    print_list(B).
+
+%-----------------------------------------------------------
+
 %Returns the max and the min values
 
 get_min_max(Nrows, Ncols, Min, Max):-
@@ -21,13 +42,6 @@ reverse_matrix([H|T], Temp, Out):-
     reverse(H,R),
     append(Temp, [R], Next),
     reverse_matrix(T,Next,Out).
-
-%-----------------------------------------------------------
-
-%Offsets a matrix
-
-offset([H1,H2|T], Out):-
-    append(T,[H1,H2],Out).
 
 %-----------------------------------------------------------
 

@@ -1,4 +1,5 @@
 :- use_module(library(clpfd)).
+:- use_module(library(lists)).
 :- use_module(library(random)).
 :- include('utilities.pl').
 
@@ -38,26 +39,23 @@ random_problem(Nrows, Ncols, Type1String, Type2String, Npieces) :-
     convert_to_string(Type1, Type1String), convert_to_string(Type2, Type2String),
     random(2, 6, Nrows), random(2, 6, Ncols), random(2, 4, Npieces),
     findall(Board, aux(Npieces, Nrows, Ncols, Type1, Type2, Board), X1), 
-    erase_duplicates(X1, Fixed, 1, Npieces),
+    erase_duplicates(X1, Fixed),
     length(Fixed, 1),
-    get_first_board(X1, FirstBoard),
+    get_first_board(Fixed, FirstBoard),
     display_board(FirstBoard, Ncols).
 
-erase_duplicates(Out, Out, A, A).
-
-erase_duplicates(In, Out, N, A):-
-    erase_simetrics(In, Temp),
-    offset(Temp, List),
-    Next is N+1,
-    erase_duplicates(List, Out, Next, A).
-
-erase_simetrics([H|T], Out):-
+%erases duplicate boards
+erase_duplicates([H|T], Out):-
+    delete(T, H, T1),
     reverse_matrix(H, [], Rev),
-    delete(T, Rev, T1),
+    delete(T1, Rev, T2),
     transpose(H, Trans),
-    delete(T1, Trans, T2),
-    transpose(Rev, [], RevTrans),
-    delete(T2, RevTrans, Out).
+    reverse_matrix(Trans, [], RevTrans),
+    transpose(RevTrans, TransRevTrans),
+    delete(T2, TransRevTrans, T3),
+    reverse_matrix(TransRevTrans, [], RevTransRevTrans),
+    delete(T3, RevTransRevTrans, T4),
+    append([H],T4,Out).
 
 get_first_board([H|[]], H).
 
@@ -95,8 +93,7 @@ aux(N, Nrows, Ncols, Type1, Type2, Board) :-
     domain(Rows, 1, Nrows), domain(Cols, 1, Ncols),
     prepare(Ncols, Rows, Cols, Res),
     set_types(Types, Type1, Type2, Npieces),
-    get_min(Nrows, Ncols, Min),
-    get_max(Nrows, Ncols, Max),
+    get_min_max(Nrows, Ncols, Min, Max),
     setup(Types, Rows, Cols, Min, Max),
     labeling([ff], Res),
     length(IntBoard, Nrows),

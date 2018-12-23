@@ -31,7 +31,7 @@ solve(N, Nrows, Ncols, Type1, Type2, Res) :-
     get_min(Nrows, Ncols, Min),
     get_max(Nrows, Ncols, Max),
     setup(Types, Rows, Cols, Min, Max),
-    once(labeling([ff], Res)),
+    labeling([ff], Res),
     display_solution(Nrows, Ncols, Types, Rows, Cols).
 
 %Prepare base case
@@ -63,16 +63,16 @@ iterate([H|Tr], [R1,R2|Rr], [C1,C2|Cr], Fr, Fc, Min, Max, Rows, Columns, Index):
 restrict(_, _, _, [], [], _, _, _, _, _, _, _).
 
 %Restrict when the analyzed piece is the one attacking (do nothing)
-restrict(H, R1, C1, [_|R], [_|C], Index1, Index2, Min, Max, N, _, _):-
+restrict(H, R1, C1, [_|R], [_|C], Index1, Index2, Min, Max, N, Pr, Pc):-
     N = Index1,
     New is N + 1,
-    restrict(H, R1, C1, R, C, Index1, Index2, Min, Max, New, _, _), !.
+    restrict(H, R1, C1, R, C, Index1, Index2, Min, Max, New, Pr, Pc), !.
 
 %Restrict when the analyzed piece is the one being attacked (do nothing)
-restrict(H, R1, C1, [_|R], [_|C], Index1, Index2, Min, Max, N, _, _):-
+restrict(H, R1, C1, [_|R], [_|C], Index1, Index2, Min, Max, N, Pr, Pc):-
     N = Index2,
     New is N + 1,
-    restrict(H, R1, C1, R, C, Index1, Index2, Min, Max, New, _, _), !.
+    restrict(H, R1, C1, R, C, Index1, Index2, Min, Max, New, Pr, Pc), !.
 
 %Restrict when the analyzed piece is foreign (not involved in the current play)
 %Makes so the foreign piece can't be in positions attackable by the current atacker
